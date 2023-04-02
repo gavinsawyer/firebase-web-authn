@@ -1,0 +1,21 @@
+{
+  "name": "@firebase-web-authn/functions",
+  "version": "9.0.0",
+  "homepage": "https://github.com/gavinsawyer/firebase-web-authn/tree/main/libs/functions#readme",
+  "author": {
+    "name": "Gavin Sawyer",
+    "email": "hello@gavinsawyer.dev",
+    "url": "https://github.com/gavinsawyer"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": "18"
+  },
+  "dependencies": {
+    "@simplewebauthn/server": "^7",
+    "@simplewebauthn/typescript-types": "^7",
+    "firebase-admin": "^11",
+    "firebase-functions": "^4"
+  },
+  "private": false
+}

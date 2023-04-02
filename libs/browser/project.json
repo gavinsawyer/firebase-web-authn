@@ -1,0 +1,32 @@
+{
+  "name": "browser",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/browser/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "assets": [
+          {
+            "glob": "README.md",
+            "input": "libs/browser",
+            "output": "."
+          }
+        ],
+        "main": "libs/browser/src/index.ts",
+        "outputPath": "dist/libs/browser",
+        "tsConfig": "libs/browser/tsconfig.lib.json"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/browser/**/*.ts"]
+      }
+    }
+  },
+  "tags": []
+}

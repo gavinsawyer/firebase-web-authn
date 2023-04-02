@@ -1,0 +1,19 @@
+{
+  "name": "@firebase-web-authn/demo-functions",
+  "homepage": "https://github.com/gavinsawyer/firebase-web-authn/tree/main/libs/demo-functions#readme",
+  "author": {
+    "name": "Gavin Sawyer",
+    "email": "hello@gavinsawyer.dev",
+    "url": "https://github.com/gavinsawyer"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": "18"
+  },
+  "main": "./demo-functions/index.js",
+  "dependencies": {
+    "firebase-admin": "^11",
+    "firebase-functions": "^4"
+  },
+  "private": false
+}

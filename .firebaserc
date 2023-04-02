@@ -1,0 +1,14 @@
+{
+  "projects": {
+    "default": "fir-web-authn"
+  },
+  "targets": {
+    "fir-web-authn": {
+      "hosting": {
+        "demo": [
+          "fir-web-authn"
+        ]
+      }
+    }
+  }
+}

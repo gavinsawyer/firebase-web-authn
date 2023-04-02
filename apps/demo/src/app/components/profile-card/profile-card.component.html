@@ -1,0 +1,27 @@
+<ng-container *ngIf="profileService.profileDocumentObservable | async as profileDocument">
+  <mat-card>
+    <mat-card-content>
+      You're signed in as {{ profileDocument.name }}.
+    </mat-card-content>
+    <mat-card-actions align="end">
+      <button
+        (click)="signInAnonymously();"
+        color="primary"
+        mat-button="">
+        Sign out
+      </button>
+    </mat-card-actions>
+  </mat-card>
+  <button
+    (click)="verifyUserWithPasskey();"
+    color="primary"
+    mat-raised-button="">
+    Verify with passkey
+  </button>
+  <button
+    (click)="signInWithPasskey();"
+    color="primary"
+    mat-raised-button="">
+    Change accounts with passkey
+  </button>
+</ng-container>

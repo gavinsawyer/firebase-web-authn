@@ -1,0 +1,40 @@
+{
+  "name": "demo-functions",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/demo-functions/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "assets": [
+          {
+            "glob": "README.md",
+            "input": "libs/demo-functions",
+            "output": "."
+          }
+        ],
+        "main": "libs/demo-functions/src/index.ts",
+        "outputPath": "dist/libs/demo-functions",
+        "rootDir": "libs",
+        "tsConfig": "libs/demo-functions/tsconfig.lib.json"
+      }
+    },
+    "deploy": {
+      "dependsOn": ["build"],
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "firebase deploy --only functions"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/demo-functions/**/*.ts"]
+      }
+    }
+  },
+  "tags": []
+}

@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "outDir": "../../dist/out-tsc",
+    "target": "ES2022",
+    "types": [],
+    "useDefineForClassFields": false
+  },
+  "exclude": ["jest.config.ts", "**/*.test.ts", "**/*.spec.ts"],
+  "extends": "./tsconfig.json",
+  "files": ["src/main.ts", "src/polyfills.ts"],
+  "include": ["src/**/*.d.ts"]
+}

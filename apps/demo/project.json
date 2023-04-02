@@ -1,0 +1,153 @@
+{
+  "name": "demo",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "apps/demo/src",
+  "prefix": "demo-app",
+  "targets": {
+    "browser": {
+      "executor": "@angular-devkit/build-angular:browser",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/apps/demo/browser",
+        "index": "apps/demo/src/index.html",
+        "main": "apps/demo/src/main.ts",
+        "polyfills": "apps/demo/src/polyfills.ts",
+        "tsConfig": "apps/demo/tsconfig.app.json",
+        "inlineStyleLanguage": "sass",
+        "assets": [
+          "apps/demo/src/robots.txt",
+          "apps/demo/src/sitemap.xml"
+        ],
+        "styles": [
+          "apps/demo/src/custom-theme.sass",
+          "apps/demo/src/styles.sass"
+        ],
+        "scripts": []
+      },
+      "configurations": {
+        "production": {
+          "budgets": [
+            {
+              "type": "initial",
+              "maximumWarning": "500kb",
+              "maximumError": "1mb"
+            },
+            {
+              "type": "anyComponentStyle",
+              "maximumWarning": "2kb",
+              "maximumError": "4kb"
+            }
+          ],
+          "fileReplacements": [
+            {
+              "replace": "apps/demo/src/environments/environment.ts",
+              "with": "apps/demo/src/environments/environment.prod.ts"
+            }
+          ],
+          "outputHashing": "all"
+        },
+        "development": {
+          "buildOptimizer": false,
+          "optimization": true,
+          "vendorChunk": true,
+          "extractLicenses": false,
+          "sourceMap": true,
+          "namedChunks": true
+        }
+      },
+      "defaultConfiguration": "production"
+    },
+    "server": {
+      "executor": "@angular-devkit/build-angular:server",
+      "options": {
+        "outputPath": "dist/apps/demo/server",
+        "main": "apps/demo/server.ts",
+        "tsConfig": "apps/demo/tsconfig.server.json",
+        "inlineStyleLanguage": "sass"
+      },
+      "configurations": {
+        "production": {
+          "outputHashing": "media",
+          "fileReplacements": [
+            {
+              "replace": "apps/demo/src/environments/environment.ts",
+              "with": "apps/demo/src/environments/environment.prod.ts"
+            }
+          ]
+        },
+        "development": {
+          "optimization": false,
+          "sourceMap": true,
+          "extractLicenses": false
+        }
+      },
+      "defaultConfiguration": "production",
+      "production": {
+        "outputHashing": "media",
+        "fileReplacements": [
+          {
+            "replace": "apps/demo/src/environments/environment.ts",
+            "with": "apps/demo/src/environments/environment.prod.ts"
+          }
+        ]
+      },
+      "development": {
+        "optimization": false,
+        "sourceMap": true,
+        "extractLicenses": false
+      }
+    },
+    "build": {
+      "dependsOn": ["^browser", "^server"],
+      "executor": "@nguniversal/builders:prerender",
+      "options": {
+        "routesFile": "apps/demo/src/app/routes.txt"
+      },
+      "configurations": {
+        "production": {
+          "browserTarget": "demo:browser:production",
+          "serverTarget": "demo:server:production"
+        },
+        "development": {
+          "browserTarget": "demo:browser:development",
+          "serverTarget": "demo:server:development"
+        }
+      },
+      "defaultConfiguration": "production"
+    },
+    "deploy": {
+      "dependsOn": ["^browser", "^server"],
+      "executor": "@angular/fire:deploy",
+      "options": {
+        "ssr": "cloud-run",
+        "prerender": true,
+        "firebaseProject": "fir-web-authn",
+        "firebaseHostingSite": "fir-web-authn",
+        "functionName": "ssr-demo",
+        "functionsNodeVersion": "18.15",
+        "region": "us-central1",
+        "browserTarget": "demo:browser:production",
+        "serverTarget": "demo:server:production",
+        "prerenderTarget": "demo:build:production",
+        "outputPath": "dist/apps/demo/run"
+      }
+    },
+    "extract-i18n": {
+      "executor": "@angular-devkit/build-angular:extract-i18n",
+      "options": {
+        "browserTarget": "demo:browser"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "apps/demo/**/*.ts",
+          "apps/demo/**/*.html"
+        ]
+      }
+    }
+  },
+  "tags": []
+}

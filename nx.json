@@ -1,0 +1,59 @@
+{
+  "$schema": "./node_modules/nx/schemas/nx-schema.json",
+  "npmScope": "ngx-firebase-web-authn",
+  "affected": {
+    "defaultBase": "main"
+  },
+  "tasksRunnerOptions": {
+    "default": {
+      "runner": "@nrwl/nx-cloud",
+      "options": {
+        "cacheableOperations": ["browser", "server", "build"],
+        "accessToken": "${NX_CLOUD_ACCESS_TOKEN}"
+      }
+    }
+  },
+  "targetDefaults": {
+    "browser": {
+      "dependsOn": ["^browser"]
+    },
+    "server": {
+      "dependsOn": ["^server"]
+    },
+    "build": {
+      "dependsOn": ["^build"]
+    }
+  },
+  "generators": {
+    "@nrwl/angular:application": {
+      "style": "sass",
+      "linter": "eslint",
+      "unitTestRunner": "none",
+      "e2eTestRunner": "none",
+      "routing": true,
+      "skipTests": true,
+      "standalone": true
+    },
+    "@nrwl/angular:library": {
+      "linter": "eslint",
+      "unitTestRunner": "none",
+      "skipModule": true
+    },
+    "@nrwl/angular:component": {
+      "style": "sass",
+      "displayBlock": true,
+      "export": true,
+      "skipTests": true,
+      "standalone": true
+    },
+    "@nrwl/js:library": {
+      "unitTestRunner": "none"
+    }
+  },
+  "defaultProject": "demo",
+  "namedInputs": {
+    "default": ["{projectRoot}/**/*", "sharedGlobals"],
+    "production": ["default", "!{projectRoot}/.eslintrc.json"],
+    "sharedGlobals": []
+  }
+}

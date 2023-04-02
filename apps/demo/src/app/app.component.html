@@ -1,0 +1,4 @@
+<mat-toolbar [ngClass]="{'pathRoot': (pathService.pathObservable | async) === '/'}">
+  <span>FirebaseWebAuthn Demo</span>
+</mat-toolbar>
+<router-outlet></router-outlet>
