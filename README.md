@@ -22,7 +22,7 @@ import { linkWithPasskey, unlinkPasskey } from "@firebase-web-authn/browser";
 linkWithPasskey: (auth: Auth, functions: Functions, name: string) => Promise<UserCredential>;
   unlinkPasskey: (auth: Auth, functions: Functions)               => Promise<User>;
 ```
-Designed to be used just like native Firebase Authentication providers:
+Designed to be used just like native the Firebase JavaScript API version 9:
 ```ts
 import { createUserWithEmailAndPassword } from "firebase/auth | @angular/fire/auth";
 import { createUserWithPasskey }          from "@firebase-web-authn/browser";
@@ -111,4 +111,4 @@ For the browser to reach FirebaseWebAuthn, modify your `firebase.json` to includ
 ```
 ### Google Cloud setup
 - Enable the Anonymous authentication provider in Firebase if you are not using it already.
-- Assign the Default Compute Service Account the `Service Account Token Creator` role in [GCP IAM Service accounts](https://console.cloud.google.com/iam-admin/serviceaccounts). This is required for all custom authentication patterns with Firebase.
+- Add the `Service Account Token Creator` role to your Firebase Functions' service account in [GCP IAM project permissions](https://console.cloud.google.com/iam-admin/iam). This is either the `Default compute service account` or the `App Engine default service account`, and can be seen under "Runtime service account" in [GCP Cloud Function configuration](https://console.cloud.google.com/functions/list) after deployment.
