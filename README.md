@@ -1,4 +1,4 @@
-# firebase-web-authn
+# FirebaseWebAuthn
 #### `Firebase Authentication` `Firebase Functions` `Firestore` `SimpleWebAuthn`
 An unofficial Firebase extension for authentication with WebAuthn passkeys.
 
