@@ -24,7 +24,8 @@ jobs:
       - run: npm i @nrwl/nx-linux-x64-gnu@^15
       - run: npx nx run-many --target build --all
         env:
-          NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
+          NX_CLOUD_ACCESS_TOKEN: '${{ secrets.NX_CLOUD_ACCESS_TOKEN }}'
+          APP_CHECK_TOKEN: '${{ secrets.APP_CHECK_TOKEN }}'
       - run: npm publish dist/libs/functions && npm publish dist/libs/browser
         env:
           NPM_ACCESS_TOKEN: ${{ secrets.NPM_ACCESS_TOKEN }}

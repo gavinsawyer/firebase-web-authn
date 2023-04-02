@@ -20,7 +20,7 @@ export class AppCheckOptionsService {
         isTokenAutoRefreshEnabled: false,
         provider: new CustomProvider({
           getToken: (): Promise<AppCheckToken> => Promise.resolve({
-            token: process.env["AppCheckUniversalToken"] as string,
+            token: process.env["APP_CHECK_TOKEN"] as string,
             expireTimeMillis: Date.now(),
           }),
         }),
