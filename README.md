@@ -20,11 +20,11 @@ import { linkWithPasskey, unlinkPasskey } from "@firebase-web-authn/browser";
 ```
 ```ts
 linkWithPasskey: (auth: Auth, functions: Functions, name: string) => Promise<UserCredential>;
-  unlinkPasskey: (auth: Auth, functions: Functions)               => Promise<User>;
+  unlinkPasskey: (auth: Auth, functions: Functions)               => Promise<void>;
 ```
 Designed to be used just like native the Firebase JavaScript API version 9:
 ```ts
-import { createUserWithEmailAndPassword } from "firebase/auth | @angular/fire/auth";
+import { createUserWithEmailAndPassword } from "firebase/auth" | "@angular/fire/auth";
 import { createUserWithPasskey }          from "@firebase-web-authn/browser";
 ```
 ```ts
