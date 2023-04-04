@@ -27,7 +27,7 @@ const baseTitle = "FirebaseWebAuthn Demo";
     }),
     MatToolbarModule,
     provideAnalytics((): Analytics => getAnalytics()),
-    provideAppCheck((injector: Injector): AppCheck => initializeAppCheck(undefined, injector.get(AppCheckOptionsService).appCheckOptions(environment.recaptchaSiteKey))),
+    provideAppCheck((injector: Injector): AppCheck => initializeAppCheck(undefined, injector.get(AppCheckOptionsService).appCheckOptions(environment.app, environment.recaptchaSiteKey))),
     provideAuth((): Auth => getAuth()),
     provideFirebaseApp((): FirebaseApp => initializeApp(environment.firebase)),
     provideFirestore((): Firestore => getFirestore()),

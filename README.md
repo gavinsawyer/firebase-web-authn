@@ -34,7 +34,7 @@ class SignUpComponent {
     private readonly auth: Auth,
     private readonly functions: Functions,
   ) {
-    // AngularFire usage
+    // Firebase | AngularFire usage
     this
       .createUserWithEmailAndPassword = (email: string, password: string) => createUserWithEmailAndPassword(auth, email, password)
       .then(() => void(0));
@@ -76,16 +76,29 @@ From your Firebase Functions package root, run:
 
 `% npm install @firebase-web-authn/functions --save`
 
-Re-export the function from your `functions/index.ts` file.
+Export the function from your `functions/index.ts` file by calling `getFirebaseWebAuthn` with a config object.
 ```ts
-import { initializeApp } from 'firebase-admin/app';
+import { initializeApp }       from 'firebase-admin/app';
+import { HttpsFunction }       from "firebase-functions";
+import { getFirebaseWebAuthn } from '@firebase-web-authn/functions';
 
 
 initializeApp();
 
-export { firebaseWebAuthn } from '@firebase-web-authn/functions';
+export const firebaseWebAuthn: HttpsFunction = getFirebaseWebAuthn({
+  authenticatorAttachment: "platform",
+  relyingPartyName: "FirebaseWebAuthn Demo",
+  userVerificationRequirement: "required",
+});
 
 // Other functions...
+```
+```ts
+interface FirebaseWebAuthnConfig {
+  authenticatorAttachment: AuthenticatorAttachment,         // Whether to allow platform passkeys (stored in browser)
+  relyingPartyName: string,                                 // Your app's display name in the passkey popup
+  userVerificationRequirement: UserVerificationRequirement, // Whether to require biometrics for user verification.
+}
 ```
 Deploy your Firebase Functions:
 

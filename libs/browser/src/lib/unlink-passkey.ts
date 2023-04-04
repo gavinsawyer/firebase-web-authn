@@ -1,7 +1,7 @@
 import { Auth }                                                 from "firebase/auth";
 import { Functions, httpsCallableFromURL, HttpsCallableResult } from "firebase/functions";
-import { FunctionRequest, FunctionResponse }                    from "@firebase-web-authn/functions";
-import { FirebaseWebAuthnError }                                from "./firebase-web-authn-error";
+import { FunctionRequest, FunctionResponse } from "@firebase-web-authn/functions";
+import { FirebaseWebAuthnError }             from "./firebase-web-authn-error";
 
 
 export const unlinkPasskey: (auth: Auth, functions: Functions) => Promise<void> = (auth: Auth, functions: Functions): Promise<void> => auth

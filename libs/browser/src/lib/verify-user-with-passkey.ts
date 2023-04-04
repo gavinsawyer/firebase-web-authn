@@ -4,8 +4,8 @@ import { FunctionRequest, FunctionResponse }                    from "@firebase-
 import { startAuthentication }                                  from "@simplewebauthn/browser";
 import { AuthenticationResponseJSON }                           from "@simplewebauthn/typescript-types";
 import { clearChallenge }                                       from "./clear-challenge";
-import { handleVerifyFunctionResponse }                         from "./handle-verify-function-response";
-import { FirebaseWebAuthnError }                                from "./firebase-web-authn-error";
+import { handleVerifyFunctionResponse } from "./handle-verify-function-response";
+import { FirebaseWebAuthnError }        from "./firebase-web-authn-error";
 
 
 export const verifyUserWithPasskey: (auth: Auth, functions: Functions) => Promise<void> = (auth: Auth, functions: Functions): Promise<void> => auth

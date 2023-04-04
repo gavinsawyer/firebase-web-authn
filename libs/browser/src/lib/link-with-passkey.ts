@@ -1,11 +1,11 @@
-import { Auth, UserCredential }                           from "firebase/auth";
+import { Auth, UserCredential }                                 from "firebase/auth";
 import { Functions, httpsCallableFromURL, HttpsCallableResult } from "firebase/functions";
 import { FunctionRequest, FunctionResponse }                    from "@firebase-web-authn/functions";
 import { startRegistration }                                    from "@simplewebauthn/browser";
 import { RegistrationResponseJSON }                             from "@simplewebauthn/typescript-types";
 import { clearChallenge }                                       from "./clear-challenge";
-import { handleVerifyFunctionResponse }                         from "./handle-verify-function-response";
-import { FirebaseWebAuthnError }                                from "./firebase-web-authn-error";
+import { handleVerifyFunctionResponse } from "./handle-verify-function-response";
+import { FirebaseWebAuthnError }        from "./firebase-web-authn-error";
 
 
 export const linkWithPasskey: (auth: Auth, functions: Functions, name: string) => Promise<UserCredential> = (auth: Auth, functions: Functions, name: string): Promise<UserCredential> => auth

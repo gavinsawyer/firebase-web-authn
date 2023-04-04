@@ -4,8 +4,8 @@ import { FunctionRequest, FunctionResponse }                    from "@firebase-
 import { startAuthentication }                                  from "@simplewebauthn/browser";
 import { AuthenticationResponseJSON }                           from "@simplewebauthn/typescript-types";
 import { clearChallenge }                                       from "./clear-challenge";
-import { handleVerifyFunctionResponse }                         from "./handle-verify-function-response";
-import { FirebaseWebAuthnError }                                from "./firebase-web-authn-error";
+import { handleVerifyFunctionResponse } from "./handle-verify-function-response";
+import { FirebaseWebAuthnError }        from "./firebase-web-authn-error";
 
 
 export const signInWithPasskey: (auth: Auth, functions: Functions) => Promise<UserCredential> = (auth: Auth, functions: Functions): Promise<UserCredential> => ((handler: () => Promise<UserCredential>): Promise<UserCredential> => auth.currentUser ? handler() : signInAnonymously(auth).then<UserCredential>((): Promise<UserCredential> => handler()).catch<never>((firebaseError): never => {

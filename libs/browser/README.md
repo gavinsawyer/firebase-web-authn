@@ -31,7 +31,7 @@ class SignUpComponent {
     private readonly auth: Auth,
     private readonly functions: Functions,
   ) {
-    // AngularFire usage
+    // Firebase | AngularFire usage
     this
       .createUserWithEmailAndPassword = (email: string, password: string) => createUserWithEmailAndPassword(auth, email, password)
       .then(() => void(0));

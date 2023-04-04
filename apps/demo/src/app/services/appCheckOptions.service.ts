@@ -13,20 +13,20 @@ export class AppCheckOptionsService {
     private readonly platformId: object,
   ) {
     this
-      .appCheckOptions = (recaptchaSiteKey: string): AppCheckOptions => isPlatformBrowser(platformId) ? {
+      .appCheckOptions = (app: string, recaptchaSiteKey: string) => isPlatformBrowser(platformId) ? {
         isTokenAutoRefreshEnabled: true,
         provider: new ReCaptchaV3Provider(recaptchaSiteKey),
       } : {
         isTokenAutoRefreshEnabled: false,
         provider: new CustomProvider({
           getToken: (): Promise<AppCheckToken> => Promise.resolve({
-            token: process.env["APP_CHECK_TOKEN"] as string,
+            token: process.env["APP_CHECK_TOKEN_" + app.toUpperCase()] as string,
             expireTimeMillis: Date.now(),
           }),
         }),
       };
   }
 
-  public readonly appCheckOptions: (recaptchaSiteKey: string) => AppCheckOptions
+  public readonly appCheckOptions: (app: string, recaptchaSiteKey: string) => AppCheckOptions
 
 }

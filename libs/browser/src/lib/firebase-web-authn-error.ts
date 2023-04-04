@@ -1,11 +1,11 @@
-import { UnknownFunctionResponseUnsuccessful } from "@firebase-web-authn/functions";
+import { FunctionResponse } from "@firebase-web-authn/functions";
 
 
 interface FirebaseWebAuthnErrorOptions {
-  "code": UnknownFunctionResponseUnsuccessful["code"] | "cancelled" | "invalid",
-  "message": UnknownFunctionResponseUnsuccessful["message"] | "Cancelled by user." | "Invalid function response.",
+  "code": Extract<FunctionResponse, { success: false, }>["code"] | "cancelled" | "invalid",
+  "message": Extract<FunctionResponse, { success: false, }>["message"] | "Cancelled by user." | "Invalid function response.",
   "method"?: "httpsCallableFromURL" | "signInAnonymously" | "signInWithCustomToken",
-  "operation"?: UnknownFunctionResponseUnsuccessful["operation"],
+  "operation"?: FunctionResponse["operation"],
 }
 export class FirebaseWebAuthnError extends Error {
 
