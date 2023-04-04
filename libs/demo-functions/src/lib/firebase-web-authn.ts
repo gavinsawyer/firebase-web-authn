@@ -1,5 +1,5 @@
 import { HttpsFunction }       from "firebase-functions";
-import { getFirebaseWebAuthn } from "@firebase-web-authn/functions";
+import { getFirebaseWebAuthn } from "../../../functions/src";
 
 
 export const firebaseWebAuthn: HttpsFunction = getFirebaseWebAuthn({
