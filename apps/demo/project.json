@@ -99,7 +99,7 @@
       }
     },
     "build": {
-      "dependsOn": ["^browser", "^server"],
+      "dependsOn": ["browser", "server"],
       "executor": "@nguniversal/builders:prerender",
       "options": {
         "routesFile": "apps/demo/src/app/routes.txt"
@@ -117,20 +117,10 @@
       "defaultConfiguration": "production"
     },
     "deploy": {
-      "dependsOn": ["^browser", "^server"],
-      "executor": "@angular/fire:deploy",
+      "dependsOn": ["build"],
+      "executor": "nx:run-commands",
       "options": {
-        "ssr": "cloud-run",
-        "prerender": true,
-        "firebaseProject": "fir-web-authn",
-        "firebaseHostingSite": "fir-web-authn",
-        "functionName": "ssr-demo",
-        "functionsNodeVersion": "18.15",
-        "region": "us-central1",
-        "browserTarget": "demo:browser:production",
-        "serverTarget": "demo:server:production",
-        "prerenderTarget": "demo:build:production",
-        "outputPath": "dist/apps/demo/run"
+        "command": "firebase deploy --only hosting:demo"
       }
     },
     "extract-i18n": {

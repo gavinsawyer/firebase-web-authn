@@ -22,6 +22,9 @@ jobs:
       - if: steps.cache-node-modules.outputs.cache-hit != 'true'
         run: npm ci
       - run: npm i @nrwl/nx-linux-x64-gnu@^15
+      - uses: google-github-actions/auth@v0
+        with:
+          credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_FIR_WEB_AUTHN }}
       - run: npx nx run-many --target build --all
         env:
           APP_CHECK_TOKEN_DEMO: '${{ secrets.APP_CHECK_TOKEN_DEMO }}'
@@ -30,15 +33,7 @@ jobs:
         env:
           NPM_ACCESS_TOKEN: ${{ secrets.NPM_ACCESS_TOKEN }}
         continue-on-error: true
-      - uses: FirebaseExtended/action-hosting-deploy@v0
-        with:
-          repoToken: '${{ secrets.GITHUB_TOKEN }}'
-          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_FIR_WEB_AUTHN }}'
-          channelId: live
-          projectId: fir-web-authn
-      - uses: google-github-actions/auth@v0
-        with:
-          credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_FIR_WEB_AUTHN }}
-      - run: npx nx run demo-functions:deploy
+      - run: npx nx run-many --target deploy --all
         env:
+          APP_CHECK_TOKEN_DEMO: '${{ secrets.APP_CHECK_TOKEN_DEMO }}'
           NX_CLOUD_ACCESS_TOKEN: '${{ secrets.NX_CLOUD_ACCESS_TOKEN }}'
