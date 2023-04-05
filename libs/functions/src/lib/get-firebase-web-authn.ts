@@ -1,5 +1,5 @@
 import { generateAuthenticationOptions, generateRegistrationOptions, VerifiedAuthenticationResponse, verifyAuthenticationResponse, VerifiedRegistrationResponse, verifyRegistrationResponse } from "@simplewebauthn/server";
-import { PublicKeyCredentialCreationOptionsJSON, PublicKeyCredentialRequestOptionsJSON }                                                                                                      from "@simplewebauthn/typescript-types";
+import { CredentialDeviceType, PublicKeyCredentialCreationOptionsJSON, PublicKeyCredentialRequestOptionsJSON }                                                                                from "@simplewebauthn/typescript-types";
 import { FirebaseError }                                                                                                                                                                      from "firebase-admin";
 import { Auth, getAuth }                                                                                                                                                                      from "firebase-admin/auth";
 import { DocumentReference, DocumentSnapshot, FieldValue, Firestore, getFirestore, Timestamp }                                                                                                from "firebase-admin/firestore";
@@ -9,15 +9,20 @@ import { FunctionResponse } from "./function-response";
 
 
 interface FirebaseWebAuthnConfig {
-  authenticatorAttachment: AuthenticatorAttachment,
+  authenticatorAttachment?: AuthenticatorAttachment,
   relyingPartyName: string,
-  userVerificationRequirement: UserVerificationRequirement,
+  userVerificationRequirement?: UserVerificationRequirement,
 }
 interface UserDocument {
   "challenge"?: string,
-  "credentialCounter"?: number,
-  "credentialId"?: Uint8Array,
-  "credentialPublicKey"?: Uint8Array,
+  "credential"?: {
+    "backedUp": boolean,
+    "counter": number,
+    "deviceType": CredentialDeviceType,
+    "id": Uint8Array,
+    "publicKey": Uint8Array,
+  },
+  "lastPresent"?: Timestamp,
   "lastVerified"?: Timestamp,
 }
 
@@ -25,7 +30,7 @@ export const getFirebaseWebAuthn: (firebaseWebAuthnConfig: FirebaseWebAuthnConfi
   enforceAppCheck: true,
 })
   .https
-  .onCall(async (functionRequest: FunctionRequest, callableContext): Promise<FunctionResponse> => callableContext.auth ? (async (auth: Auth, firestore: Firestore): Promise<FunctionResponse> => functionRequest.operation === "clear challenge" ? (firestore.collection("webAuthnUsers").doc(callableContext.auth?.uid || "") as DocumentReference<UserDocument>).get().then<FunctionResponse>((userDocumentSnapshot: DocumentSnapshot<UserDocument>): Promise<FunctionResponse> => (async (userDocument: UserDocument | undefined): Promise<FunctionResponse> => userDocument ? userDocument.challenge ? userDocument.credentialId && userDocument.credentialPublicKey ? (firestore.collection("webAuthnUsers").doc(callableContext.auth?.uid || "") as DocumentReference<UserDocument>).update({
+  .onCall(async (functionRequest: FunctionRequest, callableContext): Promise<FunctionResponse> => callableContext.auth ? (async (auth: Auth, firestore: Firestore): Promise<FunctionResponse> => functionRequest.operation === "clear challenge" ? (firestore.collection("webAuthnUsers").doc(callableContext.auth?.uid || "") as DocumentReference<UserDocument>).get().then<FunctionResponse>((userDocumentSnapshot: DocumentSnapshot<UserDocument>): Promise<FunctionResponse> => (async (userDocument: UserDocument | undefined): Promise<FunctionResponse> => userDocument ? userDocument.challenge ? userDocument.credential ? (firestore.collection("webAuthnUsers").doc(callableContext.auth?.uid || "") as DocumentReference<UserDocument>).update({
     challenge: FieldValue.delete(),
   }).then<FunctionResponse>((): FunctionResponse => ({
     operation: functionRequest.operation,
@@ -92,7 +97,7 @@ export const getFirebaseWebAuthn: (firebaseWebAuthnConfig: FirebaseWebAuthnConfi
   })))(generateAuthenticationOptions({
     rpID: callableContext.rawRequest.hostname,
     userVerification: firebaseWebAuthnConfig.userVerificationRequirement,
-  })) : functionRequest.operation === "create reauthentication challenge" ? (firestore.collection("webAuthnUsers").doc(callableContext.auth?.uid || "") as DocumentReference<UserDocument>).get().then<FunctionResponse>((userDocumentSnapshot: DocumentSnapshot<UserDocument>): Promise<FunctionResponse> => (async (userDocument: UserDocument | undefined): Promise<FunctionResponse> => userDocument ? userDocument.credentialId && userDocument.credentialPublicKey ? ((publicKeyCredentialRequestOptions: PublicKeyCredentialRequestOptionsJSON): Promise<FunctionResponse> => (firestore.collection("webAuthnUsers").doc(callableContext.auth?.uid || "") as DocumentReference<UserDocument>).set({
+  })) : functionRequest.operation === "create reauthentication challenge" ? (firestore.collection("webAuthnUsers").doc(callableContext.auth?.uid || "") as DocumentReference<UserDocument>).get().then<FunctionResponse>((userDocumentSnapshot: DocumentSnapshot<UserDocument>): Promise<FunctionResponse> => (async (userDocument: UserDocument | undefined): Promise<FunctionResponse> => userDocument ? userDocument.credential ? ((publicKeyCredentialRequestOptions: PublicKeyCredentialRequestOptionsJSON): Promise<FunctionResponse> => (firestore.collection("webAuthnUsers").doc(callableContext.auth?.uid || "") as DocumentReference<UserDocument>).set({
     challenge: publicKeyCredentialRequestOptions.challenge,
   }, {
     merge: true,
@@ -108,7 +113,7 @@ export const getFirebaseWebAuthn: (firebaseWebAuthnConfig: FirebaseWebAuthnConfi
   })))(generateAuthenticationOptions({
     allowCredentials: [
       {
-        id: userDocument.credentialId,
+        id: userDocument.credential.id,
         type: "public-key",
       },
     ],
@@ -129,7 +134,7 @@ export const getFirebaseWebAuthn: (firebaseWebAuthnConfig: FirebaseWebAuthnConfi
     message: firebaseError.message,
     operation: functionRequest.operation,
     success: false,
-  })) : functionRequest.operation === "create registration challenge" ? (firestore.collection("webAuthnUsers").doc(callableContext.auth?.uid || "") as DocumentReference<UserDocument>).get().then<FunctionResponse>((userDocumentSnapshot: DocumentSnapshot<UserDocument>): Promise<FunctionResponse> => (async (userDocument: UserDocument | undefined): Promise<FunctionResponse> => !userDocument?.credentialPublicKey ? ((publicKeyCredentialCreationOptions: PublicKeyCredentialCreationOptionsJSON): Promise<FunctionResponse> => (firestore.collection("webAuthnUsers").doc(callableContext.auth?.uid || "") as DocumentReference<UserDocument>).set({
+  })) : functionRequest.operation === "create registration challenge" ? (firestore.collection("webAuthnUsers").doc(callableContext.auth?.uid || "") as DocumentReference<UserDocument>).get().then<FunctionResponse>((userDocumentSnapshot: DocumentSnapshot<UserDocument>): Promise<FunctionResponse> => (async (userDocument: UserDocument | undefined): Promise<FunctionResponse> => !userDocument?.credential ? ((publicKeyCredentialCreationOptions: PublicKeyCredentialCreationOptionsJSON): Promise<FunctionResponse> => (firestore.collection("webAuthnUsers").doc(callableContext.auth?.uid || "") as DocumentReference<UserDocument>).set({
     challenge: publicKeyCredentialCreationOptions.challenge,
   }).then<FunctionResponse>((): FunctionResponse => ({
     creationOptions: publicKeyCredentialCreationOptions,
@@ -160,14 +165,11 @@ export const getFirebaseWebAuthn: (firebaseWebAuthnConfig: FirebaseWebAuthnConfi
     message: firebaseError.message,
     operation: functionRequest.operation,
     success: false,
-  })) : functionRequest.operation === "verify authentication" ? functionRequest.authenticationResponse.response.userHandle !== callableContext.auth?.uid ? (firestore.collection("webAuthnUsers").doc(functionRequest.authenticationResponse.response.userHandle || "") as DocumentReference<UserDocument>).get().then<FunctionResponse>((userDocumentSnapshot: DocumentSnapshot<UserDocument>): Promise<FunctionResponse> => ((userDocument: UserDocument | undefined) => userDocument ? userDocument.credentialId && userDocument.credentialPublicKey ? (firestore.collection("webAuthnUsers").doc(callableContext.auth?.uid || "") as DocumentReference<UserDocument>).get().then((priorUserDocumentSnapshot: DocumentSnapshot<UserDocument>): Promise<FunctionResponse> => ((priorUserDocument: UserDocument | undefined): Promise<FunctionResponse> => priorUserDocument && priorUserDocument.challenge ? verifyAuthenticationResponse({
+  })) : functionRequest.operation === "verify authentication" ? functionRequest.authenticationResponse.response.userHandle !== callableContext.auth?.uid ? (firestore.collection("webAuthnUsers").doc(functionRequest.authenticationResponse.response.userHandle || "") as DocumentReference<UserDocument>).get().then<FunctionResponse>((userDocumentSnapshot: DocumentSnapshot<UserDocument>): Promise<FunctionResponse> => ((userDocument: UserDocument | undefined) => userDocument ? userDocument.credential ? (firestore.collection("webAuthnUsers").doc(callableContext.auth?.uid || "") as DocumentReference<UserDocument>).get().then((priorUserDocumentSnapshot: DocumentSnapshot<UserDocument>): Promise<FunctionResponse> => ((priorUserDocument: UserDocument | undefined): Promise<FunctionResponse> => priorUserDocument && priorUserDocument.challenge ? verifyAuthenticationResponse({
     authenticator: {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      counter: userDocument.credentialCounter!,
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      credentialID: userDocument.credentialId!,
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      credentialPublicKey: userDocument.credentialPublicKey!,
+      counter: userDocument.credential?.counter!,
+      credentialID: userDocument.credential?.id!,
+      credentialPublicKey: userDocument.credential?.publicKey!,
     },
     expectedChallenge: priorUserDocument.challenge,
     expectedOrigin: "https://" + callableContext.rawRequest.hostname,
@@ -177,8 +179,9 @@ export const getFirebaseWebAuthn: (firebaseWebAuthnConfig: FirebaseWebAuthnConfi
   }).then<FunctionResponse>((verifiedAuthenticationResponse: VerifiedAuthenticationResponse): Promise<FunctionResponse> => verifiedAuthenticationResponse.verified ? (firestore.collection("webAuthnUsers").doc(functionRequest.authenticationResponse.response.userHandle || "") as DocumentReference<UserDocument>).update({
     challenge: FieldValue.delete(),
     lastVerified: Timestamp.fromDate(new Date()),
-  }).then<FunctionResponse>((): Promise<FunctionResponse> => priorUserDocument.credentialId && priorUserDocument.credentialPublicKey ? (firestore.collection("webAuthnUsers").doc(callableContext.auth?.uid || "") as DocumentReference<UserDocument>).update({
+  }).then<FunctionResponse>((): Promise<FunctionResponse> => priorUserDocument.credential ? (firestore.collection("webAuthnUsers").doc(callableContext.auth?.uid || "") as DocumentReference<UserDocument>).update({
     challenge: FieldValue.delete(),
+
   }).then<FunctionResponse>((): Promise<FunctionResponse> => auth.createCustomToken(functionRequest.authenticationResponse.response.userHandle || "").then<FunctionResponse>((customToken: string): FunctionResponse => ({
     customToken: customToken,
     operation: functionRequest.operation,
@@ -264,14 +267,11 @@ export const getFirebaseWebAuthn: (firebaseWebAuthnConfig: FirebaseWebAuthnConfi
     message: firebaseError.message,
     operation: functionRequest.operation,
     success: false,
-  })) : functionRequest.operation === "verify reauthentication" ? (firestore.collection("webAuthnUsers").doc(callableContext.auth?.uid || "") as DocumentReference<UserDocument>).get().then<FunctionResponse>((userDocumentSnapshot: DocumentSnapshot<UserDocument>): Promise<FunctionResponse> => (async (userDocument: UserDocument | undefined): Promise<FunctionResponse> => userDocument ? userDocument.credentialId && userDocument.credentialPublicKey ? (async (): Promise<FunctionResponse> => userDocument.challenge ? verifyAuthenticationResponse({
+  })) : functionRequest.operation === "verify reauthentication" ? (firestore.collection("webAuthnUsers").doc(callableContext.auth?.uid || "") as DocumentReference<UserDocument>).get().then<FunctionResponse>((userDocumentSnapshot: DocumentSnapshot<UserDocument>): Promise<FunctionResponse> => (async (userDocument: UserDocument | undefined): Promise<FunctionResponse> => userDocument ? userDocument.credential ? (async (): Promise<FunctionResponse> => userDocument.challenge ? verifyAuthenticationResponse({
     authenticator: {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      counter: userDocument.credentialCounter!,
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      credentialID: userDocument.credentialId!,
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      credentialPublicKey: userDocument.credentialPublicKey!,
+      counter: userDocument.credential?.counter!,
+      credentialID: userDocument.credential?.id!,
+      credentialPublicKey: userDocument.credential?.publicKey!,
     },
     expectedChallenge: userDocument.challenge,
     expectedOrigin: "https://" + callableContext.rawRequest.hostname,
@@ -327,7 +327,7 @@ export const getFirebaseWebAuthn: (firebaseWebAuthnConfig: FirebaseWebAuthnConfi
     message: "No user document was found in Firestore.",
     operation: functionRequest.operation,
     success: false,
-  })(userDocumentSnapshot.data())) : functionRequest.operation === "verify registration" ? (firestore.collection("webAuthnUsers").doc(callableContext.auth?.uid || "") as DocumentReference<UserDocument>).get().then<FunctionResponse>((userDocumentSnapshot: DocumentSnapshot<UserDocument>): Promise<FunctionResponse> => (async (userDocument: UserDocument | undefined): Promise<FunctionResponse> => userDocument ? userDocument.challenge ? !userDocument.credentialPublicKey ? verifyRegistrationResponse({
+  })(userDocumentSnapshot.data())) : functionRequest.operation === "verify registration" ? (firestore.collection("webAuthnUsers").doc(callableContext.auth?.uid || "") as DocumentReference<UserDocument>).get().then<FunctionResponse>((userDocumentSnapshot: DocumentSnapshot<UserDocument>): Promise<FunctionResponse> => (async (userDocument: UserDocument | undefined): Promise<FunctionResponse> => userDocument ? userDocument.challenge ? !userDocument.credential ? verifyRegistrationResponse({
     expectedChallenge: userDocument["challenge"],
     expectedOrigin: "https://" + callableContext.rawRequest.hostname,
     expectedRPID: callableContext.rawRequest.hostname,
@@ -335,9 +335,11 @@ export const getFirebaseWebAuthn: (firebaseWebAuthnConfig: FirebaseWebAuthnConfi
     response: functionRequest.registrationResponse,
   }).then<FunctionResponse>((verifiedRegistrationResponse: VerifiedRegistrationResponse): Promise<FunctionResponse> => verifiedRegistrationResponse.verified ? (firestore.collection("webAuthnUsers").doc(callableContext.auth?.uid || "") as DocumentReference<UserDocument | undefined>).update({
     challenge: FieldValue.delete(),
-    credentialCounter: verifiedRegistrationResponse.registrationInfo?.counter,
-    credentialId: verifiedRegistrationResponse.registrationInfo?.credentialID,
-    credentialPublicKey: verifiedRegistrationResponse.registrationInfo?.credentialPublicKey,
+    credential: {
+      counter: verifiedRegistrationResponse.registrationInfo?.counter,
+      id: verifiedRegistrationResponse.registrationInfo?.credentialID,
+      publicKey: verifiedRegistrationResponse.registrationInfo?.credentialPublicKey
+    },
     lastVerified: Timestamp.fromDate(new Date()),
   }).then<FunctionResponse>((): Promise<FunctionResponse> => auth.createCustomToken(callableContext.auth?.uid || "").then<FunctionResponse>((customToken: string): FunctionResponse => ({
     customToken: customToken,
