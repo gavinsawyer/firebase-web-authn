@@ -178,10 +178,15 @@ export const getFirebaseWebAuthn: (firebaseWebAuthnConfig: FirebaseWebAuthnConfi
     response: functionRequest.authenticationResponse,
   }).then<FunctionResponse>((verifiedAuthenticationResponse: VerifiedAuthenticationResponse): Promise<FunctionResponse> => verifiedAuthenticationResponse.verified ? (firestore.collection("webAuthnUsers").doc(functionRequest.authenticationResponse.response.userHandle || "") as DocumentReference<UserDocument>).update({
     challenge: FieldValue.delete(),
-    lastVerified: Timestamp.fromDate(new Date()),
+    credential: {
+      ...userDocument["credential"],
+      backedUp: verifiedAuthenticationResponse.authenticationInfo?.credentialBackedUp,
+      deviceType: verifiedAuthenticationResponse.authenticationInfo?.credentialDeviceType,
+    },
+    lastPresent: Timestamp.fromDate(new Date()),
+    lastVerified: verifiedAuthenticationResponse.authenticationInfo?.userVerified ? Timestamp.fromDate(new Date()) : userDocument["lastVerified"] || FieldValue.delete(),
   }).then<FunctionResponse>((): Promise<FunctionResponse> => priorUserDocument.credential ? (firestore.collection("webAuthnUsers").doc(callableContext.auth?.uid || "") as DocumentReference<UserDocument>).update({
     challenge: FieldValue.delete(),
-
   }).then<FunctionResponse>((): Promise<FunctionResponse> => auth.createCustomToken(functionRequest.authenticationResponse.response.userHandle || "").then<FunctionResponse>((customToken: string): FunctionResponse => ({
     customToken: customToken,
     operation: functionRequest.operation,
@@ -280,7 +285,13 @@ export const getFirebaseWebAuthn: (firebaseWebAuthnConfig: FirebaseWebAuthnConfi
     response: functionRequest.authenticationResponse,
   }).then<FunctionResponse>((verifiedAuthenticationResponse: VerifiedAuthenticationResponse): Promise<FunctionResponse> => verifiedAuthenticationResponse.verified ? (firestore.collection("webAuthnUsers").doc(callableContext.auth?.uid || "") as DocumentReference<UserDocument>).update({
     challenge: FieldValue.delete(),
-    lastVerified: Timestamp.fromDate(new Date()),
+    credential: {
+      ...userDocument["credential"],
+      backedUp: verifiedAuthenticationResponse.authenticationInfo?.credentialBackedUp,
+      deviceType: verifiedAuthenticationResponse.authenticationInfo?.credentialDeviceType,
+    },
+    lastPresent: Timestamp.fromDate(new Date()),
+    lastVerified: verifiedAuthenticationResponse.authenticationInfo?.userVerified ? Timestamp.fromDate(new Date()) : userDocument["lastVerified"] || FieldValue.delete(),
   }).then<FunctionResponse>((): Promise<FunctionResponse> => auth.createCustomToken(callableContext.auth?.uid || "").then<FunctionResponse>((customToken: string): FunctionResponse => ({
     customToken: customToken,
     operation: functionRequest.operation,
@@ -336,11 +347,14 @@ export const getFirebaseWebAuthn: (firebaseWebAuthnConfig: FirebaseWebAuthnConfi
   }).then<FunctionResponse>((verifiedRegistrationResponse: VerifiedRegistrationResponse): Promise<FunctionResponse> => verifiedRegistrationResponse.verified ? (firestore.collection("webAuthnUsers").doc(callableContext.auth?.uid || "") as DocumentReference<UserDocument | undefined>).update({
     challenge: FieldValue.delete(),
     credential: {
+      backedUp: verifiedRegistrationResponse.registrationInfo?.credentialBackedUp,
       counter: verifiedRegistrationResponse.registrationInfo?.counter,
+      deviceType: verifiedRegistrationResponse.registrationInfo?.credentialDeviceType,
       id: verifiedRegistrationResponse.registrationInfo?.credentialID,
       publicKey: verifiedRegistrationResponse.registrationInfo?.credentialPublicKey
     },
-    lastVerified: Timestamp.fromDate(new Date()),
+    lastPresent: Timestamp.fromDate(new Date()),
+    lastVerified: verifiedRegistrationResponse.registrationInfo?.userVerified ? Timestamp.fromDate(new Date()) : userDocument["lastVerified"] || FieldValue.delete(),
   }).then<FunctionResponse>((): Promise<FunctionResponse> => auth.createCustomToken(callableContext.auth?.uid || "").then<FunctionResponse>((customToken: string): FunctionResponse => ({
     customToken: customToken,
     operation: functionRequest.operation,

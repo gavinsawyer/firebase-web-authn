@@ -1,6 +1,6 @@
 {
   "name": "@firebase-web-authn/functions",
-  "version": "9.1.0",
+  "version": "9.1.1",
   "homepage": "https://github.com/gavinsawyer/firebase-web-authn/tree/main/libs/functions#readme",
   "author": {
     "name": "Gavin Sawyer",

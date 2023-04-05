@@ -61,7 +61,7 @@ class FirebaseWebAuthnError extends Error {
 }
 ```
 ### Caveats
-- Your backend security logic should depend on the `lastVerified` field in the user's document in the `webAuthnUsers` collection which is updated automatically on sign-in and verification.
+- Your backend security logic should depend on the `lastPresent` and `lastVerified` fields in the user's document in the `webAuthnUsers` collection which is updated automatically on sign-in and verification. [User Presence vs User Verification](https://developers.yubico.com/WebAuthn/WebAuthn_Developer_Guide/User_Presence_vs_User_Verification.html)
 - The `name` parameter is not stored except in the passkey and can be changed by the user without the app being able to know. Once users are signed in, your app should create a document in a separate `users`/`profiles` collection to store user information.
 - An anonymous user linked with a passkey is the same as a user created with `createUserWithPasskey`, and is marked by Firebase as having no provider.
 - Because users don't change their `uid` between starting and completing creating an account, your app should listen to `onIdTokenChanged` rather than `onAuthStateChanged`.
