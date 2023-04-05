@@ -95,9 +95,9 @@ export const firebaseWebAuthn: HttpsFunction = getFirebaseWebAuthn({
 ```
 ```ts
 interface FirebaseWebAuthnConfig {
-  authenticatorAttachment: AuthenticatorAttachment,         // Whether to allow platform passkeys (stored in browser)
-  relyingPartyName: string,                                 // Your app's display name in the passkey popup
-  userVerificationRequirement: UserVerificationRequirement, // Whether to require biometrics for user verification.
+  authenticatorAttachment?: AuthenticatorAttachment,         // Whether to allow platform passkeys (stored in browser and/or cloud).
+  relyingPartyName: string,                                  // Your app's display name in the passkey popup on some platforms.
+  userVerificationRequirement?: UserVerificationRequirement, // Whether to require user verification.
 }
 ```
 Deploy your Firebase Functions:
