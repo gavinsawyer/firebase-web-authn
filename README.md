@@ -14,7 +14,7 @@ createUserWithPasskey: (auth: Auth, functions: Functions, name: string) => Promi
     signInWithPasskey: (auth: Auth, functions: Functions)               => Promise<UserCredential>;
 verifyUserWithPasskey: (auth: Auth, functions: Functions)               => Promise<void>;
 ```
-Passkeys can be used as a secondary auth provider, as well:
+Passkeys can be used as an MFA provider, as well:
 ```ts
 import { linkWithPasskey, unlinkPasskey } from "@firebase-web-authn/browser";
 ```
@@ -123,5 +123,6 @@ For the browser to reach FirebaseWebAuthn, modify your `firebase.json` to includ
 }
 ```
 ### Google Cloud setup
-- Enable the Anonymous authentication provider in Firebase if you are not using it already.
-- Add the `Service Account Token Creator` role to your Firebase Functions' service account in [GCP IAM project permissions](https://console.cloud.google.com/iam-admin/iam). This is either the `Default compute service account` or the `App Engine default service account`, and can be seen under "Runtime service account" in [GCP Cloud Function configuration](https://console.cloud.google.com/functions/list) after deployment.
+- Enable the Anonymous authentication provider in Firebase.
+- Grant the `Service Account Token Creator` role to the `App Engine default service account` principal in [Service accounts](https://console.cloud.google.com/iam-admin/serviceaccounts) under `App Engine default service account` > Permissions.
+- Grant the `Cloud Functions Invoker` role to the `allUsers` principal in [Cloud Functions](https://console.cloud.google.com/functions/list) under `firebaseWebAuthn` > Permissions.

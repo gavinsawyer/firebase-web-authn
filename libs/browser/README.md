@@ -11,7 +11,7 @@ createUserWithPasskey: (auth: Auth, functions: Functions, name: string) => Promi
     signInWithPasskey: (auth: Auth, functions: Functions)               => Promise<UserCredential>;
 verifyUserWithPasskey: (auth: Auth, functions: Functions)               => Promise<void>;
 ```
-Passkeys can be used as a secondary auth provider, as well:
+Passkeys can be used as an MFA provider, as well:
 ```ts
 import { linkWithPasskey, unlinkPasskey } from "@firebase-web-authn/browser";
 ```

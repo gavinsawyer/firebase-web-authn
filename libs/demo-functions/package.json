@@ -12,7 +12,6 @@
   },
   "main": "./demo-functions/index.js",
   "dependencies": {
-    "firebase-admin": "^11",
     "firebase-functions": "^4"
   },
   "private": false

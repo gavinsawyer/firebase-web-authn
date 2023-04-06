@@ -1,6 +1,6 @@
 {
   "name": "@firebase-web-authn/browser",
-  "version": "9.1.2",
+  "version": "9.1.3",
   "homepage": "https://github.com/gavinsawyer/firebase-web-authn/tree/main/libs/browser#readme",
   "author": {
     "name": "Gavin Sawyer",

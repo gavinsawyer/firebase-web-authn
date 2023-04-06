@@ -3,9 +3,9 @@ import { CredentialDeviceType, PublicKeyCredentialCreationOptionsJSON, PublicKey
 import { FirebaseError }                                                                                                                                                                      from "firebase-admin";
 import { Auth, getAuth }                                                                                                                                                                      from "firebase-admin/auth";
 import { DocumentReference, DocumentSnapshot, FieldValue, Firestore, getFirestore, Timestamp }                                                                                                from "firebase-admin/firestore";
-import { HttpsFunction, runWith } from "firebase-functions";
-import { FunctionRequest }  from "./function-request";
-import { FunctionResponse } from "./function-response";
+import { HttpsFunction, runWith }                                                                                                                                                             from "firebase-functions";
+import { FunctionRequest }                                                                                                                                                                    from "./function-request";
+import { FunctionResponse }                                                                                                                                                                   from "./function-response";
 
 
 interface FirebaseWebAuthnConfig {
