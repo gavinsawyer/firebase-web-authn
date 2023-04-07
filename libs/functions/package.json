@@ -1,14 +1,12 @@
 {
   "name": "@firebase-web-authn/functions",
-  "version": "9.1.7",
+  "version": "9.1.8",
   "homepage": "https://firebase-web-authn.dev",
   "author": {
     "name": "Gavin Sawyer",
     "email": "hello@gavinsawyer.dev",
     "url": "https://gavinsawyer.dev"
   },
-  "type": "module",
-  "module": "./src/index.js",
   "license": "MIT",
   "repository": {
     "type": "git",
