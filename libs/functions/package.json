@@ -1,11 +1,11 @@
 {
   "name": "@firebase-web-authn/functions",
-  "version": "9.1.6",
-  "homepage": "https://github.com/gavinsawyer/firebase-web-authn/tree/main/libs/functions#readme",
+  "version": "9.1.7",
+  "homepage": "https://firebase-web-authn.dev",
   "author": {
     "name": "Gavin Sawyer",
     "email": "hello@gavinsawyer.dev",
-    "url": "https://github.com/gavinsawyer"
+    "url": "https://gavinsawyer.dev"
   },
   "type": "module",
   "module": "./src/index.js",

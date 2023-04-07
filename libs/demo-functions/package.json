@@ -1,10 +1,10 @@
 {
   "name": "@firebase-web-authn/demo-functions",
-  "homepage": "https://github.com/gavinsawyer/firebase-web-authn/tree/main/libs/demo-functions#readme",
+  "homepage": "https://firebase-web-authn.dev",
   "author": {
     "name": "Gavin Sawyer",
     "email": "hello@gavinsawyer.dev",
-    "url": "https://github.com/gavinsawyer"
+    "url": "https://gavinsawyer.dev"
   },
   "license": "MIT",
   "repository": {

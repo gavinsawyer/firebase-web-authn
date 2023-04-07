@@ -1,7 +1,7 @@
 # FirebaseWebAuthn
 An unofficial Firebase extension for authentication with WebAuthn passkeys.
 
-![GitHub workflow status](https://img.shields.io/github/actions/workflow/status/gavinsawyer/firebase-web-authn/ci.yml?logo=actions)
+![GitHub workflow status](https://img.shields.io/github/actions/workflow/status/gavinsawyer/firebase-web-authn/ci.yml)
 #### Demo: https://firebase-web-authn.dev
 ## [@firebase-web-authn/browser](libs/browser)
 This package contains five tree-shakeable async methods for using FirebaseWebAuthn in components and a strongly-typed error object.
