@@ -1,11 +1,11 @@
-import { Auth }                                                 from "firebase/auth";
-import { Functions, httpsCallableFromURL, HttpsCallableResult } from "firebase/functions";
 import { FunctionRequest, FunctionResponse }                    from "@firebase-web-authn/functions";
 import { startAuthentication }                                  from "@simplewebauthn/browser";
 import { AuthenticationResponseJSON }                           from "@simplewebauthn/typescript-types";
+import { Auth }                                                 from "firebase/auth";
+import { Functions, httpsCallableFromURL, HttpsCallableResult } from "firebase/functions";
 import { clearChallenge }                                       from "./clear-challenge";
-import { handleVerifyFunctionResponse } from "./handle-verify-function-response";
-import { FirebaseWebAuthnError }        from "./firebase-web-authn-error";
+import { FirebaseWebAuthnError }                                from "./firebase-web-authn-error";
+import { handleVerifyFunctionResponse }                         from "./handle-verify-function-response";
 
 
 export const verifyUserWithPasskey: (auth: Auth, functions: Functions) => Promise<void> = (auth: Auth, functions: Functions): Promise<void> => auth

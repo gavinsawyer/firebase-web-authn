@@ -1,26 +1,20 @@
 # FirebaseWebAuthn
-#### `Firebase Authentication` `Firebase Functions` `Firestore` `SimpleWebAuthn`
 An unofficial Firebase extension for authentication with WebAuthn passkeys.
 
-See the demo online at https://firebase-web-authn.dev.
+![GitHub workflow status](https://img.shields.io/github/actions/workflow/status/gavinsawyer/firebase-web-authn/ci.yml?logo=actions)
+#### Demo: https://firebase-web-authn.dev
 ## [@firebase-web-authn/browser](libs/browser)
-`% npm install @firebase-web-authn/browser --save`
+This package contains five tree-shakeable async methods for using FirebaseWebAuthn in components and a strongly-typed error object.
+
+![FirebaseWebAuthn version](https://img.shields.io/npm/v/@firebase-web-authn/browser?logo=npm)
+![Firebase version](https://img.shields.io/npm/dependency-version/@firebase-web-authn/browser/firebase?logo=firebase)
 ### Methods
-```ts
-import { createUserWithPasskey, signInWithPasskey, verifyUserWithPasskey } from "@firebase-web-authn/browser";
-```
 ```ts
 createUserWithPasskey: (auth: Auth, functions: Functions, name: string) => Promise<UserCredential>;
     signInWithPasskey: (auth: Auth, functions: Functions)               => Promise<UserCredential>;
+      linkWithPasskey: (auth: Auth, functions: Functions, name: string) => Promise<UserCredential>;
+        unlinkPasskey: (auth: Auth, functions: Functions)               => Promise<void>;
 verifyUserWithPasskey: (auth: Auth, functions: Functions)               => Promise<void>;
-```
-Passkeys can be used as an MFA provider, as well:
-```ts
-import { linkWithPasskey, unlinkPasskey } from "@firebase-web-authn/browser";
-```
-```ts
-linkWithPasskey: (auth: Auth, functions: Functions, name: string) => Promise<UserCredential>;
-  unlinkPasskey: (auth: Auth, functions: Functions)               => Promise<void>;
 ```
 Designed to be used like the Firebase JavaScript API (version 9):
 ```ts
@@ -64,14 +58,18 @@ class FirebaseWebAuthnError extends Error {
 }
 ```
 ### Caveats
-- Your backend security logic should depend on the `lastPresent` and `lastVerified` fields in the user's document in the `webAuthnUsers` collection which is updated automatically on sign-in and verification. [User Presence vs User Verification](https://developers.yubico.com/WebAuthn/WebAuthn_Developer_Guide/User_Presence_vs_User_Verification.html)
-- The `name` parameter is not stored except in the passkey and can be changed by the user without the app being able to know. Once users are signed in, your app should create a document in a separate `users`/`profiles` collection to store user information.
-- An anonymous user linked with a passkey is the same as a user created with `createUserWithPasskey`, and is marked by Firebase as having no provider.
-- Because users don't change their `uid` between starting and completing creating an account, your app should listen to `onIdTokenChanged` rather than `onAuthStateChanged`.
+- Your backend security logic should depend on the `lastPresent` and `lastVerified` fields in the user's document in the `webAuthnUsers` collection which are updated automatically on sign-in and verification. See [User Presence vs User Verification](https://developers.yubico.com/WebAuthn/WebAuthn_Developer_Guide/User_Presence_vs_User_Verification.html).
+- The `name` parameter is not stored automatically except in the passkey. Changes made to this value in a passkey manager are not detectable by the app.
+  - If FirebaseWebAuthn is configured as an MFA provider, pass the existing identifier.
+  - If FirebaseWebAuthn is your only auth provider, you can pass any recognizable value. If you expect users to have multiple usernameless accounts, `name` can be a user-generated account name ("Personal"/"Business"/etc.) or a randomized name. With generic `name` values consider passing something like "${firstName} | Personal" for users who share a passkey manager with others.
+- An anonymous user linked with a passkey is the same as a user created with `createUserWithPasskey`, and appears in Firebase as having no identifier and no provider. Users created this way are not deleted after 30 days with auto clean-up.
+- When using `createUserWithPasskey`, you may find that no `onAuthStateChanged` fires happens when converting an anonymous account to a providerless account. Listen to `onIdTokenChanged` instead.
 ## [@firebase-web-authn/functions](libs/functions)
-### Deployment
-This package contains a Firebase Function used to facilitate registering, authenticating, reauthenticating WebAuthn passkeys, and clearing data if the user cancels the process or unlinks a passkey.
+This package contains a Firebase Function that registers and authenticates WebAuthn passkeys, manages public key credentials in Firestore, and cleans up data if the user cancels a process or unlinks a passkey.
 
+![FirebaseWebAuthn version](https://img.shields.io/npm/v/@firebase-web-authn/functions?logo=npm)
+![Firebase-Functions version](https://img.shields.io/npm/dependency-version/@firebase-web-authn/functions/firebase-functions?logo=firebase)
+### Deployment
 From your Firebase Functions package root, run:
 
 `% npm install @firebase-web-authn/functions --save`

@@ -1,7 +1,7 @@
 import { Auth, signInAnonymously, UserCredential } from "firebase/auth";
 import { Functions }                               from "firebase/functions";
-import { linkWithPasskey }       from "./link-with-passkey";
-import { FirebaseWebAuthnError } from "./firebase-web-authn-error";
+import { FirebaseWebAuthnError }                   from "./firebase-web-authn-error";
+import { linkWithPasskey }                         from "./link-with-passkey";
 
 
 export const createUserWithPasskey: (auth: Auth, functions: Functions, name: string) => Promise<UserCredential> = (auth: Auth, functions: Functions, name: string): Promise<UserCredential> => auth

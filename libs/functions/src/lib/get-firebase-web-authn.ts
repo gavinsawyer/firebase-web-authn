@@ -4,8 +4,9 @@ import { FirebaseError }                                                        
 import { Auth, getAuth }                                                                                                                                                                      from "firebase-admin/auth";
 import { DocumentReference, DocumentSnapshot, FieldValue, Firestore, getFirestore, Timestamp }                                                                                                from "firebase-admin/firestore";
 import { HttpsFunction, runWith }                                                                                                                                                             from "firebase-functions";
-import { FunctionRequest }                                                                                                                                                                    from "./function-request";
-import { FunctionResponse }                                                                                                                                                                   from "./function-response";
+
+import type { FunctionRequest }  from "./function-request";
+import type { FunctionResponse } from "./function-response";
 
 
 interface FirebaseWebAuthnConfig {

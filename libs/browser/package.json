@@ -1,20 +1,19 @@
 {
   "name": "@firebase-web-authn/browser",
-  "version": "9.1.3",
+  "version": "9.1.5",
   "homepage": "https://github.com/gavinsawyer/firebase-web-authn/tree/main/libs/browser#readme",
   "author": {
     "name": "Gavin Sawyer",
     "email": "hello@gavinsawyer.dev",
     "url": "https://github.com/gavinsawyer"
   },
+  "type": "module",
+  "module": "./src/index.js",
   "license": "MIT",
   "dependencies": {
     "@simplewebauthn/browser": "^7",
     "@simplewebauthn/typescript-types": "^7",
     "firebase": "^9"
-  },
-  "peerDependencies": {
-    "@firebase-web-authn/functions": "^9"
   },
   "private": false
 }

@@ -1,7 +1,7 @@
+import { FunctionRequest, FunctionResponse }                    from "@firebase-web-authn/functions";
 import { Auth }                                                 from "firebase/auth";
 import { Functions, httpsCallableFromURL, HttpsCallableResult } from "firebase/functions";
-import { FunctionRequest, FunctionResponse } from "@firebase-web-authn/functions";
-import { FirebaseWebAuthnError }             from "./firebase-web-authn-error";
+import { FirebaseWebAuthnError }                                from "./firebase-web-authn-error";
 
 
 export const unlinkPasskey: (auth: Auth, functions: Functions) => Promise<void> = (auth: Auth, functions: Functions): Promise<void> => auth
@@ -19,9 +19,9 @@ export const unlinkPasskey: (auth: Auth, functions: Functions) => Promise<void> 
       operation: "clear challenge",
     });
   }) : ((): never => {
-  throw new FirebaseWebAuthnError({
-    code: "missing-auth",
-    message: "No user is signed in.",
-    operation: "create reauthentication challenge",
-  });
-})();
+    throw new FirebaseWebAuthnError({
+      code: "missing-auth",
+      message: "No user is signed in.",
+      operation: "create reauthentication challenge",
+    });
+  })();
