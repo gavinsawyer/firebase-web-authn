@@ -8,6 +8,17 @@ import { FirebaseWebAuthnError }                                from "./firebase
 import { handleVerifyFunctionResponse }                         from "./handle-verify-function-response";
 
 
+/**
+ * Asynchronously verifies a user with a passkey. Your backend security logic should depend on the `lastPresent` and `lastVerified` fields in the user's document in the `webAuthnUsers` collection in Firestore which are updated automatically on sign-in and verification.
+ *
+ * @see {@link https://developers.yubico.com/WebAuthn/WebAuthn_Developer_Guide/User_Presence_vs_User_Verification.html User Presence vs User Verification}
+ *
+ * @param auth - The {@link Auth} instance.
+ * @param functions - The {@link Functions} instance.
+ *
+ * @returns {@link void} when successful.
+ * @throws {@link FirebaseWebAuthnError}
+ */
 export const verifyUserWithPasskey: (auth: Auth, functions: Functions) => Promise<void> = (auth: Auth, functions: Functions): Promise<void> => auth
   .currentUser ? httpsCallableFromURL<FunctionRequest, FunctionResponse>(functions, "/firebaseWebAuthn")({
     operation: "create reauthentication challenge",

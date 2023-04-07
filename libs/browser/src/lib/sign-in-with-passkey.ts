@@ -1,13 +1,22 @@
-import { FunctionRequest, FunctionResponse }                    from "@firebase-web-authn/functions";
-import { startAuthentication }                                  from "@simplewebauthn/browser";
-import { AuthenticationResponseJSON }                           from "@simplewebauthn/typescript-types";
-import { Auth, signInAnonymously, UserCredential }              from "firebase/auth";
-import { Functions, httpsCallableFromURL, HttpsCallableResult } from "firebase/functions";
-import { clearChallenge }                                       from "./clear-challenge";
-import { FirebaseWebAuthnError }                                from "./firebase-web-authn-error";
-import { handleVerifyFunctionResponse }                         from "./handle-verify-function-response";
+import { FunctionRequest, FunctionResponse }                              from "@firebase-web-authn/functions";
+import { startAuthentication }                                            from "@simplewebauthn/browser";
+import { AuthenticationResponseJSON }                                     from "@simplewebauthn/typescript-types";
+import { Auth, signInAnonymously, signInWithCustomToken, UserCredential } from "firebase/auth";
+import { Functions, httpsCallableFromURL, HttpsCallableResult }           from "firebase/functions";
+import { clearChallenge }                                                 from "./clear-challenge";
+import { FirebaseWebAuthnError }                                          from "./firebase-web-authn-error";
+import { handleVerifyFunctionResponse }                                   from "./handle-verify-function-response";
 
 
+/**
+ * Asynchronously signs in a user with a passkey, relying on {@link signInAnonymously} to start the process and {@link signInWithCustomToken} to complete the process.
+ *
+ * @param auth - The {@link Auth} instance.
+ * @param functions - The {@link Functions} instance.
+ *
+ * @returns {@link UserCredential} when successful.
+ * @throws {@link FirebaseWebAuthnError}
+ */
 export const signInWithPasskey: (auth: Auth, functions: Functions) => Promise<UserCredential> = (auth: Auth, functions: Functions): Promise<UserCredential> => ((handler: () => Promise<UserCredential>): Promise<UserCredential> => auth.currentUser ? handler() : signInAnonymously(auth).then<UserCredential>((): Promise<UserCredential> => handler()).catch<never>((firebaseError): never => {
   throw new FirebaseWebAuthnError({
     code: firebaseError.code,

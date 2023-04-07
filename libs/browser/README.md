@@ -57,7 +57,7 @@ class FirebaseWebAuthnError extends Error {
 }
 ```
 ### Caveats
-- Your backend security logic should depend on the `lastPresent` and `lastVerified` fields in the user's document in the `webAuthnUsers` collection which are updated automatically on sign-in and verification. See [User Presence vs User Verification](https://developers.yubico.com/WebAuthn/WebAuthn_Developer_Guide/User_Presence_vs_User_Verification.html).
+- Your backend security logic should depend on the `lastPresent` and `lastVerified` fields in the user's document in the `webAuthnUsers` collection in Firestore which are updated automatically on sign-in and verification. See [User Presence vs User Verification](https://developers.yubico.com/WebAuthn/WebAuthn_Developer_Guide/User_Presence_vs_User_Verification.html).
 - The `name` parameter is not stored automatically except in the passkey. Changes made to this value in a passkey manager are not detectable by the app.
   - If FirebaseWebAuthn is configured as an MFA provider, pass the existing identifier.
   - If FirebaseWebAuthn is your only auth provider, you can pass any recognizable value. If you expect users to have multiple usernameless accounts, `name` can be a user-generated account name ("Personal"/"Business"/etc.) or a randomized name. With generic `name` values consider passing something like "${firstName} | Personal" for users who share a passkey manager with others.

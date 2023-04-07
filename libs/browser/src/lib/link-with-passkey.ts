@@ -1,13 +1,23 @@
 import { FunctionRequest, FunctionResponse }                    from "@firebase-web-authn/functions";
 import { startRegistration }                                    from "@simplewebauthn/browser";
 import { RegistrationResponseJSON }                             from "@simplewebauthn/typescript-types";
-import { Auth, UserCredential }                                 from "firebase/auth";
+import { Auth, signInWithCustomToken, UserCredential }          from "firebase/auth";
 import { Functions, httpsCallableFromURL, HttpsCallableResult } from "firebase/functions";
 import { clearChallenge }                                       from "./clear-challenge";
 import { FirebaseWebAuthnError }                                from "./firebase-web-authn-error";
 import { handleVerifyFunctionResponse }                         from "./handle-verify-function-response";
 
 
+/**
+ * Asynchronously creates a passkey for the signed-in user, relying on {@link signInWithCustomToken}.
+ *
+ * @param auth - The {@link Auth} instance.
+ * @param functions - The {@link Functions} instance.
+ * @param name - An existing user identifier if FirebaseWebAuthn is configured as an MFA provider, or any recognizable value if FirebaseWebAuthn is your sole auth provider. With generic values consider passing something like "${firstName} | Personal" for users who share a passkey manager with others.
+ *
+ * @returns {@link UserCredential} when successful.
+ * @throws {@link FirebaseWebAuthnError}
+ */
 export const linkWithPasskey: (auth: Auth, functions: Functions, name: string) => Promise<UserCredential> = (auth: Auth, functions: Functions, name: string): Promise<UserCredential> => auth
   .currentUser ? httpsCallableFromURL<FunctionRequest, FunctionResponse>(functions, "/firebaseWebAuthn")({
     name: name,

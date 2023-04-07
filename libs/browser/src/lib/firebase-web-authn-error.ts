@@ -7,6 +7,15 @@ interface FirebaseWebAuthnErrorOptions {
   "method"?: "httpsCallableFromURL" | "signInAnonymously" | "signInWithCustomToken",
   "operation"?: FunctionResponse["operation"],
 }
+
+/**
+ * This class extends the built-in `Error` class and provides additional properties
+ * specific to FirebaseWebAuthn errors. These properties include `code`, `method`, and `operation`.
+ *
+ * @property code - "firebaseWebAuthn/${FirebaseError['code] | 'missing-auth' | 'missing-user-doc' | 'no-op' | 'not-verified' | 'user-doc-missing-challenge-field' | 'user-doc-missing-passkey-fields' | 'cancelled' | 'invalid'}"
+ * @property method - FirebaseError["message"] | "No user is signed in." | "No user document was found in Firestore." | "No operation is needed." | "User not verified." | "User doc is missing challenge field from prior operation." | "User doc is missing passkey fields from prior operation."
+ * @property operation - "clear challenge" | "clear user doc" | "create authentication challenge" | "create reauthentication challenge" | "create registration challenge" | "verify authentication" | "verify reauthentication" | "verify registration"
+ */
 export class FirebaseWebAuthnError extends Error {
 
   constructor(

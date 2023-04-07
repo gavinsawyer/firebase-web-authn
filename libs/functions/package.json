@@ -1,6 +1,6 @@
 {
   "name": "@firebase-web-authn/functions",
-  "version": "9.1.5",
+  "version": "9.1.6",
   "homepage": "https://github.com/gavinsawyer/firebase-web-authn/tree/main/libs/functions#readme",
   "author": {
     "name": "Gavin Sawyer",
@@ -10,8 +10,9 @@
   "type": "module",
   "module": "./src/index.js",
   "license": "MIT",
-  "engines": {
-    "node": "18"
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gavinsawyer/firebase-web-authn.git"
   },
   "dependencies": {
     "@simplewebauthn/server": "^7",

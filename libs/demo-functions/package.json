@@ -7,6 +7,10 @@
     "url": "https://github.com/gavinsawyer"
   },
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gavinsawyer/firebase-web-authn.git"
+  },
   "engines": {
     "node": "18"
   },

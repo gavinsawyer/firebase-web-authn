@@ -27,6 +27,10 @@ interface UserDocument {
   "lastVerified"?: Timestamp,
 }
 
+/**
+ * @param firebaseWebAuthnConfig - Specifications for your WebAuthn usage.
+ * @returns An {@link HttpsFunction} which will need to be exported from your Firebase Functions package index.
+ */
 export const getFirebaseWebAuthn: (firebaseWebAuthnConfig: FirebaseWebAuthnConfig) => HttpsFunction = (firebaseWebAuthnConfig: FirebaseWebAuthnConfig): HttpsFunction => runWith({
   enforceAppCheck: true,
 })
