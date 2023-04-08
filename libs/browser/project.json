@@ -17,7 +17,8 @@
         ],
         "main": "libs/browser/src/index.ts",
         "outputPath": "dist/libs/browser",
-        "tsConfig": "libs/browser/tsconfig.lib.json"
+        "tsConfig": "libs/browser/tsconfig.lib.json",
+        "updateBuildableProjectDepsInPackageJson": false
       }
     },
     "lint": {

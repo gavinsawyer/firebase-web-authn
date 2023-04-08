@@ -1,4 +1,4 @@
-import { FunctionRequest, FunctionResponse }                    from "@firebase-web-authn/functions";
+import { FunctionRequest, FunctionResponse }                    from "@firebase-web-authn/types";
 import { startRegistration }                                    from "@simplewebauthn/browser";
 import { RegistrationResponseJSON }                             from "@simplewebauthn/typescript-types";
 import { Auth, signInWithCustomToken, UserCredential }          from "firebase/auth";

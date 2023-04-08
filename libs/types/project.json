@@ -1,7 +1,7 @@
 {
-  "name": "functions",
+  "name": "types",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/functions/src",
+  "sourceRoot": "libs/types/src",
   "projectType": "library",
   "targets": {
     "build": {
@@ -11,13 +11,13 @@
         "assets": [
           {
             "glob": "README.md",
-            "input": "libs/functions",
+            "input": "libs/types",
             "output": "."
           }
         ],
-        "main": "libs/functions/src/index.ts",
-        "outputPath": "dist/libs/functions",
-        "tsConfig": "libs/functions/tsconfig.lib.json",
+        "main": "libs/types/src/index.ts",
+        "outputPath": "dist/libs/types",
+        "tsConfig": "libs/types/tsconfig.lib.json",
         "updateBuildableProjectDepsInPackageJson": false
       }
     },
@@ -25,7 +25,7 @@
       "executor": "@nrwl/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["libs/functions/**/*.ts"]
+        "lintFilePatterns": ["libs/types/**/*.ts"]
       }
     }
   },

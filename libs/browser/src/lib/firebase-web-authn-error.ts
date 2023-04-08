@@ -1,4 +1,4 @@
-import { FunctionResponse } from "@firebase-web-authn/functions";
+import { FunctionResponse } from "@firebase-web-authn/types";
 
 
 interface FirebaseWebAuthnErrorOptions {

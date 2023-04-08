@@ -1,7 +1,8 @@
-import { FunctionRequest, FunctionResponse }                    from "@firebase-web-authn/functions";
+import { FunctionRequest, FunctionResponse }                    from "@firebase-web-authn/types";
 import { Auth }                                                 from "firebase/auth";
 import { Functions, httpsCallableFromURL, HttpsCallableResult } from "firebase/functions";
 import { FirebaseWebAuthnError }                                from "./firebase-web-authn-error";
+
 
 
 /**

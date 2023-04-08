@@ -3,7 +3,6 @@ import { getFirebaseWebAuthn } from "../../../functions/src";
 
 
 export const firebaseWebAuthn: HttpsFunction = getFirebaseWebAuthn({
-  authenticatorAttachment: "platform",
   relyingPartyName: "FirebaseWebAuthn Demo",
   userVerificationRequirement: "required",
 });

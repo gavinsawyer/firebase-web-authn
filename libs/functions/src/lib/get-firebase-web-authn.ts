@@ -1,12 +1,10 @@
-import { generateAuthenticationOptions, generateRegistrationOptions, VerifiedAuthenticationResponse, verifyAuthenticationResponse, VerifiedRegistrationResponse, verifyRegistrationResponse } from "@simplewebauthn/server";
+import { FunctionRequest, FunctionResponse }                                                                                                                                                  from "@firebase-web-authn/types";
+import { generateAuthenticationOptions, generateRegistrationOptions, VerifiedAuthenticationResponse, VerifiedRegistrationResponse, verifyAuthenticationResponse, verifyRegistrationResponse } from "@simplewebauthn/server";
 import { CredentialDeviceType, PublicKeyCredentialCreationOptionsJSON, PublicKeyCredentialRequestOptionsJSON }                                                                                from "@simplewebauthn/typescript-types";
 import { FirebaseError }                                                                                                                                                                      from "firebase-admin";
-import { Auth, getAuth }                                                                                                                                                                      from "firebase-admin/auth";
-import { DocumentReference, DocumentSnapshot, FieldValue, Firestore, getFirestore, Timestamp }                                                                                                from "firebase-admin/firestore";
+import { Auth, getAuth }                                                                                                                                                                      from "firebase-admin/lib/auth";
+import { DocumentReference, DocumentSnapshot, FieldValue, Firestore, getFirestore, Timestamp }                                                                                                from "firebase-admin/lib/firestore";
 import { HttpsFunction, runWith }                                                                                                                                                             from "firebase-functions";
-
-import type { FunctionRequest }  from "./function-request";
-import type { FunctionResponse } from "./function-response";
 
 
 interface FirebaseWebAuthnConfig {

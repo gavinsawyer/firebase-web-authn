@@ -1,25 +1,24 @@
 {
-  "name": "@firebase-web-authn/demo-functions",
+  "name": "@firebase-web-authn/types",
+  "version": "9.2.0",
   "homepage": "https://firebase-web-authn.dev",
   "author": {
     "name": "Gavin Sawyer",
     "email": "hello@gavinsawyer.dev",
     "url": "https://gavinsawyer.dev"
   },
+  "type": "module",
+  "module": "./src/index.js",
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/gavinsawyer/firebase-web-authn.git"
   },
-  "engines": {
-    "node": "18"
-  },
-  "main": "./demo-functions/index.js",
   "dependencies": {
+    "@simplewebauthn/typescript-types": "^7",
     "firebase-functions": "^4"
   },
   "peerDependencies": {
-    "@firebase-web-authn/functions": "9.2.0",
     "tslib": "^2"
   },
   "private": false

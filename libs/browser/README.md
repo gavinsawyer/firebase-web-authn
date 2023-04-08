@@ -62,4 +62,4 @@ class FirebaseWebAuthnError extends Error {
   - If FirebaseWebAuthn is configured as an MFA provider, pass the existing identifier.
   - If FirebaseWebAuthn is your only auth provider, you can pass any recognizable value. If you expect users to have multiple usernameless accounts, `name` can be a user-generated account name ("Personal"/"Business"/etc.) or a randomized name. With generic `name` values consider passing something like "${firstName} | Personal" for users who share a passkey manager with others.
 - An anonymous user linked with a passkey is the same as a user created with `createUserWithPasskey`, and appears in Firebase as having no identifier and no provider. Users created this way are not deleted after 30 days with auto clean-up.
-- When using `createUserWithPasskey`, you may find that no `onAuthStateChanged` fires happens when converting an anonymous account to a providerless account. Listen to `onIdTokenChanged` instead.
+- When using `createUserWithPasskey`, you will find that no `onAuthStateChanged` callback fires when converting an anonymous account to a providerless account. Your callback should be passed to `onIdTokenChanged` instead.
