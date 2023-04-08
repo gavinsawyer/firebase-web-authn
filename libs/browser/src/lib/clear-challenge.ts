@@ -3,18 +3,12 @@ import { FunctionRequest, FunctionResponse }                    from "@firebase-
 import { Functions, httpsCallableFromURL, HttpsCallableResult } from "firebase/functions";
 
 
-export const clearChallenge: (functions: Functions) => Promise<never> = (functions: Functions) => httpsCallableFromURL<FunctionRequest, FunctionResponse>(functions, "/firebaseWebAuthn")({
+export const clearChallenge: (functions: Functions) => Promise<void> = (functions: Functions) => httpsCallableFromURL<FunctionRequest, FunctionResponse>(functions, "/firebaseWebAuthn")({
   operation: "clear challenge",
 })
-  .then<never>(({ data: functionResponse }: HttpsCallableResult<FunctionResponse>): never => "code" in functionResponse ? ((): never => {
+  .then<void>(({ data: functionResponse }: HttpsCallableResult<FunctionResponse>): void => "code" in functionResponse ? ((): never => {
     throw new FirebaseWebAuthnError(functionResponse);
-  })() : ((): never => {
-    throw new FirebaseWebAuthnError({
-      code: "cancelled",
-      message: "Cancelled by user.",
-      operation: functionResponse.operation,
-    });
-  })())
+  })() : void(0))
   .catch<never>((firebaseError): never => {
     throw new FirebaseWebAuthnError({
       code: firebaseError.code,

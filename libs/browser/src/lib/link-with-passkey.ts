@@ -28,14 +28,13 @@ export const linkWithPasskey: (auth: Auth, functions: Functions, name: string) =
   })() : "creationOptions" in functionResponse ? startRegistration(functionResponse.creationOptions).then<UserCredential>((registrationResponse: RegistrationResponseJSON): Promise<UserCredential> => httpsCallableFromURL<FunctionRequest, FunctionResponse>(functions, "/firebaseWebAuthn")({
     registrationResponse: registrationResponse,
     operation: "verify registration",
-  }).then<UserCredential>(({ data: functionResponse }: HttpsCallableResult<FunctionResponse>): Promise<UserCredential> => handleVerifyFunctionResponse(auth, functionResponse)).catch<never>((firebaseError): never => {
+  }).then<UserCredential>(({ data: functionResponse }: HttpsCallableResult<FunctionResponse>): Promise<UserCredential> => handleVerifyFunctionResponse(auth, functionResponse))).catch<never>((): Promise<never> => clearChallenge(functions).then<never>((): never => {
     throw new FirebaseWebAuthnError({
-      code: firebaseError.code,
-      message: firebaseError.message,
-      method: "httpsCallableFromURL",
+      code: "cancelled",
+      message: "Cancelled by user.",
       operation: "verify registration",
     });
-  })).catch<never>((): Promise<never> => clearChallenge(functions)) : ((): never => {
+  })) : ((): never => {
     throw new FirebaseWebAuthnError({
       code: "invalid",
       message: "Invalid function response.",

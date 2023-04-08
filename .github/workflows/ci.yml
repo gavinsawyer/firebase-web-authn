@@ -21,7 +21,6 @@ jobs:
           key: node-modules-cache-${{ hashFiles('package-lock.json') }}
       - if: steps.cache-node-modules.outputs.cache-hit != 'true'
         run: npm ci
-      - run: npm i @nrwl/nx-linux-x64-gnu@^15
       - uses: google-github-actions/auth@v0
         with:
           credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_FIR_WEB_AUTHN }}

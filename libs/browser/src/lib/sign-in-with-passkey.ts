@@ -30,14 +30,13 @@ export const signInWithPasskey: (auth: Auth, functions: Functions) => Promise<Us
 })() : "requestOptions" in functionResponse ? startAuthentication(functionResponse.requestOptions).then<UserCredential>((authenticationResponse: AuthenticationResponseJSON): Promise<UserCredential> => httpsCallableFromURL<FunctionRequest, FunctionResponse>(functions, "/firebaseWebAuthn")({
   authenticationResponse: authenticationResponse,
   operation: "verify authentication",
-}).then<UserCredential>(({ data: functionResponse }: HttpsCallableResult<FunctionResponse>): Promise<UserCredential> => handleVerifyFunctionResponse(auth, functionResponse)).catch<never>((firebaseError): never => {
+}).then<UserCredential>(({ data: functionResponse }: HttpsCallableResult<FunctionResponse>): Promise<UserCredential> => handleVerifyFunctionResponse(auth, functionResponse))).catch<never>((): Promise<never> => clearChallenge(functions).then<never>((): never => {
   throw new FirebaseWebAuthnError({
-    code: firebaseError.code,
-    message: firebaseError.message,
-    method: "httpsCallableFromURL",
-    operation: "verify authentication",
+    code: "cancelled",
+    message: "Cancelled by user.",
+    operation: functionResponse.operation,
   });
-})).catch<never>((): Promise<never> => clearChallenge(functions)) : ((): never => {
+})) : ((): never => {
   throw new FirebaseWebAuthnError({
     code: "invalid",
     message: "Invalid function response.",

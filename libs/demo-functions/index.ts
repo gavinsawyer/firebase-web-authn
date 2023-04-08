@@ -1,6 +1,7 @@
-import { initializeApp } from "firebase-admin/app";
+import { getApps, initializeApp } from "firebase-admin/app";
 
 
-initializeApp();
+getApps()
+  .length === 0 && initializeApp();
 
 export * from "./src/index";
