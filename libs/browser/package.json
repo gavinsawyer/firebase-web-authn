@@ -1,6 +1,6 @@
 {
   "name": "@firebase-web-authn/browser",
-  "version": "9.2.1",
+  "version": "9.2.2",
   "homepage": "https://firebase-web-authn.dev",
   "author": {
     "name": "Gavin Sawyer",
@@ -20,7 +20,7 @@
     "firebase": "^9"
   },
   "peerDependencies": {
-    "@firebase-web-authn/types": "9.2.0",
+    "@firebase-web-authn/types": "^9",
     "tslib": "^2"
   },
   "private": false

@@ -93,9 +93,9 @@ export const firebaseWebAuthn: HttpsFunction = getFirebaseWebAuthn({
 ```
 ```ts
 interface FirebaseWebAuthnConfig {
-  authenticatorAttachment?: AuthenticatorAttachment,         // Whether to allow platform passkeys (stored in browser and/or cloud).
+  authenticatorAttachment?: AuthenticatorAttachment,         // Passing "cross-platform" only allows security keys. Passing "platform" only allows passkey managers in the user's cloud or browser.
   relyingPartyName: string,                                  // Your app's display name in the passkey popup on some platforms.
-  userVerificationRequirement?: UserVerificationRequirement, // Whether to require user verification.
+  userVerificationRequirement?: UserVerificationRequirement, // Whether to require user verification. "preferred" is default.
 }
 ```
 Deploy your Firebase Functions:
@@ -124,3 +124,7 @@ For the browser to reach FirebaseWebAuthn, modify your `firebase.json` to includ
 - Enable the Anonymous authentication provider in Firebase.
 - Grant the `Service Account Token Creator` role to the `App Engine default service account` principal in [Service accounts](https://console.cloud.google.com/iam-admin/serviceaccounts) under `App Engine default service account` > Permissions.
 - Grant the `Cloud Functions Invoker` role to the `allUsers` principal in [Cloud Functions](https://console.cloud.google.com/functions/list) under `firebaseWebAuthn` > Permissions.
+## [@firebase-web-authn/types](libs/types)
+This package contains types used internally by FirebaseWebAuthn.
+
+[![FirebaseWebAuthn version](https://img.shields.io/npm/v/@firebase-web-authn/types?logo=npm)](https://www.npmjs.com/package/@firebase-web-authn/types)

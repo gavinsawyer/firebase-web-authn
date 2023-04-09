@@ -28,7 +28,7 @@ jobs:
         env:
           APP_CHECK_TOKEN_DEMO: '${{ secrets.APP_CHECK_TOKEN_DEMO }}'
           NX_CLOUD_ACCESS_TOKEN: '${{ secrets.NX_CLOUD_ACCESS_TOKEN }}'
-      - run: npm publish dist/libs/types --access public && npm publish dist/libs/functions && npm publish dist/libs/browser
+      - run: npm publish dist/libs/types && npm publish dist/libs/functions && npm publish dist/libs/browser
         env:
           NPM_ACCESS_TOKEN: ${{ secrets.NPM_ACCESS_TOKEN }}
         continue-on-error: true

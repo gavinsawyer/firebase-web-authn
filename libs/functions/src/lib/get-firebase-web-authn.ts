@@ -5,13 +5,9 @@ import { FirebaseError }                                                        
 import { Auth, getAuth }                                                                                                                                                                      from "firebase-admin/auth";
 import { DocumentReference, DocumentSnapshot, FieldValue, Firestore, getFirestore, Timestamp }                                                                                                from "firebase-admin/firestore";
 import { HttpsFunction, runWith }                                                                                                                                                             from "firebase-functions";
+import { FirebaseWebAuthnConfig }                                                                                                                                                             from "./firebase-web-authn-config";
 
 
-interface FirebaseWebAuthnConfig {
-  authenticatorAttachment?: AuthenticatorAttachment,
-  relyingPartyName: string,
-  userVerificationRequirement?: UserVerificationRequirement,
-}
 interface UserDocument {
   "challenge"?: string,
   "credential"?: {
