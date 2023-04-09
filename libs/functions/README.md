@@ -21,17 +21,13 @@ import { getFirebaseWebAuthn } from '@firebase-web-authn/functions';
 
 initializeApp();
 
-export const firebaseWebAuthn: HttpsFunction = getFirebaseWebAuthn({
-  authenticatorAttachment: "platform",
-  relyingPartyName: "FirebaseWebAuthn Demo",
-  userVerificationRequirement: "required",
-});
+export const firebaseWebAuthn: HttpsFunction = getFirebaseWebAuthn({...});
 
 // Other functions...
 ```
 ```ts
 interface FirebaseWebAuthnConfig {
-  authenticatorAttachment?: AuthenticatorAttachment,         // Passing "cross-platform" only allows security keys. Passing "platform" only allows passkey managers in the user's cloud or browser.
+  authenticatorAttachment: AuthenticatorAttachment,          // Passing "cross-platform" allows security keys. Passing "platform" allows passkey managers in the user's cloud or browser.
   relyingPartyName: string,                                  // Your app's display name in the passkey popup on some platforms.
   userVerificationRequirement?: UserVerificationRequirement, // Whether to require user verification. "preferred" is default.
 }

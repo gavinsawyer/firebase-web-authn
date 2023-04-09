@@ -83,11 +83,7 @@ import { getFirebaseWebAuthn } from '@firebase-web-authn/functions';
 
 initializeApp();
 
-export const firebaseWebAuthn: HttpsFunction = getFirebaseWebAuthn({
-  authenticatorAttachment: "platform",
-  relyingPartyName: "FirebaseWebAuthn Demo",
-  userVerificationRequirement: "required",
-});
+export const firebaseWebAuthn: HttpsFunction = getFirebaseWebAuthn({...});
 
 // Other functions...
 ```
