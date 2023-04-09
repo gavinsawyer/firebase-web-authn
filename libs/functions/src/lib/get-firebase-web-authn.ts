@@ -2,8 +2,8 @@ import { FunctionRequest, FunctionResponse }                                    
 import { generateAuthenticationOptions, generateRegistrationOptions, VerifiedAuthenticationResponse, VerifiedRegistrationResponse, verifyAuthenticationResponse, verifyRegistrationResponse } from "@simplewebauthn/server";
 import { CredentialDeviceType, PublicKeyCredentialCreationOptionsJSON, PublicKeyCredentialRequestOptionsJSON }                                                                                from "@simplewebauthn/typescript-types";
 import { FirebaseError }                                                                                                                                                                      from "firebase-admin";
-import { Auth, getAuth }                                                                                                                                                                      from "firebase-admin/lib/auth";
-import { DocumentReference, DocumentSnapshot, FieldValue, Firestore, getFirestore, Timestamp }                                                                                                from "firebase-admin/lib/firestore";
+import { Auth, getAuth }                                                                                                                                                                      from "firebase-admin/auth";
+import { DocumentReference, DocumentSnapshot, FieldValue, Firestore, getFirestore, Timestamp }                                                                                                from "firebase-admin/firestore";
 import { HttpsFunction, runWith }                                                                                                                                                             from "firebase-functions";
 
 
