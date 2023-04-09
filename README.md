@@ -120,7 +120,3 @@ For the browser to reach FirebaseWebAuthn, modify your `firebase.json` to includ
 - Enable the Anonymous authentication provider in Firebase.
 - Grant the `Service Account Token Creator` role to the `App Engine default service account` principal in [Service accounts](https://console.cloud.google.com/iam-admin/serviceaccounts) under `App Engine default service account` > Permissions.
 - Grant the `Cloud Functions Invoker` role to the `allUsers` principal in [Cloud Functions](https://console.cloud.google.com/functions/list) under `firebaseWebAuthn` > Permissions.
-## [@firebase-web-authn/types](libs/types)
-This package contains types used internally by FirebaseWebAuthn.
-
-[![FirebaseWebAuthn version](https://img.shields.io/npm/v/@firebase-web-authn/types?logo=npm)](https://www.npmjs.com/package/@firebase-web-authn/types)

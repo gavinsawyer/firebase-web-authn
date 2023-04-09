@@ -16,7 +16,7 @@ import { ProfileService }                                                  from 
     MatButtonModule,
     MatSnackBarModule,
   ],
-  selector: "demo-app-profile-card",
+  selector: "website-app-profile-card",
   standalone: true,
   styleUrls: [
     "./profile-card.component.sass",

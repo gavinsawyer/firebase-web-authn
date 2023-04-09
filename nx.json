@@ -50,7 +50,7 @@
       "unitTestRunner": "none"
     }
   },
-  "defaultProject": "demo",
+  "defaultProject": "website",
   "namedInputs": {
     "default": ["{projectRoot}/**/*", "sharedGlobals"],
     "production": ["default", "!{projectRoot}/.eslintrc.json"],

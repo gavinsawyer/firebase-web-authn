@@ -33,7 +33,7 @@ type SignInFormStatus = "unsent" | "pending" | "complete";
     MatSnackBarModule,
     ReactiveFormsModule,
   ],
-  selector: "demo-app-sign-in-card",
+  selector: "website-app-sign-in-card",
   standalone: true,
   styleUrls: [
     "./sign-in-card.component.sass",

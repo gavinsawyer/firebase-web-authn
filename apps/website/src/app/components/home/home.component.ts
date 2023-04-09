@@ -11,7 +11,7 @@ import { SignInCardComponent }   from "../sign-in-card";
     ProfileCardComponent,
     SignInCardComponent,
   ],
-  selector: "demo-app-home",
+  selector: "website-app-home",
   standalone: true,
   styleUrls: [
     "./home.component.sass",

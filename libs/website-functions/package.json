@@ -1,5 +1,5 @@
 {
-  "name": "@firebase-web-authn/demo-functions",
+  "name": "@firebase-web-authn/website-functions",
   "homepage": "https://firebase-web-authn.dev",
   "author": {
     "name": "Gavin Sawyer",
@@ -14,7 +14,7 @@
   "engines": {
     "node": "18"
   },
-  "main": "./demo-functions/index.js",
+  "main": "./website-functions/index.js",
   "dependencies": {
     "firebase-functions": "^4"
   },

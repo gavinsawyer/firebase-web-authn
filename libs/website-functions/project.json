@@ -1,7 +1,7 @@
 {
-  "name": "demo-functions",
+  "name": "website-functions",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/demo-functions/src",
+  "sourceRoot": "/src",
   "projectType": "library",
   "targets": {
     "build": {
@@ -11,14 +11,14 @@
         "assets": [
           {
             "glob": "README.md",
-            "input": "libs/demo-functions",
+            "input": "libs/website-functions",
             "output": "."
           }
         ],
-        "main": "libs/demo-functions/src/index.ts",
-        "outputPath": "dist/libs/demo-functions",
+        "main": "libs/website-functions/src/index.ts",
+        "outputPath": "dist/libs/website-functions",
         "rootDir": "libs",
-        "tsConfig": "libs/demo-functions/tsconfig.lib.json",
+        "tsConfig": "libs/website-functions/tsconfig.lib.json",
         "updateBuildableProjectDepsInPackageJson": false
       }
     },
@@ -33,7 +33,7 @@
       "executor": "@nrwl/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["libs/demo-functions/**/*.ts"]
+        "lintFilePatterns": ["libs/website-functions/**/*.ts"]
       }
     }
   },

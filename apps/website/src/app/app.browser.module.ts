@@ -16,7 +16,7 @@ import { environment }                                                          
 import { AppComponent }                                                                          from "./app.component";
 
 
-const baseTitle = "FirebaseWebAuthn Demo";
+const baseTitle = "FirebaseWebAuthn";
 
 @NgModule({
   declarations: [AppComponent],

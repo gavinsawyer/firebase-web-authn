@@ -1,5 +1,5 @@
 export const environment = {
-  app: "demo",
+  app: "website",
   firebase: {
     apiKey: "AIzaSyBMw2wD275dSe0GgjMwnnZdH3UeEjhzjAg",
     appId: "1:27945769308:web:22bb25b759f71244148999",

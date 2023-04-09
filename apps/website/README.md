@@ -1,4 +1,4 @@
-## @firebase-web-authn/demo-functions
+## @firebase-web-authn/website
 An unofficial Firebase extension for authentication with WebAuthn passkeys.
 
-A demo of FirebaseWebAuthn.
+FirebaseWebAuthn's website.

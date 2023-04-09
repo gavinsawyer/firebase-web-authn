@@ -16,9 +16,10 @@
     "baseUrl": ".",
     "paths": {
       "@firebase-web-authn/browser": ["libs/browser/src/index.ts"],
-      "@firebase-web-authn/demo-functions": ["libs/demo-functions/src/index.ts"],
       "@firebase-web-authn/functions": ["libs/functions/src/index.ts"],
-      "@firebase-web-authn/types": ["libs/types/src/index.ts"]
+      "@firebase-web-authn/types": ["libs/types/src/index.ts"],
+      "@firebase-web-authn/website": ["apps/website/src/index.ts"],
+      "@firebase-web-authn/website-functions": ["libs/website-functions/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp", "**/README.md"]

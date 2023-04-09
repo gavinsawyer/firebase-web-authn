@@ -16,7 +16,7 @@
     "type": "git",
     "url": "git+https://github.com/gavinsawyer/firebase-web-authn.git"
   },
-  "main": "./apps/demo/src/main.ts",
+  "main": "./apps/website/src/main.ts",
   "dependencies": {
     "@angular/animations": "^15",
     "@angular/cdk": "^15",
@@ -63,6 +63,7 @@
     "eslint-plugin-tsdoc": "^0.2.17",
     "firebase-functions": "^4.2.1",
     "firebase-tools": "^11.25.3",
+    "git-describe": "^4.1.1",
     "nx": "^15",
     "prettier": "^2.8.7",
     "typescript": "^4.9.5"

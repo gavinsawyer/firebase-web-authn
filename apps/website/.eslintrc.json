@@ -21,7 +21,7 @@
           "error",
           {
             "type": "element",
-            "prefix": "demo-app",
+            "prefix": "website-app",
             "style": "kebab-case"
           }
         ]

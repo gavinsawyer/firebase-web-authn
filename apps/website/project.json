@@ -1,27 +1,34 @@
 {
-  "name": "demo",
+  "name": "website",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "projectType": "application",
-  "sourceRoot": "apps/demo/src",
-  "prefix": "demo-app",
+  "sourceRoot": "apps/website/src",
+  "prefix": "website-app",
   "targets": {
+    "prebuild": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node -p \"'export const packageVersion: string = ' + JSON.stringify(require('./package.json').version) + ';'\" > apps/website/src/package-version.ts && node -p \"'import { GitInfo } from \\'git-describe\\';\\n\\n\\nexport const gitInfo: Partial<GitInfo> = ' + JSON.stringify(((gitInfo) => ({dirty: gitInfo.dirty,hash: gitInfo.hash}))(require('git-describe').gitDescribeSync())) + ';'\" > apps/website/src/git-info.ts"
+      }
+    },
     "browser": {
+      "dependsOn": ["prebuild"],
       "executor": "@angular-devkit/build-angular:browser",
       "outputs": ["{options.outputPath}"],
       "options": {
-        "outputPath": "dist/apps/demo/browser",
-        "index": "apps/demo/src/index.html",
-        "main": "apps/demo/src/main.ts",
-        "polyfills": "apps/demo/src/polyfills.ts",
-        "tsConfig": "apps/demo/tsconfig.app.json",
+        "outputPath": "dist/apps/website/browser",
+        "index": "apps/website/src/index.html",
+        "main": "apps/website/src/main.ts",
+        "polyfills": "apps/website/src/polyfills.ts",
+        "tsConfig": "apps/website/tsconfig.app.json",
         "inlineStyleLanguage": "sass",
         "assets": [
-          "apps/demo/src/robots.txt",
-          "apps/demo/src/sitemap.xml"
+          "apps/website/src/robots.txt",
+          "apps/website/src/sitemap.xml"
         ],
         "styles": [
-          "apps/demo/src/custom-theme.sass",
-          "apps/demo/src/styles.sass"
+          "apps/website/src/custom-theme.sass",
+          "apps/website/src/styles.sass"
         ],
         "scripts": []
       },
@@ -41,8 +48,8 @@
           ],
           "fileReplacements": [
             {
-              "replace": "apps/demo/src/environments/environment.ts",
-              "with": "apps/demo/src/environments/environment.prod.ts"
+              "replace": "apps/website/src/environments/environment.ts",
+              "with": "apps/website/src/environments/environment.prod.ts"
             }
           ],
           "outputHashing": "all"
@@ -59,11 +66,12 @@
       "defaultConfiguration": "production"
     },
     "server": {
+      "dependsOn": ["prebuild"],
       "executor": "@angular-devkit/build-angular:server",
       "options": {
-        "outputPath": "dist/apps/demo/server",
-        "main": "apps/demo/server.ts",
-        "tsConfig": "apps/demo/tsconfig.server.json",
+        "outputPath": "dist/apps/website/server",
+        "main": "apps/website/server.ts",
+        "tsConfig": "apps/website/tsconfig.server.json",
         "inlineStyleLanguage": "sass"
       },
       "configurations": {
@@ -71,8 +79,8 @@
           "outputHashing": "media",
           "fileReplacements": [
             {
-              "replace": "apps/demo/src/environments/environment.ts",
-              "with": "apps/demo/src/environments/environment.prod.ts"
+              "replace": "apps/website/src/environments/environment.ts",
+              "with": "apps/website/src/environments/environment.prod.ts"
             }
           ]
         },
@@ -87,8 +95,8 @@
         "outputHashing": "media",
         "fileReplacements": [
           {
-            "replace": "apps/demo/src/environments/environment.ts",
-            "with": "apps/demo/src/environments/environment.prod.ts"
+            "replace": "apps/website/src/environments/environment.ts",
+            "with": "apps/website/src/environments/environment.prod.ts"
           }
         ]
       },
@@ -102,16 +110,16 @@
       "dependsOn": ["browser", "server"],
       "executor": "@nguniversal/builders:prerender",
       "options": {
-        "routesFile": "apps/demo/src/app/routes.txt"
+        "routesFile": "apps/website/src/app/routes.txt"
       },
       "configurations": {
         "production": {
-          "browserTarget": "demo:browser:production",
-          "serverTarget": "demo:server:production"
+          "browserTarget": "website:browser:production",
+          "serverTarget": "website:server:production"
         },
         "development": {
-          "browserTarget": "demo:browser:development",
-          "serverTarget": "demo:server:development"
+          "browserTarget": "website:browser:development",
+          "serverTarget": "website:server:development"
         }
       },
       "defaultConfiguration": "production"
@@ -120,21 +128,21 @@
       "dependsOn": ["build"],
       "executor": "nx:run-commands",
       "options": {
-        "command": "firebase deploy --only hosting:demo"
+        "command": "firebase deploy --only hosting:website"
       }
     },
     "extract-i18n": {
       "executor": "@angular-devkit/build-angular:extract-i18n",
       "options": {
-        "browserTarget": "demo:browser"
+        "browserTarget": "website:browser"
       }
     },
     "lint": {
       "executor": "@nrwl/linter:eslint",
       "options": {
         "lintFilePatterns": [
-          "apps/demo/**/*.ts",
-          "apps/demo/**/*.html"
+          "apps/website/**/*.ts",
+          "apps/website/**/*.html"
         ]
       }
     }

@@ -1,2 +1,0 @@
-<demo-app-profile-card *ngIf="(authenticationService.userObservable | async)?.isAnonymous === false"></demo-app-profile-card>
-<demo-app-sign-in-card *ngIf="(authenticationService.userObservable | async)?.isAnonymous === true || (profileService.profileDocumentObservable | async) === null"></demo-app-sign-in-card>

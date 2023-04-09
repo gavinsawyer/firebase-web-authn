@@ -9,7 +9,7 @@ import { PathService }                              from "../../services";
   imports: [
     CommonModule,
   ],
-  selector: "demo-app-otherwise",
+  selector: "website-app-otherwise",
   standalone: true,
   styleUrls: [
     "./otherwise.component.sass",

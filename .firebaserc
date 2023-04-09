@@ -5,7 +5,7 @@
   "targets": {
     "fir-web-authn": {
       "hosting": {
-        "demo": [
+        "website": [
           "fir-web-authn"
         ]
       }

@@ -1,7 +1,7 @@
 {
   "hosting": {
-    "target": "demo",
-    "public": "dist/apps/demo/browser",
+    "target": "website",
+    "public": "dist/apps/website/browser",
     "ignore": [
       "**/.*"
     ],
@@ -33,7 +33,7 @@
       {
         "source": "**",
         "run": {
-          "serviceId": "ssr-demo"
+          "serviceId": "ssr-website"
         }
       }
     ]
@@ -48,7 +48,7 @@
         "firebase-debug.*.log"
       ],
       "runtime": "nodejs18",
-      "source": "dist/libs/demo-functions"
+      "source": "dist/libs/website-functions"
     }
   ],
   "firestore": {
