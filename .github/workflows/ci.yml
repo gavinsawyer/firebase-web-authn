@@ -26,7 +26,7 @@ jobs:
           credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_FIR_WEB_AUTHN }}
       - run: npx nx run-many --target build --all
         env:
-          APP_CHECK_TOKEN_DEMO: '${{ secrets.APP_CHECK_TOKEN_DEMO }}'
+          APP_CHECK_TOKEN_WEBSITE: '${{ secrets.APP_CHECK_TOKEN_WEBSITE }}'
           NX_CLOUD_ACCESS_TOKEN: '${{ secrets.NX_CLOUD_ACCESS_TOKEN }}'
       - run: npm publish dist/libs/types && npm publish dist/libs/functions && npm publish dist/libs/browser
         env:
@@ -34,5 +34,5 @@ jobs:
         continue-on-error: true
       - run: npx nx run-many --target deploy --all
         env:
-          APP_CHECK_TOKEN_DEMO: '${{ secrets.APP_CHECK_TOKEN_DEMO }}'
+          APP_CHECK_TOKEN_WEBSITE: '${{ secrets.APP_CHECK_TOKEN_WEBSITE }}'
           NX_CLOUD_ACCESS_TOKEN: '${{ secrets.NX_CLOUD_ACCESS_TOKEN }}'

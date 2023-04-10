@@ -1,4 +1,25 @@
-<mat-toolbar [ngClass]="{'pathRoot': (pathService.pathObservable | async) === '/'}">
-  <span>FirebaseWebAuthn</span>
-</mat-toolbar>
-<router-outlet></router-outlet>
+<main>
+  <div>
+    <website-app-aside></website-app-aside>
+    <router-outlet></router-outlet>
+  </div>
+</main>
+<footer>
+  <div>
+    <div>
+      <span>
+        NPM
+      </span>
+    </div>
+    <div>
+      <span>
+        <a href="https://www.npmjs.com/package/@firebase-web-authn/browser">browser</a> | <a href="https://www.npmjs.com/package/@firebase-web-authn/functions">functions</a>
+      </span>
+    </div>
+  </div>
+  <div>
+    <span>
+      v{{ packageVersion + (gitInfo.dirty ? "-next" : "") }}+<a [href]="'https://github.com/gavinsawyer/firebase-web-authn/commit/' + gitInfo.hash">{{ gitInfo.hash }}</a>
+    </span>
+  </div>
+</footer>

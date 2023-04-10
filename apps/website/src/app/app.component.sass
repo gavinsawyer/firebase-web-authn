@@ -2,6 +2,32 @@
   display: flex
   flex-direction: column
   flex-grow: 1
+  min-height: calc(100vh)
 
-  router-outlet
-    display: none
+  main
+    display: flex
+    flex-direction: column
+    flex-grow: 1
+    padding: 1rem
+
+    & > div
+      display: flex
+      flex-direction: row
+      flex-wrap: wrap-reverse
+      gap: 1rem
+      justify-content: center
+
+      router-outlet
+        display: none
+
+  footer
+    display: flex
+    flex-direction: row
+    justify-content: space-between
+    padding: 1rem
+
+    & > div
+      display: flex
+      flex-direction: row
+      gap: 1rem
+

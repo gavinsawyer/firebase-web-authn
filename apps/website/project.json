@@ -38,7 +38,7 @@
             {
               "type": "initial",
               "maximumWarning": "500kb",
-              "maximumError": "1mb"
+              "maximumError": "1.25mb"
             },
             {
               "type": "anyComponentStyle",
@@ -110,7 +110,7 @@
       "dependsOn": ["browser", "server"],
       "executor": "@nguniversal/builders:prerender",
       "options": {
-        "routesFile": "apps/website/src/app/routes.txt"
+        "routesFile": "apps/website/src/routes.txt"
       },
       "configurations": {
         "production": {
@@ -130,6 +130,19 @@
       "options": {
         "command": "firebase deploy --only hosting:website"
       }
+    },
+    "serve": {
+      "dependsOn": ["prebuild"],
+      "executor": "@angular-devkit/build-angular:dev-server",
+      "configurations": {
+        "production": {
+          "browserTarget": "website:browser:production"
+        },
+        "development": {
+          "browserTarget": "website:browser:development"
+        }
+      },
+      "defaultConfiguration": "development"
     },
     "extract-i18n": {
       "executor": "@angular-devkit/build-angular:extract-i18n",

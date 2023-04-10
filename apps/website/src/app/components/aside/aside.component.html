@@ -1,0 +1,4 @@
+<aside>
+  <website-app-profile-card *ngIf="(authenticationService.userObservable | async)?.isAnonymous === false"></website-app-profile-card>
+  <website-app-sign-in-card *ngIf="(authenticationService.userObservable | async)?.isAnonymous === true || (profileService.profileDocumentObservable | async) === null"></website-app-sign-in-card>
+</aside>
