@@ -12,14 +12,14 @@ From your Firebase Functions package root, run:
 
 `% npm install @firebase-web-authn/functions --save`
 
-Export the function from your `functions/index.ts` file by calling `getFirebaseWebAuthn` with a config object.
+Export the function by calling `getFirebaseWebAuthn` with a config object.
 ```ts
 import { initializeApp }       from 'firebase-admin/app';
 import { HttpsFunction }       from "firebase-functions";
 import { getFirebaseWebAuthn } from '@firebase-web-authn/functions';
 
 
-initializeApp();
+getApps().length === 0 && initializeApp();
 
 export const firebaseWebAuthn: HttpsFunction = getFirebaseWebAuthn({...});
 

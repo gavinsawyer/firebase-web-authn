@@ -3,6 +3,8 @@ An unofficial Firebase extension for authentication with WebAuthn passkeys.
 
 [![GitHub workflow status](https://img.shields.io/github/actions/workflow/status/gavinsawyer/firebase-web-authn/ci.yml)](https://github.com/gavinsawyer/firebase-web-authn/actions/workflows/ci.yml)
 #### Demo: https://firebase-web-authn.dev
+### Thesis
+This project aims to provide the best underlying system for Firebase sites to use a new web standard for passwordless authentication. WebAuthn enables creating an account or signing in with as few as two clicks and doesn't ask the user to remember anything. With platform support turned on, the account automatically becomes available as a sign-in option on all of a user's other devices. Alternatively, with cross-platform support turned on, the site asks for a security key. Your site will also securely be able to tell when a user was verified last with biometrics.
 ## [@firebase-web-authn/browser](libs/browser)
 This package contains five tree-shakeable async methods for using FirebaseWebAuthn in components and a strongly-typed error object.
 
@@ -74,14 +76,14 @@ From your Firebase Functions package root, run:
 
 `% npm install @firebase-web-authn/functions --save`
 
-Export the function from your `functions/index.ts` file by calling `getFirebaseWebAuthn` with a config object.
+Export the function by calling `getFirebaseWebAuthn` with a config object.
 ```ts
 import { initializeApp }       from 'firebase-admin/app';
 import { HttpsFunction }       from "firebase-functions";
 import { getFirebaseWebAuthn } from '@firebase-web-authn/functions';
 
 
-initializeApp();
+getApps().length === 0 && initializeApp();
 
 export const firebaseWebAuthn: HttpsFunction = getFirebaseWebAuthn({...});
 
@@ -89,7 +91,7 @@ export const firebaseWebAuthn: HttpsFunction = getFirebaseWebAuthn({...});
 ```
 ```ts
 interface FirebaseWebAuthnConfig {
-  authenticatorAttachment?: AuthenticatorAttachment,         // Passing "cross-platform" only allows security keys. Passing "platform" only allows passkey managers in the user's cloud or browser.
+  authenticatorAttachment: AuthenticatorAttachment,          // Passing "cross-platform" only allows security keys. Passing "platform" only allows passkey managers in the browser.
   relyingPartyName: string,                                  // Your app's display name in the passkey popup on some platforms.
   userVerificationRequirement?: UserVerificationRequirement, // Whether to require user verification. "preferred" is default.
 }
