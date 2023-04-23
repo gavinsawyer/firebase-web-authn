@@ -3,12 +3,20 @@ A Firebase extension for authentication with WebAuthn passkeys.
 
 This package conforms to the Firebase Extensions spec and is pending approval for the Extensions Marketplace Early Access Program.
 
-If you know a way to install it from the source code, you will be able to bypass most of the setup process.
-
 [![GitHub workflow status](https://img.shields.io/github/actions/workflow/status/gavinsawyer/firebase-web-authn/ci.yml)](https://github.com/gavinsawyer/firebase-web-authn/actions/workflows/ci.yml)
 [![FirebaseWebAuthn version](https://img.shields.io/npm/v/@firebase-web-authn/extension?logo=npm)](https://www.npmjs.com/package/@firebase-web-authn/extension)
 #### Demo: https://firebase-web-authn.dev
 
+### Installation
+Run the following commands:
+```
+% npm install @firebase-web-authn/extension --save-dev
+% firebase ext:install ./${EXTENSION_PACKAGE_DIRECTORY}
+% firebase deploy --only extensions
+```
+> Firebase Extensions are in Beta. Deployment may fail to complete on the first attempt or fail altogether to set service account roles.
+>
+> If you are getting `PERMISSION_DENIED` errors from the API, grant the `Cloud Datastore User` and `Service Account Token Creator` roles to the `Firebase Extensions firebase-web-authn service account` principal in [IAM](https://console.cloud.google.com/iam-admin/iam) under `Firebase Extensions firebase-web-authn service account` > Edit > Assign roles.
 ---
 ## Authenticate with WebAuthn
 
@@ -28,7 +36,7 @@ For the browser to reach FirebaseWebAuthn, modify your `firebase.json` to includ
       "rewrites": [
         {
           "source": "/firebaseWebAuthn",
-          "function": "firebaseWebAuthn"
+          "function": "ext-firebase-web-authn-api"
         }
       ]
     }

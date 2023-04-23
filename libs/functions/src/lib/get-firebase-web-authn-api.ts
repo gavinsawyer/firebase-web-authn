@@ -12,7 +12,7 @@ import { FirebaseWebAuthnConfig }                                               
  * @param firebaseWebAuthnConfig - Configuration for your WebAuthn Cloud Function.
  * @returns An {@link HttpsFunction} which will need to be exported from your Firebase Functions package index.
  */
-export const getFirebaseWebAuthn: (firebaseWebAuthnConfig: FirebaseWebAuthnConfig) => HttpsFunction = (firebaseWebAuthnConfig: FirebaseWebAuthnConfig): HttpsFunction => runWith({
+export const getFirebaseWebAuthnApi: (firebaseWebAuthnConfig: FirebaseWebAuthnConfig) => HttpsFunction = (firebaseWebAuthnConfig: FirebaseWebAuthnConfig): HttpsFunction => runWith({
   enforceAppCheck: true,
 })
   .https

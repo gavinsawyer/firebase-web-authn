@@ -1,6 +1,7 @@
 Use this extension and the associated [browser library](https://github.com/gavinsawyer/firebase-web-authn/tree/main/libs/browser) to create and sign in users with passkeys, link and unlink existing users to passkeys, and prompt signed-in users with a biometric verification request.
 ### Additional Setup
 For the browser to reach FirebaseWebAuthn, modify your `firebase.json` to include a rewrite on each app where you'd like to use passkeys.
+
 ```json
 {
   "hosting": [
@@ -9,13 +10,14 @@ For the browser to reach FirebaseWebAuthn, modify your `firebase.json` to includ
       "rewrites": [
         {
           "source": "/firebaseWebAuthn",
-          "function": "firebaseWebAuthn"
+          "function": "ext-firebase-web-authn-api"
         }
       ]
     }
   ]
 }
 ```
+
 ### Pre-Requisites
 Before installing this extension, you'll need to set up these services in your Firebase project:
 - Firebase Authentication and the Anonymous provider.

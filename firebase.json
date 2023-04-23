@@ -28,7 +28,7 @@
     "rewrites": [
       {
         "source": "/firebaseWebAuthn",
-        "function": "firebaseWebAuthn"
+        "function": "ext-firebase-web-authn-api"
       },
       {
         "source": "**",
@@ -38,21 +38,11 @@
       }
     ]
   },
-  "functions": [
-    {
-      "codebase": "functions",
-      "ignore": [
-        "node_modules",
-        ".git",
-        "firebase-debug.log",
-        "firebase-debug.*.log"
-      ],
-      "runtime": "nodejs18",
-      "source": "dist/libs/website-functions"
-    }
-  ],
   "firestore": {
     "rules": "firestore.rules",
     "indexes": "firestore.indexes.json"
+  },
+  "extensions": {
+    "firebase-web-authn": "./dist/libs/extension"
   }
 }

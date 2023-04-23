@@ -10,5 +10,12 @@
         ]
       }
     }
+  },
+  "etags": {
+    "fir-web-authn": {
+      "extensionInstances": {
+        "firebase-web-authn": "987285c37c4cbf7c4860adbfb99a7b31fed9eb66be21ad09f29158ece4ee1d2e"
+      }
+    }
   }
 }

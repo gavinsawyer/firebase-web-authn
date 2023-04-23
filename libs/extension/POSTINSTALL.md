@@ -1,8 +1,10 @@
 ### Using the extension
 Install the [browser package](https://github.com/gavinsawyer/firebase-web-authn/tree/main/libs/browser):
+
 ```
 % npm install --save @firebase-web-authn/browser
 ```
+
 #### Caveats
 - The `webAuthnUsers` collection should not have read or write access from users. Your app should use a separate `users`/`profiles` document.
 - Your backend security logic should depend on the `lastPresent` and `lastVerified` fields in the user's document which is updated automatically on sign-in or verification.
@@ -14,6 +16,7 @@ Install the [browser package](https://github.com/gavinsawyer/firebase-web-authn/
 - An anonymous user linked with a passkey is the same as a user created with `createUserWithPasskey`, and appears in Firebase as having no identifier and no provider. Users created this way are not deleted after 30 days with auto clean-up.
 - When using `createUserWithPasskey`, you will find that no `onAuthStateChanged` callback fires when converting an anonymous account to a providerless account. Your callback should be passed to `onIdTokenChanged` instead.
 #### Methods
+
 ```ts
 createUserWithPasskey: (auth: Auth, functions: Functions, name: string) => Promise<UserCredential>;
     signInWithPasskey: (auth: Auth, functions: Functions)               => Promise<UserCredential>;
@@ -21,11 +24,14 @@ createUserWithPasskey: (auth: Auth, functions: Functions, name: string) => Promi
         unlinkPasskey: (auth: Auth, functions: Functions)               => Promise<void>;
 verifyUserWithPasskey: (auth: Auth, functions: Functions)               => Promise<void>;
 ```
+
 Designed to be used like the Firebase JavaScript SDK:
+
 ```ts
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { createUserWithPasskey }          from "@firebase-web-authn/browser";
 ```
+
 ```ts
 class SignUpComponent {
 
@@ -50,10 +56,13 @@ class SignUpComponent {
 
 }
 ```
+
 Add `.catch((err: FirebaseWebAuthnError): void => console.error(err))` to these for a detailed error object with a `code`, `message`, `method`, and/or `operation`. `method` is present for Firebase errors, and `operation` is present on all errors except Firebase errors from Auth methods:
+
 ```ts
 import { FirebaseWebAuthnError } from "@firebase-web-authn/browser";
 ```
+
 ```ts
 class FirebaseWebAuthnError extends Error {
   code: `firebaseWebAuthn/${FirebaseError["code"] | "missing-auth" | "missing-user-doc" | "no-op" | "not-verified" | "user-doc-missing-challenge-field" | "user-doc-missing-passkey-fields" | "cancelled" | "invalid"}`;
