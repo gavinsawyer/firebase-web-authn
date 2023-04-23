@@ -1,5 +1,5 @@
 ## @firebase-web-authn/functions
-An unofficial Firebase extension for authentication with WebAuthn passkeys.
+A Firebase extension for authentication with WebAuthn passkeys.
 
 This package contains a Firebase Function that registers and authenticates WebAuthn passkeys, manages public key credentials in Firestore, and cleans up data if the user cancels a process or unlinks a passkey.
 
@@ -14,9 +14,9 @@ From your Firebase Functions package root, run:
 
 Export the function by calling `getFirebaseWebAuthn` with a config object.
 ```ts
-import { initializeApp }       from 'firebase-admin/app';
+import { initializeApp }       from "firebase-admin/app";
 import { HttpsFunction }       from "firebase-functions";
-import { getFirebaseWebAuthn } from '@firebase-web-authn/functions';
+import { getFirebaseWebAuthn } from "@firebase-web-authn/functions";
 
 
 getApps().length === 0 && initializeApp();
@@ -56,5 +56,5 @@ For the browser to reach FirebaseWebAuthn, modify your `firebase.json` to includ
 ```
 ### Google Cloud setup
 - Enable the Anonymous authentication provider in Firebase.
-- Grant the `Service Account Token Creator` role to the `App Engine default service account` principal in [Service accounts](https://console.cloud.google.com/iam-admin/serviceaccounts) under `App Engine default service account` > Permissions.
+- Grant the `Cloud Datastore User` and `Service Account Token Creator` roles to the `App Engine default service account` principal in [Service accounts](https://console.cloud.google.com/iam-admin/serviceaccounts) under `App Engine default service account` > Permissions.
 - Grant the `Cloud Functions Invoker` role to the `allUsers` principal in [Cloud Functions](https://console.cloud.google.com/functions/list) under `firebaseWebAuthn` > Permissions.

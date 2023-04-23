@@ -1,0 +1,141 @@
+name: firebase-web-authn
+version: 9.2.3
+specVersion: v1beta
+
+displayName: Authenticate with WebAuthn
+description: >-
+  Adds support for WebAuthn as a primary or multi-factor auth provider.
+
+license: MIT
+
+sourceUrl: https://github.com/gavinsawyer/firebase-web-authn
+
+author:
+  authorName: Gavin Sawyer
+  email: hello@gavinsawyer.dev
+  url: https://gavinsawyer.dev
+
+billingRequired: true
+
+roles:
+  - role: iam.serviceAccounts.signBlob
+    reason: Allows the extension to create custom auth tokens for authenticated users.
+
+  - role: datastore.user
+    reason: Allows the extension to write updates to the database.
+
+resources:
+  - name: firebaseWebAuthn
+    type: firebaseextensions.v1beta.function
+    description: >-
+      Registers and authenticates WebAuthn passkeys, manages public key credentials in Firestore, and cleans up data if
+      the user cancels a process or unlinks a passkey.
+    properties:
+      location: ${param:LOCATION}
+      runtime: nodejs18
+
+params:
+  - param: LOCATION
+    label: Cloud Functions location
+    description: >-
+      Where do you want to deploy the functions created for this extension? You usually want a location close to your
+      database. For help selecting a location, refer to the
+      [location selection guide](https://firebase.google.com/docs/functions/locations).
+    type: select
+    options:
+      - label: Iowa (us-central1)
+        value: us-central1
+      - label: South Carolina (us-east1)
+        value: us-east1
+      - label: Northern Virginia (us-east4)
+        value: us-east4
+      - label: Los Angeles (us-west2)
+        value: us-west2
+      - label: Salt Lake City (us-west3)
+        value: us-west3
+      - label: Las Vegas (us-west4)
+        value: us-west4
+      - label: Warsaw (europe-central2)
+        value: europe-central2
+      - label: Belgium (europe-west1)
+        value: europe-west1
+      - label: London (europe-west2)
+        value: europe-west2
+      - label: Frankfurt (europe-west3)
+        value: europe-west3
+      - label: Zurich (europe-west6)
+        value: europe-west6
+      - label: Taiwan (asia-east1)
+        value: asia-east1
+      - label: Hong Kong (asia-east2)
+        value: asia-east2
+      - label: Tokyo (asia-northeast1)
+        value: asia-northeast1
+      - label: Osaka (asia-northeast2)
+        value: asia-northeast2
+      - label: Seoul (asia-northeast3)
+        value: asia-northeast3
+      - label: Mumbai (asia-south1)
+        value: asia-south1
+      - label: Singapore (asia-southeast1)
+        value: asia-southeast1
+      - label: Jakarta (asia-southeast2)
+        value: asia-southeast2
+      - label: Montreal (northamerica-northeast1)
+        value: northamerica-northeast1
+      - label: Sao Paulo (southamerica-east1)
+        value: southamerica-east1
+      - label: Sydney (australia-southeast1)
+        value: australia-southeast1
+    default: us-central1
+    required: true
+    immutable: true
+
+  - param: COLLECTION_PATH
+    label: Collection path
+    description: >-
+      What is the path of the collection that you would like to use for WebAuthn users?
+    type: string
+    validationRegex: "^[^/]+(/[^/]+/[^/]+)*$"
+    validationErrorMessage: >-
+      Firestore collection paths must be an odd number of segments separated by slashes, e.g. "path/to/collection".
+    default: webAuthnUsers
+    required: true
+
+  - param: AUTHENTICATOR_ATTACHMENT
+    label: Authenticator attachment
+    description: >-
+      What authenticator attachment modality would you like to use with WebAuthn? "cross-platform" allows security keys.
+      "platform" allows passkey managers in the user's cloud or browser.
+    type: select
+    options:
+      - label: Platform
+        value: platform
+      - label: Cross-platform
+        value: cross-platform
+    default: platform
+    required: true
+
+  - param: RELYING_PARTY_NAME
+    label: Relying party name
+    description: >-
+      What relying party name would you like to use with WebAuthn? This appears in the passkey window in some browsers
+      in place of your domain name.
+    type: string
+    required: true
+
+  - param: USER_VERIFICATION_REQUIREMENT
+    label: User verification requirement
+    description: >-
+      What user verification requirement would you like to use with WebAuthn? See
+      [User Presence vs. User Verification](https://developers.yubico.com/WebAuthn/WebAuthn_Developer_Guide/User_Presence_vs_User_Verification.html).
+    type: select
+    options:
+      - label: Required
+        value: required
+      - label: Preferred
+        value: preferred
+      - label: Discouraged
+        value: discouraged
+    default: preferred
+    required: true

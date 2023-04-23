@@ -1,14 +1,10 @@
-## @firebase-web-authn/browser
-A Firebase extension for authentication with WebAuthn passkeys.
-
-This package contains five tree-shakeable async methods for using FirebaseWebAuthn in components and a strongly-typed error object.
-
-[![GitHub workflow status](https://img.shields.io/github/actions/workflow/status/gavinsawyer/firebase-web-authn/ci.yml)](https://github.com/gavinsawyer/firebase-web-authn/actions/workflows/ci.yml)
-[![FirebaseWebAuthn version](https://img.shields.io/npm/v/@firebase-web-authn/browser?logo=npm)](https://www.npmjs.com/package/@firebase-web-authn/browser)
-[![Firebase version](https://img.shields.io/npm/dependency-version/@firebase-web-authn/browser/firebase?logo=firebase)](https://www.npmjs.com/package/firebase)
-#### Demo: https://firebase-web-authn.dev
-### Caveats
-- The `webAuthnUsers` collection should not have read or write access from users. Your app should use a separate `users`/`profiles` document.
+### Using the extension
+Install the [browser package](https://github.com/gavinsawyer/firebase-web-authn/tree/main/libs/browser):
+```
+% npm install --save @firebase-web-authn/browser
+```
+#### Caveats
+- The collection path is configured during setup (default: `webAuthnUsers`). This collection should not have read or write access from users. Your app should use a separate `users`/`profiles` document.
 - Your backend security logic should depend on the `lastPresent` and `lastVerified` fields in the user's document which is updated automatically on sign-in or verification.
   - `WebAuthnUserDocument` is exported from [@firebase-web-authn/types](https://github.com/gavinsawyer/firebase-web-authn/tree/main/libs/types).
   - See [User Presence vs User Verification](https://developers.yubico.com/WebAuthn/WebAuthn_Developer_Guide/User_Presence_vs_User_Verification.html).
@@ -17,7 +13,7 @@ This package contains five tree-shakeable async methods for using FirebaseWebAut
   - If FirebaseWebAuthn is your only auth provider, you can pass any recognizable value. If you expect users to have multiple usernameless accounts, `name` can be a user-generated account name ("Personal"/"Work"/etc.). With generic `name` values consider passing something like "${FIRST_NAME} | Personal" for users who share a device with others.
 - An anonymous user linked with a passkey is the same as a user created with `createUserWithPasskey`, and appears in Firebase as having no identifier and no provider. Users created this way are not deleted after 30 days with auto clean-up.
 - When using `createUserWithPasskey`, you will find that no `onAuthStateChanged` callback fires when converting an anonymous account to a providerless account. Your callback should be passed to `onIdTokenChanged` instead.
-### Methods
+#### Methods
 ```ts
 createUserWithPasskey: (auth: Auth, functions: Functions, name: string) => Promise<UserCredential>;
     signInWithPasskey: (auth: Auth, functions: Functions)               => Promise<UserCredential>;

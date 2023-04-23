@@ -1,0 +1,54 @@
+{
+  "name": "extension",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "assets": [
+          {
+            "glob": "extension.yaml",
+            "input": "libs/extension",
+            "output": "."
+          },
+          {
+            "glob": "package.json",
+            "input": "libs/extension/functions",
+            "output": "./functions"
+          },
+          {
+            "glob": "POSTINSTALL.md",
+            "input": "libs/extension",
+            "output": "."
+          },
+          {
+            "glob": "PREINSTALL.md",
+            "input": "libs/extension",
+            "output": "."
+          },
+          {
+            "glob": "README.md",
+            "input": "libs/extension",
+            "output": "."
+          }
+        ],
+        "main": "libs/extension/functions/index.ts",
+        "outputPath": "dist/libs/extension",
+        "rootDir": "libs/extension",
+        "tsConfig": "libs/extension/tsconfig.lib.json",
+        "updateBuildableProjectDepsInPackageJson": false
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/website-functions/**/*.ts"]
+      }
+    }
+  },
+  "tags": []
+}

@@ -1,5 +1,5 @@
 {
-  "name": "@firebase-web-authn/browser",
+  "name": "@firebase-web-authn/extension",
   "version": "9.3.0",
   "homepage": "https://firebase-web-authn.dev",
   "author": {
@@ -7,17 +7,15 @@
     "email": "hello@gavinsawyer.dev",
     "url": "https://gavinsawyer.dev"
   },
-  "type": "module",
-  "module": "./src/index.js",
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/gavinsawyer/firebase-web-authn.git"
   },
   "dependencies": {
-    "@simplewebauthn/browser": "^7",
+    "@simplewebauthn/server": "^7",
     "@simplewebauthn/typescript-types": "^7",
-    "firebase": "^9"
+    "firebase-functions": "^4"
   },
   "peerDependencies": {
     "@firebase-web-authn/types": "^9",
