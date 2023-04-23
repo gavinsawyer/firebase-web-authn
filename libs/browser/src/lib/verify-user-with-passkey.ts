@@ -9,7 +9,7 @@ import { handleVerifyFunctionResponse }                         from "./handle-v
 
 
 /**
- * Asynchronously verifies a user with a passkey. Your backend security logic should depend on the `lastPresent` and `lastVerified` fields in the user's document in the `webAuthnUsers` collection in Firestore which are updated automatically on sign-in and verification.
+ * Asynchronously verifies a user with a passkey. Your backend security logic should depend on the `lastPresent` and `lastVerified` fields in the user's document in the `webAuthnUsers` collection in Firestore which are updated automatically on successful operations.
  *
  * @see {@link https://developers.yubico.com/WebAuthn/WebAuthn_Developer_Guide/User_Presence_vs_User_Verification.html User Presence vs User Verification}
  *

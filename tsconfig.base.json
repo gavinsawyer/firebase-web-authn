@@ -19,7 +19,6 @@
       "@firebase-web-authn/functions": ["libs/functions/src/index.ts"],
       "@firebase-web-authn/types": ["libs/types/src/index.ts"],
       "@firebase-web-authn/website": ["apps/website/src/index.ts"],
-      "@firebase-web-authn/website-functions": ["libs/website-functions/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp", "**/README.md"]

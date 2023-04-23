@@ -1,4 +1,4 @@
-Use this extension along with the browser package to add support for WebAuthn as a primary or multi-factor auth provider.
+Use this extension and the associated [browser library](https://github.com/gavinsawyer/firebase-web-authn/tree/main/libs/browser) to create and sign in users with passkeys, link and unlink existing users to passkeys, and prompt signed-in users with a biometric verification request.
 ### Additional Setup
 For the browser to reach FirebaseWebAuthn, modify your `firebase.json` to include a rewrite on each app where you'd like to use passkeys.
 ```json

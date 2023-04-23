@@ -27,9 +27,9 @@ export const firebaseWebAuthn: HttpsFunction = getFirebaseWebAuthn({...});
 ```
 ```ts
 interface FirebaseWebAuthnConfig {
-  authenticatorAttachment: AuthenticatorAttachment,          // Passing "cross-platform" allows security keys. Passing "platform" allows passkey managers in the user's cloud or browser.
-  relyingPartyName: string,                                  // Your app's display name in the passkey popup on some platforms.
-  userVerificationRequirement?: UserVerificationRequirement, // Whether to require user verification. "preferred" is default.
+  authenticatorAttachment: AuthenticatorAttachment,          // Preferred authenticator attachment modality. "cross-platform" allows security keys. "platform" allows passkey managers.
+  relyingPartyName: string,                                  // Your app's display name in the passkey popup on some browsers.
+  userVerificationRequirement?: UserVerificationRequirement, // Your app's user verification requirement. "preferred" is default.
 }
 ```
 Deploy your Firebase Functions:
@@ -55,6 +55,9 @@ For the browser to reach FirebaseWebAuthn, modify your `firebase.json` to includ
 }
 ```
 ### Google Cloud setup
-- Enable the Anonymous authentication provider in Firebase.
+- Set up these services in your Firebase project:
+  - Firebase Authentication and the Anonymous provider.
+  - Cloud Firestore
+  - Cloud Functions
 - Grant the `Cloud Datastore User` and `Service Account Token Creator` roles to the `App Engine default service account` principal in [Service accounts](https://console.cloud.google.com/iam-admin/serviceaccounts) under `App Engine default service account` > Permissions.
 - Grant the `Cloud Functions Invoker` role to the `allUsers` principal in [Cloud Functions](https://console.cloud.google.com/functions/list) under `firebaseWebAuthn` > Permissions.

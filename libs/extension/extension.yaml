@@ -91,22 +91,11 @@ params:
     required: true
     immutable: true
 
-  - param: COLLECTION_PATH
-    label: Collection path
-    description: >-
-      What is the path of the collection that you would like to use for WebAuthn users?
-    type: string
-    validationRegex: "^[^/]+(/[^/]+/[^/]+)*$"
-    validationErrorMessage: >-
-      Firestore collection paths must be an odd number of segments separated by slashes, e.g. "path/to/collection".
-    default: webAuthnUsers
-    required: true
-
   - param: AUTHENTICATOR_ATTACHMENT
     label: Authenticator attachment
     description: >-
       What authenticator attachment modality would you like to use with WebAuthn? "cross-platform" allows security keys.
-      "platform" allows passkey managers in the user's cloud or browser.
+      "platform" allows passkey managers.
     type: select
     options:
       - label: Platform

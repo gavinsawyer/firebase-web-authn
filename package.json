@@ -1,6 +1,6 @@
 {
   "name": "firebase-web-authn",
-  "version": "9.3.1",
+  "version": "9.4.2",
   "homepage": "https://firebase-web-authn.dev",
   "author": {
     "name": "Gavin Sawyer",
@@ -65,7 +65,7 @@
     "firebase-tools": "^11.28.0",
     "git-describe": "^4.1.1",
     "nx": "^15",
-    "prettier": "^2.8.7",
+    "prettier": "^2.8.8",
     "typescript": "^4.9.5"
   }
 }

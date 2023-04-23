@@ -9,7 +9,7 @@ import { FirebaseWebAuthnConfig }                                               
 
 
 /**
- * @param firebaseWebAuthnConfig - Specifications for your WebAuthn usage.
+ * @param firebaseWebAuthnConfig - Configuration for your WebAuthn Cloud Function.
  * @returns An {@link HttpsFunction} which will need to be exported from your Firebase Functions package index.
  */
 export const getFirebaseWebAuthn: (firebaseWebAuthnConfig: FirebaseWebAuthnConfig) => HttpsFunction = (firebaseWebAuthnConfig: FirebaseWebAuthnConfig): HttpsFunction => runWith({
@@ -166,11 +166,11 @@ export const getFirebaseWebAuthn: (firebaseWebAuthnConfig: FirebaseWebAuthnConfi
     challenge: FieldValue.delete(),
     credential: {
       ...userDocument["credential"],
-      backedUp: verifiedAuthenticationResponse.authenticationInfo?.credentialBackedUp,
-      deviceType: verifiedAuthenticationResponse.authenticationInfo?.credentialDeviceType,
+      backupEligible: verifiedAuthenticationResponse.authenticationInfo.credentialDeviceType === "multiDevice",
+      backupSuccessful: verifiedAuthenticationResponse.authenticationInfo.credentialBackedUp,
     },
     lastPresent: Timestamp.fromDate(new Date()),
-    lastVerified: verifiedAuthenticationResponse.authenticationInfo?.userVerified ? Timestamp.fromDate(new Date()) : userDocument["lastVerified"] || FieldValue.delete(),
+    lastVerified: verifiedAuthenticationResponse.authenticationInfo.userVerified ? Timestamp.fromDate(new Date()) : userDocument["lastVerified"] || FieldValue.delete(),
   }).then<FunctionResponse>((): Promise<FunctionResponse> => priorUserDocument.credential ? (firestore.collection("webAuthnUsers").doc(callableContext.auth?.uid || "") as DocumentReference<WebAuthnUserDocument>).update({
     challenge: FieldValue.delete(),
   }).then<FunctionResponse>((): Promise<FunctionResponse> => auth.createCustomToken(functionRequest.authenticationResponse.response.userHandle || "").then<FunctionResponse>((customToken: string): FunctionResponse => ({
@@ -273,11 +273,11 @@ export const getFirebaseWebAuthn: (firebaseWebAuthnConfig: FirebaseWebAuthnConfi
     challenge: FieldValue.delete(),
     credential: {
       ...userDocument["credential"],
-      backedUp: verifiedAuthenticationResponse.authenticationInfo?.credentialBackedUp,
-      deviceType: verifiedAuthenticationResponse.authenticationInfo?.credentialDeviceType,
+      backupEligible: verifiedAuthenticationResponse.authenticationInfo.credentialDeviceType === "multiDevice",
+      backupSuccessful: verifiedAuthenticationResponse.authenticationInfo.credentialBackedUp,
     },
     lastPresent: Timestamp.fromDate(new Date()),
-    lastVerified: verifiedAuthenticationResponse.authenticationInfo?.userVerified ? Timestamp.fromDate(new Date()) : userDocument["lastVerified"] || FieldValue.delete(),
+    lastVerified: verifiedAuthenticationResponse.authenticationInfo.userVerified ? Timestamp.fromDate(new Date()) : userDocument["lastVerified"] || FieldValue.delete(),
   }).then<FunctionResponse>((): Promise<FunctionResponse> => auth.createCustomToken(callableContext.auth?.uid || "").then<FunctionResponse>((customToken: string): FunctionResponse => ({
     customToken: customToken,
     operation: functionRequest.operation,
@@ -330,17 +330,17 @@ export const getFirebaseWebAuthn: (firebaseWebAuthnConfig: FirebaseWebAuthnConfi
     expectedRPID: callableContext.rawRequest.hostname,
     requireUserVerification: true,
     response: functionRequest.registrationResponse,
-  }).then<FunctionResponse>((verifiedRegistrationResponse: VerifiedRegistrationResponse): Promise<FunctionResponse> => verifiedRegistrationResponse.verified ? (firestore.collection("webAuthnUsers").doc(callableContext.auth?.uid || "") as DocumentReference<WebAuthnUserDocument | undefined>).update({
+  }).then<FunctionResponse>((verifiedRegistrationResponse: VerifiedRegistrationResponse): Promise<FunctionResponse> => verifiedRegistrationResponse.verified && verifiedRegistrationResponse.registrationInfo ? (firestore.collection("webAuthnUsers").doc(callableContext.auth?.uid || "") as DocumentReference<WebAuthnUserDocument | undefined>).update({
     challenge: FieldValue.delete(),
     credential: {
-      backedUp: verifiedRegistrationResponse.registrationInfo?.credentialBackedUp,
-      counter: verifiedRegistrationResponse.registrationInfo?.counter,
-      deviceType: verifiedRegistrationResponse.registrationInfo?.credentialDeviceType,
-      id: verifiedRegistrationResponse.registrationInfo?.credentialID,
-      publicKey: verifiedRegistrationResponse.registrationInfo?.credentialPublicKey
+      backupEligible: verifiedRegistrationResponse.registrationInfo.credentialDeviceType === "multiDevice",
+      backupSuccessful: verifiedRegistrationResponse.registrationInfo.credentialBackedUp,
+      counter: verifiedRegistrationResponse.registrationInfo.counter,
+      id: verifiedRegistrationResponse.registrationInfo.credentialID,
+      publicKey: verifiedRegistrationResponse.registrationInfo.credentialPublicKey
     },
     lastPresent: Timestamp.fromDate(new Date()),
-    lastVerified: verifiedRegistrationResponse.registrationInfo?.userVerified ? Timestamp.fromDate(new Date()) : userDocument["lastVerified"] || FieldValue.delete(),
+    lastVerified: verifiedRegistrationResponse.registrationInfo.userVerified ? Timestamp.fromDate(new Date()) : userDocument["lastVerified"] || FieldValue.delete(),
   }).then<FunctionResponse>((): Promise<FunctionResponse> => auth.createCustomToken(callableContext.auth?.uid || "").then<FunctionResponse>((customToken: string): FunctionResponse => ({
     customToken: customToken,
     operation: functionRequest.operation,

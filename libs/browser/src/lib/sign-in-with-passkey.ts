@@ -9,7 +9,7 @@ import { handleVerifyFunctionResponse }                                   from "
 
 
 /**
- * Asynchronously signs in a user with a passkey, relying on {@link signInAnonymously} to start the process and {@link signInWithCustomToken} to complete the process.
+ * Asynchronously signs in a user with a passkey, relying on {@link signInAnonymously} to start the process and {@link signInWithCustomToken} to complete it.
  *
  * @param auth - The {@link Auth} instance.
  * @param functions - The {@link Functions} instance.

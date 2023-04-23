@@ -9,7 +9,7 @@ This package contains five tree-shakeable async methods for using FirebaseWebAut
 #### Demo: https://firebase-web-authn.dev
 ### Caveats
 - The `webAuthnUsers` collection should not have read or write access from users. Your app should use a separate `users`/`profiles` document.
-- Your backend security logic should depend on the `lastPresent` and `lastVerified` fields in the user's document which is updated automatically on sign-in or verification.
+- Your backend security logic should depend on the `lastPresent` and `lastVerified` fields in the user's document in `webAuthnUsers` which is updated automatically on successful operations.
   - `WebAuthnUserDocument` is exported from [@firebase-web-authn/types](https://github.com/gavinsawyer/firebase-web-authn/tree/main/libs/types).
   - See [User Presence vs User Verification](https://developers.yubico.com/WebAuthn/WebAuthn_Developer_Guide/User_Presence_vs_User_Verification.html).
 - The `name` parameter is not automatically stored anywhere except in the passkey. Changes made to this value in a passkey manager are not detectable by the app.

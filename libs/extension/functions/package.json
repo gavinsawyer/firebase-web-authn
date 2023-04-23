@@ -15,12 +15,11 @@
   },
   "main": "./index.js",
   "dependencies": {
-    "@simplewebauthn/server": "^7",
     "@simplewebauthn/typescript-types": "^7",
     "firebase-functions": "^4"
   },
   "peerDependencies": {
-    "@firebase-web-authn/types": "^9",
+    "@firebase-web-authn/functions": "^9",
     "tslib": "^2"
   },
   "private": false

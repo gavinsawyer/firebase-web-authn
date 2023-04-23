@@ -8,7 +8,7 @@ WebAuthn enables creating an account or signing in with as few as two clicks and
 ## [@firebase-web-authn/extension](libs/extension)
 This package conforms to the Firebase Extensions spec and is pending approval for the Extensions Marketplace Early Access Program.
 
-If you know a way to install it from the source code, you will be able to bypass the Deployment and Google Cloud Setup steps of the functions library below.
+If you know a way to install it from the source code, you will be able to bypass most of the setup process.
 
 [![FirebaseWebAuthn version](https://img.shields.io/npm/v/@firebase-web-authn/extension?logo=npm)](https://www.npmjs.com/package/@firebase-web-authn/extension)
 ## [@firebase-web-authn/browser](libs/browser)
@@ -16,11 +16,10 @@ This package contains five tree-shakeable async methods for using FirebaseWebAut
 
 [![FirebaseWebAuthn version](https://img.shields.io/npm/v/@firebase-web-authn/browser?logo=npm)](https://www.npmjs.com/package/@firebase-web-authn/browser)
 [![Firebase version](https://img.shields.io/npm/dependency-version/@firebase-web-authn/browser/firebase?logo=firebase)](https://www.npmjs.com/package/firebase)
-#### Demo: https://firebase-web-authn.dev
 ### Caveats
 - The `webAuthnUsers` collection should not have read or write access from users. Your app should use a separate `users`/`profiles` document.
-- Your backend security logic should depend on the `lastPresent` and `lastVerified` fields in the user's document which is updated automatically on sign-in or verification.
-  - `WebAuthnUserDocument` is exported from [@firebase-web-authn/types](https://github.com/gavinsawyer/firebase-web-authn/tree/main/libs/types).
+- Your backend security logic should depend on the `lastPresent` and `lastVerified` fields in the user's document which is updated automatically on successful operations.
+  - `WebAuthnUserDocument` is exported from [@firebase-web-authn/types](libs/types).
   - See [User Presence vs User Verification](https://developers.yubico.com/WebAuthn/WebAuthn_Developer_Guide/User_Presence_vs_User_Verification.html).
 - The `name` parameter is not automatically stored anywhere except in the passkey. Changes made to this value in a passkey manager are not detectable by the app.
   - If FirebaseWebAuthn is configured as an MFA provider, pass the existing identifier.
@@ -101,9 +100,9 @@ export const firebaseWebAuthn: HttpsFunction = getFirebaseWebAuthn({...});
 ```
 ```ts
 interface FirebaseWebAuthnConfig {
-  authenticatorAttachment: AuthenticatorAttachment,          // Passing "cross-platform" allows security keys. Passing "platform" allows passkey managers in the browser.
-  relyingPartyName: string,                                  // Your app's display name in the passkey popup on some platforms.
-  userVerificationRequirement?: UserVerificationRequirement, // Whether to require user verification. "preferred" is default.
+  authenticatorAttachment: AuthenticatorAttachment,          // Preferred authenticator attachment modality. "cross-platform" allows security keys. "platform" allows passkey managers.
+  relyingPartyName: string,                                  // Your app's display name in the passkey popup on some browsers.
+  userVerificationRequirement?: UserVerificationRequirement, // Your app's user verification requirement. "preferred" is default.
 }
 ```
 Deploy your Firebase Functions:
@@ -129,27 +128,40 @@ For the browser to reach FirebaseWebAuthn, modify your `firebase.json` to includ
 }
 ```
 ### Google Cloud setup
-- Enable the Anonymous authentication provider in Firebase.
+- Set up these services in your Firebase project:
+  - Firebase Authentication and the Anonymous provider.
+  - Cloud Firestore
+  - Cloud Functions
 - Grant the `Cloud Datastore User` and `Service Account Token Creator` roles to the `App Engine default service account` principal in [Service accounts](https://console.cloud.google.com/iam-admin/serviceaccounts) under `App Engine default service account` > Permissions.
 - Grant the `Cloud Functions Invoker` role to the `allUsers` principal in [Cloud Functions](https://console.cloud.google.com/functions/list) under `firebaseWebAuthn` > Permissions.
 ## [@firebase-web-authn/types](libs/types)
-This package contains types used internally by FirebaseWebAuthn as well as `WebAuthnUserDocument`.
+This package contains types and interfaces used internally by FirebaseWebAuthn and for implementing it in a secure context.
 
 [![FirebaseWebAuthn version](https://img.shields.io/npm/v/@firebase-web-authn/types?logo=npm)](https://www.npmjs.com/package/@firebase-web-authn/types)
+#### WebAuthnUserCredential
+Information about the public key credential associated with the user
+```ts
+import { WebAuthnUserCredential } from "@firebase-web-authn/types";
+```
+```ts
+interface WebAuthnUserCredential {
+  "backupEligible": boolean,   // Whether the private key is eligible to be backed up.
+  "backupSuccessful": boolean, // Whether the private key has been backed up successfully.
+  "counter": number,           // Updated automatically by some browsers to help prevent replay attacks.
+  "id": Uint8Array,            // ID associated with the credential.
+  "publicKey": Uint8Array,     // Public key associated with the credential.}
+}
+```
+#### WebAuthnUserDocument
+Document in the `webAuthnUsers` collection. This should not have read or write access from users.
 ```ts
 import { WebAuthnUserDocument } from "@firebase-web-authn/types";
 ```
 ```ts
 interface WebAuthnUserDocument {
-  "challenge"?: string, // Only present between operations and cleaned up if the user cancels.
-  "credential"?: {
-    "backedUp": boolean,
-    "counter": number, // Updated by some browsers and tracked by FirebaseWebAuthn automatically.
-    "deviceType": "singleDevice" | "multiDevice",
-    "id": Uint8Array,
-    "publicKey": Uint8Array,
-  },
-  "lastPresent"?: Timestamp,  // Automatically updated on successful operations.
-  "lastVerified"?: Timestamp, // Automatically updated on successful operations that verified the user with biometrics.
+  "challenge"?: string,                  // Only present between operations and cleaned up if the user cancels.
+  "credential"?: WebAuthnUserCredential, // Information about the public key credential associated with the user.
+  "lastPresent"?: Timestamp,             // Automatically updated on successful operations.
+  "lastVerified"?: Timestamp,            // Automatically updated on successful operations that verified the user with biometrics.
 }
 ```
