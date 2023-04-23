@@ -4,9 +4,9 @@ A Firebase extension for authentication with WebAuthn passkeys.
 [![GitHub workflow status](https://img.shields.io/github/actions/workflow/status/gavinsawyer/firebase-web-authn/ci.yml)](https://github.com/gavinsawyer/firebase-web-authn/actions/workflows/ci.yml)
 #### Demo: https://firebase-web-authn.dev
 ### Thesis
-WebAuthn enables creating an account or signing in with as few as two clicks and doesn't ask the user to remember anything. This project addresses a [popular feature request](https://github.com/firebase/firebase-js-sdk/issues/2123) for WebAuthn support in Firebase sites. With platform support turned on, the account automatically becomes available as a sign-in option on all of a user's other devices. Alternatively, with cross-platform support turned on, the site asks for a security key. Your site will also securely be able to tell when a user was verified last with biometrics.
+WebAuthn enables creating an account or signing in with as few as two clicks and doesn't ask the user to remember anything. This extension addresses a [popular feature request](https://github.com/firebase/firebase-js-sdk/issues/2123) for WebAuthn support in Firebase sites. Features include creating and signing in users with passkeys, linking and unlinking existing users to passkeys, and prompting signed-in users with a biometric verification request. Your site will also securely be able to tell when a user was verified last with biometrics.
 ## [@firebase-web-authn/extension](libs/extension)
-This package conforms to the Firebase Extensions spec pending approval for the Extensions Marketplace Early Access Program.
+This package conforms to the Firebase Extensions spec and is pending approval for the Extensions Marketplace Early Access Program.
 
 If you know a way to install it from the source code, you will be able to bypass the Deployment and Google Cloud Setup steps of the functions library below.
 
