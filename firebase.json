@@ -27,7 +27,7 @@
     ],
     "rewrites": [
       {
-        "source": "/firebaseWebAuthn",
+        "source": "/firebase-web-authn-api",
         "function": "ext-firebase-web-authn-api"
       },
       {

@@ -20,12 +20,12 @@ import { handleVerifyFunctionResponse }                         from "./handle-v
  * @throws {@link FirebaseWebAuthnError}
  */
 export const verifyUserWithPasskey: (auth: Auth, functions: Functions) => Promise<void> = (auth: Auth, functions: Functions): Promise<void> => auth
-  .currentUser ? httpsCallableFromURL<FunctionRequest, FunctionResponse>(functions, "/firebaseWebAuthn")({
+  .currentUser ? httpsCallableFromURL<FunctionRequest, FunctionResponse>(functions, "/firebase-web-authn-api")({
     operation: "create reauthentication challenge",
   })
   .then<void>(async ({ data: functionResponse }: HttpsCallableResult<FunctionResponse>): Promise<void> => "code" in functionResponse ? ((): never => {
     throw new FirebaseWebAuthnError(functionResponse);
-  })() : "requestOptions" in functionResponse ? startAuthentication(functionResponse.requestOptions).then<void>((authenticationResponse: AuthenticationResponseJSON): Promise<void> => httpsCallableFromURL<FunctionRequest, FunctionResponse>(functions, "/firebaseWebAuthn")({
+  })() : "requestOptions" in functionResponse ? startAuthentication(functionResponse.requestOptions).then<void>((authenticationResponse: AuthenticationResponseJSON): Promise<void> => httpsCallableFromURL<FunctionRequest, FunctionResponse>(functions, "/firebase-web-authn-api")({
     authenticationResponse: authenticationResponse,
     operation: "verify reauthentication",
   }).then<void>(({ data: functionResponse }: HttpsCallableResult<FunctionResponse>): Promise<void> => handleVerifyFunctionResponse(auth, functionResponse).then<void>((): void => void(0)))).catch<never>(async (): Promise<never> => clearChallenge(functions).then<never>((): never => {

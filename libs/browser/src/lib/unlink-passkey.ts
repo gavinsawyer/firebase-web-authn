@@ -15,7 +15,7 @@ import { FirebaseWebAuthnError }                                from "./firebase
  * @throws {@link FirebaseWebAuthnError}
  */
 export const unlinkPasskey: (auth: Auth, functions: Functions) => Promise<void> = (auth: Auth, functions: Functions): Promise<void> => auth
-  .currentUser ? httpsCallableFromURL<FunctionRequest, FunctionResponse>(functions, "/firebaseWebAuthn")({
+  .currentUser ? httpsCallableFromURL<FunctionRequest, FunctionResponse>(functions, "/firebase-web-authn-api")({
     operation: "clear user doc",
   })
   .then<void>(({ data: functionResponse }: HttpsCallableResult<FunctionResponse>): void => "code" in functionResponse ? ((): never => {

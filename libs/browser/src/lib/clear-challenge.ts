@@ -3,7 +3,7 @@ import { Functions, httpsCallableFromURL, HttpsCallableResult } from "firebase/f
 import { FirebaseWebAuthnError }                                from "./firebase-web-authn-error";
 
 
-export const clearChallenge: (functions: Functions) => Promise<void> = (functions: Functions) => httpsCallableFromURL<FunctionRequest, FunctionResponse>(functions, "/firebaseWebAuthn")({
+export const clearChallenge: (functions: Functions) => Promise<void> = (functions: Functions) => httpsCallableFromURL<FunctionRequest, FunctionResponse>(functions, "/firebase-web-authn-api")({
   operation: "clear challenge",
 })
   .then<void>(({ data: functionResponse }: HttpsCallableResult<FunctionResponse>): void => "code" in functionResponse ? ((): never => {

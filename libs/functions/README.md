@@ -36,7 +36,6 @@ interface FirebaseWebAuthnConfig {
 3. Deploy your Firebase Functions:
 
 `% firebase deploy --only functions`
-
 ### Google Cloud setup
 - Set up these services in your Firebase project:
   - Firebase Authentication and the Anonymous provider.
@@ -53,7 +52,7 @@ For the browser to reach FirebaseWebAuthn, modify your `firebase.json` to includ
       "target": "...",
       "rewrites": [
         {
-          "source": "/firebaseWebAuthn",
+          "source": "/firebase-web-authn-api",
           "function": "firebaseWebAuthnAPI"
         }
       ]

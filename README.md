@@ -13,7 +13,7 @@ This package conforms to the Firebase Extensions spec and is pending approval fo
 Run the following commands:
 ```
 % npm install @firebase-web-authn/extension --save-dev
-% firebase ext:install ./${EXTENSION_PACKAGE_DIRECTORY}
+% firebase ext:install ./node_modules/@firebase-web-authn/extension
 % firebase deploy --only extensions
 ```
 > Firebase Extensions are in Beta. Deployment may fail to complete on the first attempt or fail altogether to set service account roles.
@@ -134,7 +134,7 @@ For the browser to reach FirebaseWebAuthn, modify your `firebase.json` to includ
       "target": "...",
       "rewrites": [
         {
-          "source": "/firebaseWebAuthn",
+          "source": "/firebase-web-authn-api",
           "function": "firebaseWebAuthnAPI"
         }
       ]
