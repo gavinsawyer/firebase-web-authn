@@ -1,5 +1,5 @@
 name: firebase-web-authn
-version: 9.4.7
+version: 9.4.8
 specVersion: v1beta
 
 displayName: Authenticate with WebAuthn
@@ -12,7 +12,7 @@ sourceUrl: https://github.com/gavinsawyer/firebase-web-authn
 
 author:
   authorName: Gavin Sawyer
-  email: hello@gavinsawyer.dev
+  email: g@vinsawyer.dev
   url: https://gavinsawyer.dev
 
 billingRequired: true

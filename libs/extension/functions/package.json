@@ -2,10 +2,10 @@
   "name": "functions",
   "author": {
     "name": "Gavin Sawyer",
-    "email": "hello@gavinsawyer.dev",
+    "email": "g@vinsawyer.dev",
     "url": "https://gavinsawyer.dev"
   },
-  "license": "MIT",
+  "license": "Apache-2.0",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/gavinsawyer/firebase-web-authn.git"

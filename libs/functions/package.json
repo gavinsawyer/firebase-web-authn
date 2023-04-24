@@ -1,13 +1,13 @@
 {
   "name": "@firebase-web-authn/functions",
-  "version": "9.4.7",
+  "version": "9.4.8",
   "homepage": "https://firebase-web-authn.dev",
   "author": {
     "name": "Gavin Sawyer",
-    "email": "hello@gavinsawyer.dev",
+    "email": "g@vinsawyer.dev",
     "url": "https://gavinsawyer.dev"
   },
-  "license": "MIT",
+  "license": "Apache-2.0",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/gavinsawyer/firebase-web-authn.git"

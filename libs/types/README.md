@@ -16,7 +16,7 @@ interface WebAuthnUserCredential {
   "backupSuccessful": boolean, // Whether the private key has been backed up successfully.
   "counter": number,           // Updated automatically by some browsers to help prevent replay attacks.
   "id": Uint8Array,            // ID associated with the credential.
-  "publicKey": Uint8Array,     // Public key associated with the credential.}
+  "publicKey": Uint8Array,     // Public key associated with the credential.
 }
 ```
 #### WebAuthnUserDocument
