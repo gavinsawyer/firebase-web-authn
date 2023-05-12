@@ -10,6 +10,11 @@
       "options": {
         "assets": [
           {
+            "glob": "CHANGELOG.md",
+            "input": "libs/extension",
+            "output": "."
+          },
+          {
             "glob": "extension.yaml",
             "input": "libs/extension",
             "output": "."
