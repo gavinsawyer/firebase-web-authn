@@ -6,19 +6,20 @@ A Firebase Extension for authentication with WebAuthn passkeys.
 ### Thesis
 WebAuthn enables creating an account or signing in with as few as two clicks and doesn't ask the user to remember anything. This extension addresses a [popular feature request](https://github.com/firebase/firebase-js-sdk/issues/2123) for WebAuthn support in Firebase sites. Features include creating and signing in users with passkeys, linking and unlinking existing users to passkeys, and prompting signed-in users with a biometric verification request. Your site will also securely be able to tell when a user was verified last with biometrics.
 ## [@firebase-web-authn/extension](libs/extension)
-This package conforms to the Firebase Extensions spec and is pending approval for the Extensions Marketplace Early Access Program.
+This package conforms to the Firebase Extensions spec and is pending approval for the Extensions Hub.
 
 [![FirebaseWebAuthn version](https://img.shields.io/npm/v/@firebase-web-authn/extension?logo=npm)](https://www.npmjs.com/package/@firebase-web-authn/extension)
 ### Installation
 Run the following commands:
 ```
-% npm install @firebase-web-authn/extension --save-dev
-% firebase ext:install ./node_modules/@firebase-web-authn/extension
+% firebase ext:install gavinsawyer/firebase-web-authn
 % firebase deploy --only extensions
 ```
 > Firebase Extensions are in Beta. Deployment may fail to complete on the first attempt or fail altogether to set service account roles.
 >
 > If you are getting `PERMISSION_DENIED` errors from the API, grant the `Cloud Datastore User` and `Service Account Token Creator` roles to the `Firebase Extensions firebase-web-authn service account` principal in [IAM](https://console.cloud.google.com/iam-admin/iam) under `Firebase Extensions firebase-web-authn service account` > Edit > Assign roles.
+>
+> If you don't see the service account, click `Grant Access` and enter its address as `ext-firebase-web-authn@${PROJECT_ID}.iam.gserviceaccount.com`
 ## [@firebase-web-authn/browser](libs/browser)
 This package contains five tree-shakeable async methods for using FirebaseWebAuthn in components and a strongly-typed error object.
 
