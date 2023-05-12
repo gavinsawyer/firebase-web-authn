@@ -1,17 +1,13 @@
 ## @firebase-web-authn/extension
-A Firebase extension for authentication with WebAuthn passkeys.
+A Firebase Extension for authentication with WebAuthn passkeys.
 
 This package conforms to the Firebase Extensions spec and is pending approval for the Extensions Marketplace Early Access Program.
 
 [![GitHub workflow status](https://img.shields.io/github/actions/workflow/status/gavinsawyer/firebase-web-authn/ci.yml)](https://github.com/gavinsawyer/firebase-web-authn/actions/workflows/ci.yml)
 [![FirebaseWebAuthn version](https://img.shields.io/npm/v/@firebase-web-authn/extension?logo=npm)](https://www.npmjs.com/package/@firebase-web-authn/extension)
-
 #### Demo: https://firebase-web-authn.dev
-
 ### Installation
-
 Run the following commands from your project root:
-
 ```
 % npm install @firebase-web-authn/extension --save-dev
 % firebase ext:install ./node_modules/@firebase-web-authn/extension
@@ -21,7 +17,6 @@ Run the following commands from your project root:
 >
 > If you are getting `PERMISSION_DENIED` errors from the API, grant the `Cloud Datastore User` and `Service Account Token Creator` roles to the `Firebase Extensions firebase-web-authn service account` principal in [IAM](https://console.cloud.google.com/iam-admin/iam) under `Firebase Extensions firebase-web-authn service account` > Edit > Assign roles.
 ---
-
 ## Authenticate with WebAuthn
 
 **Author**: Gavin Sawyer (**[https://gavinsawyer.dev](https://gavinsawyer.dev)**)
@@ -32,7 +27,7 @@ Run the following commands from your project root:
 
 ### Additional setup
 
-For the browser to reach FirebaseWebAuthn, modify your `firebase.json` to include a rewrite on each app where you'd like to use passkeys.
+The browser must reach FirebaseWebAuthn from the same domain as your website. Modify your `firebase.json` to include a rewrite on each app where you'd like to use passkeys:
 
 ```json
 {
@@ -59,7 +54,6 @@ For the browser to reach FirebaseWebAuthn, modify your `firebase.json` to includ
 
 ### Billing
 
-To install an extension, your project must be on the Blaze (pay as you go) plan
-- This extension uses other Firebase and Google Cloud Platform services, which have associated charges if you exceed the service’s no-cost tier:
-  - Cloud Firestore
-  - Cloud Functions (Node.js 18 runtime)
+To install an extension, your project must be on the Blaze (pay as you go) plan. This extension uses other Firebase and Google Cloud Platform services, which have associated charges if you exceed the service’s no-cost tier:
+- Firestore Database
+- Functions (Node.js 18 runtime)

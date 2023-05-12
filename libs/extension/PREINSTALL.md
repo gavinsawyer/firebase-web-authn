@@ -2,7 +2,7 @@ Use this extension and the associated [browser library](https://github.com/gavin
 
 ### Additional Setup
 
-For the browser to reach FirebaseWebAuthn, modify your `firebase.json` to include a rewrite on each app where you'd like to use passkeys.
+The browser must reach FirebaseWebAuthn from the same domain as your website. Modify your `firebase.json` to include a rewrite on each app where you'd like to use passkeys:
 
 ```json
 {
@@ -23,13 +23,13 @@ For the browser to reach FirebaseWebAuthn, modify your `firebase.json` to includ
 ### Pre-Requisites
 
 Before installing this extension, you'll need to set up these services in your Firebase project:
-- Firebase Authentication and the Anonymous provider.
-- Cloud Firestore
-- Cloud Functions
+- App Check
+- Authentication with the anonymous provider
+- Firestore Database
+- Functions
 
 ### Billing
 
-To install an extension, your project must be on the Blaze (pay as you go) plan
-- This extension uses other Firebase and Google Cloud Platform services, which have associated charges if you exceed the service’s no-cost tier:
-  - Cloud Firestore
-  - Cloud Functions (Node.js 18 runtime)
+To install an extension, your project must be on the Blaze (pay as you go) plan. This extension uses other Firebase and Google Cloud Platform services, which have associated charges if you exceed the service’s no-cost tier:
+- Firestore Database
+- Functions (Node.js 18 runtime)

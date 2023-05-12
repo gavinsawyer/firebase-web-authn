@@ -1,4 +1,4 @@
 ## @firebase-web-authn/website
-A Firebase extension for authentication with WebAuthn passkeys.
+A Firebase Extension for authentication with WebAuthn passkeys.
 
 FirebaseWebAuthn's website.

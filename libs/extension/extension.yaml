@@ -1,5 +1,5 @@
 name: firebase-web-authn
-version: 9.4.9
+version: 9.4.10
 specVersion: v1beta
 
 displayName: Authenticate with WebAuthn

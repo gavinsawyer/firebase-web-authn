@@ -1,22 +1,28 @@
 ### Using the extension
 
+The browser must reach FirebaseWebAuthn from the same domain as your website. Modify your `firebase.json` to include a rewrite on each app where you'd like to use passkeys.
+
+```json
+{
+  "hosting": [
+    {
+      "target": "...",
+      "rewrites": [
+        {
+          "source": "/firebase-web-authn-api",
+          "function": "ext-firebase-web-authn-api"
+        }
+      ]
+    }
+  ]
+}
+```
+
 Install the [browser package](https://github.com/gavinsawyer/firebase-web-authn/tree/main/libs/browser):
 
 ```
 % npm install --save @firebase-web-authn/browser
 ```
-
-#### Caveats
-
-- The `webAuthnUsers` collection should not have read or write access from users. Your app should use a separate `users`/`profiles` document.
-- Your backend security logic should depend on the `lastPresent` and `lastVerified` fields in the user's document which is updated automatically on sign-in or verification.
-  - `WebAuthnUserDocument` is exported from [@firebase-web-authn/types](https://github.com/gavinsawyer/firebase-web-authn/tree/main/libs/types).
-  - See [User Presence vs User Verification](https://developers.yubico.com/WebAuthn/WebAuthn_Developer_Guide/User_Presence_vs_User_Verification.html).
-- The `name` parameter is not automatically stored anywhere except in the passkey. Changes made to this value in a passkey manager are not detectable by the app.
-  - If FirebaseWebAuthn is configured as an MFA provider, pass the existing identifier.
-  - If FirebaseWebAuthn is your only auth provider, you can pass any recognizable value. If you expect users to have multiple usernameless accounts, `name` can be a user-generated account name ("Personal"/"Work"/etc.). With generic `name` values consider passing something like "${FIRST_NAME} | Personal" for users who share a device with others.
-- An anonymous user linked with a passkey is the same as a user created with `createUserWithPasskey`, and appears in Firebase as having no identifier and no provider. Users created this way are not deleted after 30 days with auto clean-up.
-- When using `createUserWithPasskey`, you will find that no `onAuthStateChanged` callback fires when converting an anonymous account to a providerless account. Your callback should be passed to `onIdTokenChanged` instead.
 
 #### Methods
 
@@ -74,3 +80,15 @@ class FirebaseWebAuthnError extends Error {
   operation?: "clear challenge" | "clear user doc" | "create authentication challenge" | "create reauthentication challenge" | "create registration challenge" | "verify authentication" | "verify reauthentication" | "verify registration";
 }
 ```
+
+#### Caveats
+
+- The `webAuthnUsers` collection should not have read or write access from users. Your app should use a separate `users`/`profiles` document.
+- Your backend security logic should depend on the `lastPresent` and `lastVerified` fields in the user's document which is updated automatically on sign-in or verification.
+  - `WebAuthnUserDocument` is exported from [@firebase-web-authn/types](https://github.com/gavinsawyer/firebase-web-authn/tree/main/libs/types).
+  - See [User Presence vs User Verification](https://developers.yubico.com/WebAuthn/WebAuthn_Developer_Guide/User_Presence_vs_User_Verification.html).
+- The `name` parameter is not automatically stored anywhere except in the passkey. Changes made to this value in a passkey manager are not detectable by the app.
+  - If FirebaseWebAuthn is configured as an MFA provider, pass the existing identifier.
+  - If FirebaseWebAuthn is your only auth provider, you can pass any recognizable value. If you expect users to have multiple usernameless accounts, `name` can be a user-generated account name ("Personal"/"Work"/etc.). With generic `name` values consider passing something like "${FIRST_NAME} | Personal" for users who share a device with others.
+- An anonymous user linked with a passkey is the same as a user created with `createUserWithPasskey`, and appears in Firebase as having no identifier and no provider. Users created this way are not deleted after 30 days with auto clean-up.
+- When using `createUserWithPasskey`, you will find that no `onAuthStateChanged` callback fires when converting an anonymous account to a providerless account. Your callback should be passed to `onIdTokenChanged` instead.

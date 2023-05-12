@@ -1,5 +1,5 @@
 ## @firebase-web-authn/types
-A Firebase extension for authentication with WebAuthn passkeys.
+A Firebase Extension for authentication with WebAuthn passkeys.
 
 This package contains types and interfaces used internally by FirebaseWebAuthn and for implementing it in a secure context.
 
