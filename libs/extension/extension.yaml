@@ -1,10 +1,12 @@
 name: firebase-web-authn
-version: 9.4.14
+version: 9.4.15
 specVersion: v1beta
+icon: icon.png
 
 displayName: Authenticate with WebAuthn
 description: >-
   Adds support for WebAuthn as a primary or multi-factor auth provider.
+tags: [utilities]
 
 license: Apache-2.0
 

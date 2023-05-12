@@ -20,6 +20,11 @@
             "output": "."
           },
           {
+            "glob": "icon.png",
+            "input": "libs/extension",
+            "output": "."
+          },
+          {
             "glob": "package.json",
             "input": "libs/extension/functions",
             "output": "./functions"
