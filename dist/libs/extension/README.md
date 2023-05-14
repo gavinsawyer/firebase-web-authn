@@ -9,7 +9,7 @@ This package conforms to the Firebase Extensions spec and is pending approval fo
 ### Installation
 Run the following commands from your project root:
 ```
-% firebase ext:install gavinsawyer/firebase-web-authn
+% firebase ext:install gavinsawyer/firebase-web-authn@9.4.16-rc.0
 % firebase deploy --only extensions
 ```
 > Firebase Extensions are in Beta. Deployment may fail to complete on the first attempt or fail altogether to set service account roles.

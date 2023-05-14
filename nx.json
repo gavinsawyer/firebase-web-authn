@@ -1,6 +1,6 @@
 {
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
-  "npmScope": "ngx-firebase-web-authn",
+  "npmScope": "firebase-web-authn",
   "affected": {
     "defaultBase": "main"
   },

@@ -1,9 +1,12 @@
 {
-  "name": "functions",
+  "name": "firebase-web-authn-functions",
   "author": {
     "name": "Gavin Sawyer",
     "email": "g@vinsawyer.dev",
     "url": "https://gavinsawyer.dev"
+  },
+  "scripts": {
+    "build": ""
   },
   "license": "Apache-2.0",
   "repository": {
@@ -22,5 +25,5 @@
     "@firebase-web-authn/functions": "^9",
     "tslib": "^2"
   },
-  "private": false
+  "private": true
 }
