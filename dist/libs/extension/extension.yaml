@@ -1,5 +1,5 @@
 name: firebase-web-authn
-version: 9.4.16
+version: 9.4.17
 specVersion: v1beta
 icon: icon.png
 
@@ -25,11 +25,10 @@ apis:
     reason: Needed for custom auth provider.
 
 roles:
-  - role: iam.serviceAccountTokenCreator
-    reason: Allows the extension to create custom auth tokens for authenticated users.
-
   - role: datastore.user
     reason: Allows the extension to write updates to the database.
+  - role: iam.serviceAccountTokenCreator
+    reason: Allows the extension to create custom auth tokens for authenticated users.
 
 resources:
   - name: api
@@ -98,7 +97,6 @@ params:
     default: us-central1
     required: true
     immutable: true
-
   - param: AUTHENTICATOR_ATTACHMENT
     label: Authenticator attachment
     description: >-
@@ -112,7 +110,6 @@ params:
         value: cross-platform
     default: platform
     required: true
-
   - param: RELYING_PARTY_NAME
     label: Relying party name
     description: >-
@@ -120,7 +117,6 @@ params:
       in place of your domain name.
     type: string
     required: true
-
   - param: USER_VERIFICATION_REQUIREMENT
     label: User verification requirement
     description: >-

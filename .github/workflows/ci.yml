@@ -28,11 +28,19 @@ jobs:
         env:
           APP_CHECK_TOKEN_WEBSITE: '${{ secrets.APP_CHECK_TOKEN_WEBSITE }}'
           NX_CLOUD_ACCESS_TOKEN: '${{ secrets.NX_CLOUD_ACCESS_TOKEN }}'
-      - run: npm publish dist/libs/types && npm publish dist/libs/browser && npm publish dist/libs/functions
+      - run: npm publish dist/libs/types
         env:
           NPM_ACCESS_TOKEN: ${{ secrets.NPM_ACCESS_TOKEN }}
         continue-on-error: true
-      - run: cd dist/libs/extension && npm i --package-lock-only && cd functions && npm i --package-lock-only && cd ../../../../ && npm publish dist/libs/extension
+      - run: npm publish dist/libs/browser
+        env:
+          NPM_ACCESS_TOKEN: ${{ secrets.NPM_ACCESS_TOKEN }}
+        continue-on-error: true
+      - run: npm publish dist/libs/functions
+        env:
+          NPM_ACCESS_TOKEN: ${{ secrets.NPM_ACCESS_TOKEN }}
+        continue-on-error: true
+      - run: cd dist/libs/extension/functions && npm i --package-lock-only && cd ../../../../ && npm publish dist/libs/extension
         env:
           NPM_ACCESS_TOKEN: ${{ secrets.NPM_ACCESS_TOKEN }}
         continue-on-error: true

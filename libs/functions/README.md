@@ -14,6 +14,7 @@ If you would rather deploy FirebaseWebAuthn from your existing Firebase Function
 1. Run:
 
 `% npm install @firebase-web-authn/functions --save-dev`
+
 2. Export the API from your Firebase Functions package's `main` file by calling `getFirebaseWebAuthnApi` with a config object.
 ```ts
 import { initializeApp }          from "firebase-admin/app";

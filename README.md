@@ -12,12 +12,14 @@ This package conforms to the Firebase Extensions spec and is pending approval fo
 ### Installation
 Run the following commands:
 ```
-% firebase ext:install gavinsawyer/firebase-web-authn@9.4.16-rc.0
+% firebase ext:install gavinsawyer/firebase-web-authn@9.4.17-rc.0
 % firebase deploy --only extensions
 ```
-> Firebase Extensions are in Beta. Deployment may fail to complete on the first attempt or fail altogether to set service account roles.
+> #### Caveat
 >
-> If you are getting `PERMISSION_DENIED` errors from the API, grant the `Cloud Datastore User` and `Service Account Token Creator` roles to the `Firebase Extensions firebase-web-authn service account` principal in [IAM](https://console.cloud.google.com/iam-admin/iam) under `Firebase Extensions firebase-web-authn service account` > Edit > Assign roles.
+> As of May 2023, [supported roles for Firebase Extensions](https://firebase.google.com/docs/extensions/publishers/access#supported-roles) do not include `iam.serviceAccounts.signBlob` which is needed for custom auth providers.
+>
+> After deploying the extension, make sure the `Service Account Token Creator` and `Cloud Datastore User` roles are granted to the `Firebase Extensions firebase-web-authn service account` principal in [IAM](https://console.cloud.google.com/iam-admin/iam) under `Firebase Extensions firebase-web-authn service account` > Edit > Assign roles.
 >
 > If you don't see the service account, click `Grant Access` and enter its address as `ext-firebase-web-authn@${PROJECT_ID}.iam.gserviceaccount.com`
 ## [@firebase-web-authn/browser](libs/browser)
@@ -96,6 +98,7 @@ If you would rather deploy FirebaseWebAuthn from your existing Firebase Function
 1. Run:
 
 `% npm install @firebase-web-authn/functions --save-dev`
+
 2. Export the API from your Firebase Functions package's `main` file by calling `getFirebaseWebAuthnApi` with a config object.
 ```ts
 import { initializeApp }          from "firebase-admin/app";
