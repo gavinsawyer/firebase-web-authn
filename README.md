@@ -10,11 +10,16 @@ This package conforms to the Firebase Extensions spec and is pending approval fo
 
 [![FirebaseWebAuthn version](https://img.shields.io/npm/v/@firebase-web-authn/extension?logo=npm)](https://www.npmjs.com/package/@firebase-web-authn/extension)
 ### Installation
-Run the following commands:
+To install using NPM, run the following commands from your project root:
 ```
-% firebase ext:install gavinsawyer/firebase-web-authn@9.4.17-rc.0
-% firebase deploy --only extensions
+% npm i @firebase-web-authn/extension --save-dev
+% firebase ext:install ./node_modules/@firebase-web-authn/extension
 ```
+To install using the Extensions Hub, run:
+```
+% firebase ext:install gavinsawyer/firebase-web-authn@9.4.18-rc.0
+```
+Using NPM is recommended to receive updates to FirebaseWebAuthn alongside your other dependencies.
 > #### Caveat
 >
 > As of May 2023, [supported roles for Firebase Extensions](https://firebase.google.com/docs/extensions/publishers/access#supported-roles) do not include `iam.serviceAccounts.signBlob` which is needed for custom auth providers.
