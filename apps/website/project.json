@@ -126,9 +126,19 @@
     },
     "deploy": {
       "dependsOn": ["build"],
-      "executor": "nx:run-commands",
+      "executor": "@angular/fire:deploy",
       "options": {
-        "command": "firebase deploy --only hosting:website"
+        "ssr": "cloud-run",
+        "prerender": true,
+        "firebaseProject": "fir-web-authn",
+        "firebaseHostingSite": "fir-web-authn",
+        "functionName": "ssr-website",
+        "functionsNodeVersion": "18.16",
+        "region": "us-central1",
+        "browserTarget": "website:browser:production",
+        "serverTarget": "website:server:production",
+        "prerenderTarget": "website:build:production",
+        "outputPath": "dist/apps/website/run"
       }
     },
     "serve": {

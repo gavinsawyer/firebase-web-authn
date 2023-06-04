@@ -14,16 +14,18 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 16
-      - id: cache-node-modules
+      - id:   cache-node-modules
         uses: actions/cache@v3
         with:
           path: node_modules
-          key: node-modules-cache-${{ hashFiles('package-lock.json') }}
-      - if: steps.cache-node-modules.outputs.cache-hit != 'true'
+          key:  node-modules-cache-${{ hashFiles('package-lock.json') }}
+      - if:  steps.cache-node-modules.outputs.cache-hit != 'true'
         run: npm ci
-      - uses: google-github-actions/auth@v0
+      - id:   auth
+        uses: google-github-actions/auth@v1
         with:
           credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_FIR_WEB_AUTHN }}
+          token_format:     access_token
       - run: npx nx run-many --target build --all
         env:
           APP_CHECK_TOKEN_WEBSITE: '${{ secrets.APP_CHECK_TOKEN_WEBSITE }}'
@@ -35,16 +37,17 @@ jobs:
       - run: npm publish dist/libs/browser
         env:
           NPM_ACCESS_TOKEN: ${{ secrets.NPM_ACCESS_TOKEN }}
-        continue-on-error: true
+        continue-on-error:  true
       - run: npm publish dist/libs/functions
         env:
           NPM_ACCESS_TOKEN: ${{ secrets.NPM_ACCESS_TOKEN }}
-        continue-on-error: true
+        continue-on-error:  true
       - run: cd dist/libs/extension/functions && npm i --package-lock-only && cd ../../../../ && npm publish dist/libs/extension
         env:
           NPM_ACCESS_TOKEN: ${{ secrets.NPM_ACCESS_TOKEN }}
-        continue-on-error: true
+        continue-on-error:  true
       - run: npx nx run-many --target deploy --all
         env:
-          APP_CHECK_TOKEN_WEBSITE: '${{ secrets.APP_CHECK_TOKEN_WEBSITE }}'
-          NX_CLOUD_ACCESS_TOKEN: '${{ secrets.NX_CLOUD_ACCESS_TOKEN }}'
+          APP_CHECK_TOKEN_WEBSITE: ${{ secrets.APP_CHECK_TOKEN_WEBSITE }}
+          FIREBASE_TOKEN:          ${{ steps.auth.outputs.access_token }}
+          NX_CLOUD_ACCESS_TOKEN:   ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}

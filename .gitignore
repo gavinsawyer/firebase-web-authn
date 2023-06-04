@@ -3,6 +3,7 @@
 # compiled output
 dist/apps
 dist/libs/browser
+dist/libs/extension/functions/package-lock.json
 dist/libs/functions
 dist/libs/types
 tmp
@@ -40,6 +41,7 @@ Thumbs.db
 .firebase
 *-debug.log
 .runtimeconfig.json
+gha-creds-*.json
 
 apps/*/src/git-info.ts
 apps/*/src/package-version.ts
