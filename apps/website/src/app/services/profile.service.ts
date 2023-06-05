@@ -1,9 +1,11 @@
-import { Injectable }                                                        from "@angular/core";
-import { User }                                                              from "@angular/fire/auth";
-import { doc, docSnapshots, DocumentReference, DocumentSnapshot, Firestore } from "@angular/fire/firestore";
-import { catchError, filter, map, mergeMap, Observable, of, retry, Subject } from "rxjs";
-import { ProfileDocument }                                                   from "../interfaces";
-import { AuthenticationService }                                             from "./authentication.service";
+import { isPlatformBrowser }                                                                  from "@angular/common";
+import { Inject, Injectable, PLATFORM_ID, signal, Signal }                                    from "@angular/core";
+import { takeUntilDestroyed, toSignal }                                                       from "@angular/core/rxjs-interop";
+import { Auth, onIdTokenChanged, User }                                                       from "@angular/fire/auth";
+import { doc, docSnapshots, DocumentReference, DocumentSnapshot, Firestore }                  from "@angular/fire/firestore";
+import { catchError, filter, map, Observable, Observer, startWith, switchMap, TeardownLogic } from "rxjs";
+import { ProfileDocument }                                                                    from "../interfaces";
+import { AuthenticationService }                                                              from "../services";
 
 
 @Injectable({
@@ -11,29 +13,30 @@ import { AuthenticationService }                                             fro
 })
 export class ProfileService {
 
+  public profileDocument: Signal<ProfileDocument | null>;
+
   constructor(
+    @Inject(PLATFORM_ID)
+    private readonly platformId: object,
+
+    private readonly auth: Auth,
     private readonly authenticationService: AuthenticationService,
     private readonly firestore: Firestore,
   ) {
     this
-      .profileDocumentObservable = authenticationService
-      .userObservable
-      .pipe<DocumentSnapshot<ProfileDocument>, ProfileDocument | undefined, ProfileDocument, ProfileDocument, ProfileDocument>(
-        mergeMap<User, Observable<DocumentSnapshot<ProfileDocument>>>((user: User): Observable<DocumentSnapshot<ProfileDocument>> => user.isAnonymous ? new Subject<DocumentSnapshot<ProfileDocument>>().asObservable() : docSnapshots<ProfileDocument>(doc(firestore, "/profiles/" + user.uid) as DocumentReference<ProfileDocument>)),
-        map<DocumentSnapshot<ProfileDocument>, ProfileDocument | undefined>((profileDocumentSnapshot: DocumentSnapshot<ProfileDocument>): ProfileDocument | undefined => profileDocumentSnapshot.data()),
-        filter<ProfileDocument | undefined, ProfileDocument>((profileDocument: ProfileDocument | undefined): profileDocument is ProfileDocument => !!profileDocument),
-        retry<ProfileDocument>({
-          delay: (error) => error.code === "permission-denied" ? of<object>({}) : new Subject<ProfileDocument>().asObservable(),
-        }),
-        catchError<ProfileDocument, Observable<ProfileDocument>>((error) => {
-          console
-            .error(error);
-
-          return new Subject<ProfileDocument>().asObservable();
-        }),
-      );
+      .profileDocument = isPlatformBrowser(platformId) ? toSignal<ProfileDocument | null>(new Observable<User | null>((userObserver: Observer<User | null>): TeardownLogic => onIdTokenChanged(auth, (user: User | null) => userObserver.next(user))).pipe<User | null, User, ProfileDocument, ProfileDocument | null, ProfileDocument | null>(
+        startWith<User | null>(auth.currentUser),
+        filter<User | null, User>((user: User | null): user is User => !!user),
+        switchMap<User, Observable<ProfileDocument>>((user: User): Observable<ProfileDocument> => docSnapshots<ProfileDocument>(doc(firestore, "/profiles/" + user.uid) as DocumentReference<ProfileDocument>).pipe<DocumentSnapshot<ProfileDocument>, ProfileDocument | undefined, ProfileDocument>(
+          catchError<DocumentSnapshot<ProfileDocument>, Observable<DocumentSnapshot<ProfileDocument>>>(() => new Observable<DocumentSnapshot<ProfileDocument>>()),
+          map<DocumentSnapshot<ProfileDocument>, ProfileDocument | undefined>((profileDocumentSnapshot: DocumentSnapshot<ProfileDocument>): ProfileDocument | undefined => profileDocumentSnapshot.data()),
+          filter<ProfileDocument | undefined, ProfileDocument>((profileDocument: ProfileDocument | undefined): profileDocument is ProfileDocument => !!profileDocument),
+        )),
+        startWith<ProfileDocument | null>(null),
+        takeUntilDestroyed<ProfileDocument | null>(),
+      ), {
+        requireSync: true,
+      }) : signal<ProfileDocument | null>(null);
   }
-
-  public readonly profileDocumentObservable: Observable<ProfileDocument>;
 
 }

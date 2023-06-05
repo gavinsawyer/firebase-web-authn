@@ -1,5 +1,5 @@
 import { CommonModule }                                                    from "@angular/common";
-import { Component }                                                       from "@angular/core";
+import { Component, signal, WritableSignal }                               from "@angular/core";
 import { Auth, User }                                                      from "@angular/fire/auth";
 import { doc, DocumentReference, Firestore, setDoc }                       from "@angular/fire/firestore";
 import { Functions }                                                       from "@angular/fire/functions";
@@ -11,7 +11,6 @@ import { MatIconModule }                                                   from 
 import { MatInputModule }                                                  from "@angular/material/input";
 import { MatSnackBar, MatSnackBarModule }                                  from "@angular/material/snack-bar";
 import { createUserWithPasskey, FirebaseWebAuthnError, signInWithPasskey } from "@firebase-web-authn/browser";
-import { BehaviorSubject, firstValueFrom, Observable }                     from "rxjs";
 import { ProfileDocument }                                                 from "../../interfaces";
 import { AuthenticationService }                                           from "../../services";
 
@@ -20,7 +19,7 @@ interface SignInForm {
   "name"?: FormControl<string>,
 }
 
-type SignInFormStatus = "unsent" | "pending" | "complete";
+type Status = "unsent" | "pending" | "complete";
 
 @Component({
   imports: [
@@ -42,6 +41,11 @@ type SignInFormStatus = "unsent" | "pending" | "complete";
 })
 export class SignInCardComponent {
 
+  public readonly formGroup: FormGroup<SignInForm>;
+  public readonly signInWithPasskey: () => Promise<void>;
+  public readonly status: WritableSignal<Status>;
+  public readonly submit: () => void;
+
   constructor(
     private readonly auth: Auth,
     private readonly authenticationService: AuthenticationService,
@@ -62,28 +66,28 @@ export class SignInCardComponent {
         throw firebaseWebAuthnError;
       })());
     this
-      .statusSubject = new BehaviorSubject<SignInFormStatus>("unsent");
-    this
-      .statusObservable = this
-      .statusSubject
-      .asObservable();
+      .status = signal<Status>("unsent");
     this
       .submit = async (): Promise<void> => this
       .formGroup
       .value
-      .name ? ((name: string): Promise<void> => firstValueFrom(authenticationService.userObservable)
-      .then<void>((user: User): Promise<void> => createUserWithPasskey(auth, functions, name).then<void>((): Promise<void> => matSnackBar.open("Sign-up successful.", "Okay") && setDoc(doc(firestore, "/profiles/" + user.uid) as DocumentReference<ProfileDocument>, {
-        name: name,
-      }).then<void>((): void => void(0))).catch<never>((firebaseWebAuthnError: FirebaseWebAuthnError): never => matSnackBar.open(firebaseWebAuthnError.message, "Okay") && ((): never => {
-        throw firebaseWebAuthnError;
-      })())))(this.formGroup.value.name) : void(0);
+      .name ? (async (name: string | undefined, user: User | null): Promise<void> => name && user ? ((): Promise<void> => {
+        this
+          .formGroup
+          .disable();
+
+        this
+          .status
+          .set("pending");
+
+        return createUserWithPasskey(auth, functions, name)
+          .then<void>((): Promise<void> => matSnackBar.open("Sign-up successful.", "Okay") && setDoc(doc(firestore, "/profiles/" + user.uid) as DocumentReference<ProfileDocument>, {
+            name: this.formGroup.value.name,
+          }))
+          .catch<never>((firebaseWebAuthnError: FirebaseWebAuthnError): never => matSnackBar.open(firebaseWebAuthnError.message, "Okay") && ((): never => {
+            throw firebaseWebAuthnError;
+          })());
+      })() : void(0))(this.formGroup.value.name, authenticationService.user()) : void(0);
   }
-
-  private readonly statusSubject: BehaviorSubject<SignInFormStatus>;
-
-  public readonly formGroup: FormGroup<SignInForm>;
-  public readonly signInWithPasskey: () => Promise<void>;
-  public readonly statusObservable: Observable<SignInFormStatus>;
-  public readonly submit: () => void;
 
 }

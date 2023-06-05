@@ -1,4 +1,4 @@
-<ng-container *ngIf="profileService.profileDocumentObservable | async as profileDocument">
+<ng-container *ngIf="profileService.profileDocument() as profileDocument">
   <mat-card>
     <mat-card-content>
       You're signed in as {{ profileDocument.name }}.

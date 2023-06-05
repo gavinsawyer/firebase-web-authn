@@ -25,6 +25,10 @@ import { ProfileService }                                                  from 
 })
 export class ProfileCardComponent {
 
+  public readonly verifyUserWithPasskey: () => Promise<void>;
+  public readonly signInAnonymously: () => Promise<void>;
+  public readonly signInWithPasskey: () => Promise<void>;
+
   constructor(
     private readonly auth: Auth,
     private readonly functions: Functions,
@@ -48,9 +52,5 @@ export class ProfileCardComponent {
         throw firebaseWebAuthnError;
       })());
   }
-
-  public readonly verifyUserWithPasskey: () => Promise<void>;
-  public readonly signInAnonymously: () => Promise<void>;
-  public readonly signInWithPasskey: () => Promise<void>;
 
 }

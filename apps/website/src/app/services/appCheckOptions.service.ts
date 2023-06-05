@@ -1,6 +1,6 @@
 import { isPlatformBrowser }                                                   from "@angular/common";
 import { Inject, Injectable, PLATFORM_ID }                                     from "@angular/core";
-import { CustomProvider, ReCaptchaV3Provider, AppCheckToken, AppCheckOptions } from "@angular/fire/app-check"
+import { AppCheckOptions, AppCheckToken, CustomProvider, ReCaptchaV3Provider } from "@angular/fire/app-check";
 
 
 @Injectable({
@@ -8,12 +8,14 @@ import { CustomProvider, ReCaptchaV3Provider, AppCheckToken, AppCheckOptions } f
 })
 export class AppCheckOptionsService {
 
+  public readonly appCheckOptions: (app: string, recaptchaSiteKey: string) => AppCheckOptions;
+
   constructor(
     @Inject(PLATFORM_ID)
     private readonly platformId: object,
   ) {
     this
-      .appCheckOptions = (app: string, recaptchaSiteKey: string) => isPlatformBrowser(platformId) ? {
+      .appCheckOptions = (app: string, recaptchaSiteKey: string): AppCheckOptions => isPlatformBrowser(platformId) ? {
         isTokenAutoRefreshEnabled: true,
         provider: new ReCaptchaV3Provider(recaptchaSiteKey),
       } : {
@@ -26,7 +28,5 @@ export class AppCheckOptionsService {
         }),
       };
   }
-
-  public readonly appCheckOptions: (app: string, recaptchaSiteKey: string) => AppCheckOptions
 
 }
