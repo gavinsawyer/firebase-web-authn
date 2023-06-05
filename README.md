@@ -17,16 +17,31 @@ To install using NPM, run the following commands from your project root:
 ```
 To install using the Extensions Hub, run:
 ```
-% firebase ext:install gavinsawyer/firebase-web-authn@9.4.19-rc.0
+% firebase ext:install gavinsawyer/firebase-web-authn@9.4.20-rc.0
 ```
 Using NPM is recommended to receive updates to FirebaseWebAuthn alongside your other dependencies.
-> #### Caveat
+>### Additional setup:
 >
-> As of May 2023, [supported roles for Firebase Extensions](https://firebase.google.com/docs/extensions/publishers/access#supported-roles) do not include `iam.serviceAccounts.signBlob` which is needed for custom auth providers.
+>1. As of May 2023, [supported roles for Firebase Extensions](https://firebase.google.com/docs/extensions/publishers/access#supported-roles) do not include `iam.serviceAccounts.signBlob` which is needed for custom auth providers.
+>  - After deploying the extension, grant the `Service Account Token Creator` role to the extension's service account in [IAM](https://console.cloud.google.com/iam-admin/iam) under `Firebase Extensions firebase-web-authn service account` > Edit > Assign roles.
+>  - If the service account isn't appearing, click `Grant Access` and enter its address as `ext-firebase-web-authn@${PROJECT_ID}.iam.gserviceaccount.com`
+>2. The browser must reach FirebaseWebAuthn from the same domain as your website. Modify your `firebase.json` to include a rewrite on each app where you'd like to use passkeys:
 >
-> After deploying the extension, make sure the `Service Account Token Creator` and `Cloud Datastore User` roles are granted to the `Firebase Extensions firebase-web-authn service account` principal in [IAM](https://console.cloud.google.com/iam-admin/iam) under `Firebase Extensions firebase-web-authn service account` > Edit > Assign roles.
->
-> If you don't see the service account, click `Grant Access` and enter its address as `ext-firebase-web-authn@${PROJECT_ID}.iam.gserviceaccount.com`
+>    ```json
+>    {
+>      "hosting": [
+>        {
+>          "target": "...",
+>          "rewrites": [
+>            {
+>              "source": "/firebase-web-authn",
+>              "function": "ext-firebase-web-authn-api"
+>            }
+>          ]
+>        }
+>      ]
+>    }
+>    ```
 ## [@firebase-web-authn/browser](libs/browser)
 This package contains five tree-shakeable async methods for using FirebaseWebAuthn in components and a strongly-typed error object.
 

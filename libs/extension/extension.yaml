@@ -1,11 +1,10 @@
 name: firebase-web-authn
-version: 9.4.19
+version: 9.4.20
 specVersion: v1beta
 icon: icon.png
 
 displayName: Authenticate with WebAuthn
-description: >-
-  Adds support for WebAuthn as a primary or multi-factor auth provider.
+description: Adds support for WebAuthn as a primary or multi-factor auth provider.
 tags: [utilities]
 
 license: Apache-2.0
@@ -22,13 +21,11 @@ billingRequired: true
 
 apis:
   - apiName: iamcredentials.googleapis.com
-    reason: Needed for custom auth provider.
+    reason: Needed for a custom auth provider to create user authentication tokens.
 
 roles:
   - role: datastore.user
-    reason: Allows the extension to write updates to the database.
-  - role: iam.serviceAccountTokenCreator
-    reason: Allows the extension to create custom auth tokens for authenticated users.
+    reason: Allows the extension to write updates to the database where public keys are stored.
 
 resources:
   - name: api

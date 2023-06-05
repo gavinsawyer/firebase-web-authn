@@ -1,23 +1,5 @@
 ### Using the extension
 
-The browser must reach FirebaseWebAuthn from the same domain as your website. Modify your `firebase.json` to include a rewrite on each app where you'd like to use passkeys.
-
-```json
-{
-  "hosting": [
-    {
-      "target": "...",
-      "rewrites": [
-        {
-          "source": "/firebase-web-authn-api",
-          "function": "ext-firebase-web-authn-api"
-        }
-      ]
-    }
-  ]
-}
-```
-
 Install the [browser package](https://github.com/gavinsawyer/firebase-web-authn/tree/main/libs/browser):
 
 ```
