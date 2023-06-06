@@ -14,7 +14,7 @@ To install using NPM, run the following commands from your project root:
 ```
 To install using the Extensions Hub instead, run:
 ```
-% firebase ext:install gavinsawyer/firebase-web-authn@9.4.21-rc.0
+% firebase ext:install gavinsawyer/firebase-web-authn@9.4.22-rc.0
 ```
 Using NPM is recommended to receive updates to FirebaseWebAuthn alongside your other dependencies.
 >### Additional setup:

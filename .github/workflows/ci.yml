@@ -42,7 +42,7 @@ jobs:
         env:
           NPM_ACCESS_TOKEN: ${{ secrets.NPM_ACCESS_TOKEN }}
         continue-on-error:  true
-      - run: cd dist/libs/extension/functions && npm i --package-lock-only && cd ../../../../ && npm publish dist/libs/extension
+      - run: npm publish dist/libs/extension
         env:
           NPM_ACCESS_TOKEN: ${{ secrets.NPM_ACCESS_TOKEN }}
         continue-on-error:  true

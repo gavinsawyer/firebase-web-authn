@@ -3,7 +3,6 @@
 # compiled output
 dist/apps
 dist/libs/browser
-dist/libs/extension/functions/package-lock.json
 dist/libs/functions
 dist/libs/types
 tmp

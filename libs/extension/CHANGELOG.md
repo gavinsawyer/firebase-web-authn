@@ -3,6 +3,12 @@ A Firebase Extension for authentication with WebAuthn passkeys.
 
 [![GitHub workflow status](https://img.shields.io/github/actions/workflow/status/gavinsawyer/firebase-web-authn/ci.yml)](https://github.com/gavinsawyer/firebase-web-authn/actions/workflows/ci.yml)
 
+## v9.4.22
+
+- Exported missing WebAuthnUserCredential from types library.
+- Added package-lock.json in extensions dist root.
+- Updated dependencies.
+
 ## v9.4.21
 
 - Updated services to use Signals.
