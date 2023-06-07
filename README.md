@@ -17,7 +17,7 @@ To install using NPM, run the following commands from your project root:
 ```
 To install using the Extensions Hub, run:
 ```
-% firebase ext:install gavinsawyer/firebase-web-authn@9.5.0-rc.0
+% firebase ext:install gavinsawyer/firebase-web-authn@9.5.1-rc.0
 ```
 Using NPM is recommended to receive updates to the extension alongside other FirebaseWebAuthn dependencies.
 ### Additional setup:
@@ -25,6 +25,7 @@ Using NPM is recommended to receive updates to the extension alongside other Fir
    - After deploying the extension, grant the `Service Account Token Creator` role to the extension's service account in [IAM](https://console.cloud.google.com/iam-admin/iam) under `Firebase Extensions firebase-web-authn service account` > Edit > Assign roles.
    - If the service account isn't appearing, click `Grant Access` and enter its address as `ext-firebase-web-authn@${PROJECT_ID}.iam.gserviceaccount.com`
 2. The browser must reach FirebaseWebAuthn from the same domain as your website. Modify your `firebase.json` to include a rewrite on each app where you'd like to use passkeys:
+
     ```json
     {
       "hosting": [

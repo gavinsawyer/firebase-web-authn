@@ -3,6 +3,11 @@ A Firebase Extension for authentication with WebAuthn passkeys.
 
 [![GitHub workflow status](https://img.shields.io/github/actions/workflow/status/gavinsawyer/firebase-web-authn/ci.yml)](https://github.com/gavinsawyer/firebase-web-authn/actions/workflows/ci.yml)
 
+## v9.5.1
+
+- Updated copy in extension description for keywords "passkey," "biometrics."
+- Documentation
+
 ## v9.5.0
 
 - Added a server library with four methods to check when a user was last present or verified, whether their passkey is eligible to be backed up, or whether their passkey is successfully backed up.

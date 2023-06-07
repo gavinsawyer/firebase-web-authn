@@ -1,10 +1,10 @@
 name: firebase-web-authn
-version: 9.5.0
+version: 9.5.1
 specVersion: v1beta
 icon: icon.png
 
 displayName: Authenticate with WebAuthn
-description: Adds support for WebAuthn as a primary or multi-factor auth provider.
+description: Adds support for biometrics as a primary or multi-factor auth provider using WebAuthn passkeys.
 tags: [utilities]
 
 license: Apache-2.0

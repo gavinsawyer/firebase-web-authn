@@ -2,7 +2,7 @@
 
 **Author**: Gavin Sawyer (**[https://gavinsawyer.dev](https://gavinsawyer.dev)**)
 
-**Description**: Adds support for WebAuthn as a primary or multi-factor auth provider.
+**Description**: Adds support for biometrics as a primary or multi-factor auth provider using WebAuthn passkeys.
 
 **Details**: Use this extension and the associated [browser library](https://github.com/gavinsawyer/firebase-web-authn/tree/main/libs/browser) to create and sign in users with passkeys, link and unlink existing users to passkeys, and prompt signed-in users with a biometric verification request.
 

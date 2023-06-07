@@ -18,7 +18,7 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 18
       - id:   cache-node-modules
         uses: actions/cache@v3
         with:
@@ -34,14 +34,14 @@ jobs:
       - run: npx nx run-many --target deploy --all
         env:
           FIREBASE_TOKEN: ${{ steps.auth.outputs.access_token }}
-      - run: npx nx run-many --target build --all
+      - run: npx nx run-many --target build --projects types,browser,functions,server,extension
       - run:               npm publish dist/libs/types
         continue-on-error: true
       - run:               npm publish dist/libs/browser
         continue-on-error: true
       - run:               npm publish dist/libs/functions
         continue-on-error: true
-      - run:               npm publish dist/libs/server --access public
+      - run:               npm publish dist/libs/server
         continue-on-error: true
       - run:               npm publish dist/libs/extension
         continue-on-error: true
