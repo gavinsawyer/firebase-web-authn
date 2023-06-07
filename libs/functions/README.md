@@ -5,7 +5,7 @@ This package contains a Firebase Function that registers and authenticates WebAu
 
 [![GitHub workflow status](https://img.shields.io/github/actions/workflow/status/gavinsawyer/firebase-web-authn/ci.yml)](https://github.com/gavinsawyer/firebase-web-authn/actions/workflows/ci.yml)
 [![FirebaseWebAuthn version](https://img.shields.io/npm/v/@firebase-web-authn/functions?logo=npm)](https://www.npmjs.com/package/@firebase-web-authn/functions)
-[![Firebase-Functions version](https://img.shields.io/npm/dependency-version/@firebase-web-authn/functions/firebase-functions?logo=firebase)](https://www.npmjs.com/package/firebase-functions)
+[![FirebaseFunctions version](https://img.shields.io/npm/dependency-version/@firebase-web-authn/functions/firebase-functions?logo=firebase)](https://www.npmjs.com/package/firebase-functions)
 #### Demo: https://firebase-web-authn.dev
 ### Firebase Extension deployment
 See [@firebase-web-authn/extension](https://github.com/gavinsawyer/firebase-web-authn/tree/main/libs/extension) for installation instructions using `firebase ext:install`.
@@ -40,25 +40,25 @@ interface FirebaseWebAuthnConfig {
 `% firebase deploy --only functions`
 ### Additional setup
 1. The browser must reach FirebaseWebAuthn from the same domain as your website. Modify your `firebase.json` to include a rewrite on each app where you'd like to use passkeys:
-```json
-{
-  "hosting": [
+    ```json
     {
-      "target": "...",
-      "rewrites": [
+      "hosting": [
         {
-          "source": "/firebase-web-authn-api",
-          "function": "firebaseWebAuthnAPI"
+          "target": "...",
+          "rewrites": [
+            {
+              "source": "/firebase-web-authn-api",
+              "function": "firebaseWebAuthnAPI"
+            }
+          ]
         }
       ]
     }
-  ]
-}
-```
+    ```
 2. Set up these services in your Firebase project:
-  - App Check
-  - Authentication with the anonymous provider
-  - Firestore Database
-  - Functions
+   - App Check
+   - Authentication with the anonymous provider
+   - Firestore Database
+   - Functions
 3. Grant the `Cloud Datastore User` and `Service Account Token Creator` roles to the `App Engine default service account` principal in [Service accounts](https://console.cloud.google.com/iam-admin/serviceaccounts) under `App Engine default service account` > Permissions.
 4. Grant the `Cloud Functions Invoker` role to the `allUsers` principal in [Cloud Functions](https://console.cloud.google.com/functions/list) under `firebaseWebAuthnAPI` > Permissions.

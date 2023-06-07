@@ -1,0 +1,33 @@
+{
+  "name": "server",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/server/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "assets": [
+          {
+            "glob": "README.md",
+            "input": "libs/server",
+            "output": "."
+          }
+        ],
+        "main": "libs/server/src/index.ts",
+        "outputPath": "dist/libs/server",
+        "tsConfig": "libs/server/tsconfig.lib.json",
+        "updateBuildableProjectDepsInPackageJson": false
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/server/**/*.ts"]
+      }
+    }
+  },
+  "tags": []
+}

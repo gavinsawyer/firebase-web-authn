@@ -1,5 +1,5 @@
 {
-  "name": "@firebase-web-authn/extension",
+  "name": "@firebase-web-authn/server",
   "version": "9.5.0",
   "homepage": "https://firebase-web-authn.dev",
   "author": {
@@ -7,16 +7,19 @@
     "email": "g@vinsawyer.dev",
     "url": "https://gavinsawyer.dev"
   },
+  "type": "module",
+  "module": "./src/index.js",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/gavinsawyer/firebase-web-authn.git"
   },
+  "dependencies": {
+    "firebase-admin": "^11"
+  },
   "peerDependencies": {
-    "@firebase-web-authn/functions": "^9",
+    "@firebase-web-authn/types": "^9",
     "tslib": "^2"
   },
-  "private": false,
-  "main": "./functions/index.js",
-  "types": "./functions/index.d.ts"
+  "private": false
 }

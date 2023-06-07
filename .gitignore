@@ -4,6 +4,7 @@
 dist/apps
 dist/libs/browser
 dist/libs/functions
+dist/libs/server
 dist/libs/types
 tmp
 /out-tsc

@@ -1,45 +1,3 @@
-## @firebase-web-authn/extension
-A Firebase Extension for authentication with WebAuthn passkeys.
-
-This package conforms to the Firebase Extensions spec and is pending approval for the Extensions Hub.
-
-[![GitHub workflow status](https://img.shields.io/github/actions/workflow/status/gavinsawyer/firebase-web-authn/ci.yml)](https://github.com/gavinsawyer/firebase-web-authn/actions/workflows/ci.yml)
-[![FirebaseWebAuthn version](https://img.shields.io/npm/v/@firebase-web-authn/extension?logo=npm)](https://www.npmjs.com/package/@firebase-web-authn/extension)
-#### Demo: https://firebase-web-authn.dev
-### Installation
-To install using NPM, run the following commands from your project root:
-```
-% npm i @firebase-web-authn/extension --save-dev
-% firebase ext:install ./node_modules/@firebase-web-authn/extension
-```
-To install using the Extensions Hub instead, run:
-```
-% firebase ext:install gavinsawyer/firebase-web-authn@9.4.23-rc.0
-```
-Using NPM is recommended to receive updates to FirebaseWebAuthn alongside your other dependencies.
->### Additional setup:
-> 
->1. As of May 2023, [supported roles for Firebase Extensions](https://firebase.google.com/docs/extensions/publishers/access#supported-roles) do not include `iam.serviceAccounts.signBlob` which is needed for custom auth providers. 
->  - After deploying the extension, grant the `Service Account Token Creator` role to the extension's service account in [IAM](https://console.cloud.google.com/iam-admin/iam) under `Firebase Extensions firebase-web-authn service account` > Edit > Assign roles.
->  - If the service account isn't appearing, click `Grant Access` and enter its address as `ext-firebase-web-authn@${PROJECT_ID}.iam.gserviceaccount.com`
->2. The browser must reach FirebaseWebAuthn from the same domain as your website. Modify your `firebase.json` to include a rewrite on each app where you'd like to use passkeys:
-> 
->    ```json
->    {
->      "hosting": [
->        {
->          "target": "...",
->          "rewrites": [
->            {
->              "source": "/firebase-web-authn",
->              "function": "ext-firebase-web-authn-api"
->            }
->          ]
->        }
->      ]
->    }
->    ```
----
 ## Authenticate with WebAuthn
 
 **Author**: Gavin Sawyer (**[https://gavinsawyer.dev](https://gavinsawyer.dev)**)
@@ -55,21 +13,21 @@ Using NPM is recommended to receive updates to FirebaseWebAuthn alongside your o
    - If the service account isn't appearing, click `Grant Access` and enter its address as `ext-firebase-web-authn@${PROJECT_ID}.iam.gserviceaccount.com`
 2. The browser must reach FirebaseWebAuthn from the same domain as your website. Modify your `firebase.json` to include a rewrite on each app where you'd like to use passkeys:
 
-  ```json
-  {
-    "hosting": [
-      {
-        "target": "...",
-        "rewrites": [
-          {
-            "source": "/firebase-web-authn",
-            "function": "ext-firebase-web-authn-api"
-          }
-        ]
-      }
-    ]
-  }
-  ```
+    ```json
+    {
+      "hosting": [
+        {
+          "target": "...",
+          "rewrites": [
+            {
+              "source": "/firebase-web-authn",
+              "function": "ext-firebase-web-authn-api"
+            }
+          ]
+        }
+      ]
+    }
+    ```
 
 ### Configuration parameters
 

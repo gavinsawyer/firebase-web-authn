@@ -17,31 +17,29 @@ To install using NPM, run the following commands from your project root:
 ```
 To install using the Extensions Hub, run:
 ```
-% firebase ext:install gavinsawyer/firebase-web-authn@9.4.23-rc.0
+% firebase ext:install gavinsawyer/firebase-web-authn@9.5.0-rc.0
 ```
-Using NPM is recommended to receive updates to FirebaseWebAuthn alongside your other dependencies.
->### Additional setup:
->
->1. As of May 2023, [supported roles for Firebase Extensions](https://firebase.google.com/docs/extensions/publishers/access#supported-roles) do not include `iam.serviceAccounts.signBlob` which is needed for custom auth providers.
->  - After deploying the extension, grant the `Service Account Token Creator` role to the extension's service account in [IAM](https://console.cloud.google.com/iam-admin/iam) under `Firebase Extensions firebase-web-authn service account` > Edit > Assign roles.
->  - If the service account isn't appearing, click `Grant Access` and enter its address as `ext-firebase-web-authn@${PROJECT_ID}.iam.gserviceaccount.com`
->2. The browser must reach FirebaseWebAuthn from the same domain as your website. Modify your `firebase.json` to include a rewrite on each app where you'd like to use passkeys:
->
->    ```json
->    {
->      "hosting": [
->        {
->          "target": "...",
->          "rewrites": [
->            {
->              "source": "/firebase-web-authn",
->              "function": "ext-firebase-web-authn-api"
->            }
->          ]
->        }
->      ]
->    }
->    ```
+Using NPM is recommended to receive updates to the extension alongside other FirebaseWebAuthn dependencies.
+### Additional setup:
+1. As of May 2023, [supported roles for Firebase Extensions](https://firebase.google.com/docs/extensions/publishers/access#supported-roles) do not include `iam.serviceAccounts.signBlob` which is needed for custom auth providers.
+   - After deploying the extension, grant the `Service Account Token Creator` role to the extension's service account in [IAM](https://console.cloud.google.com/iam-admin/iam) under `Firebase Extensions firebase-web-authn service account` > Edit > Assign roles.
+   - If the service account isn't appearing, click `Grant Access` and enter its address as `ext-firebase-web-authn@${PROJECT_ID}.iam.gserviceaccount.com`
+2. The browser must reach FirebaseWebAuthn from the same domain as your website. Modify your `firebase.json` to include a rewrite on each app where you'd like to use passkeys:
+    ```json
+    {
+      "hosting": [
+        {
+          "target": "...",
+          "rewrites": [
+            {
+              "source": "/firebase-web-authn",
+              "function": "ext-firebase-web-authn-api"
+            }
+          ]
+        }
+      ]
+    }
+    ```
 ## [@firebase-web-authn/browser](libs/browser)
 This package contains five tree-shakeable async methods for using FirebaseWebAuthn in components and a strongly-typed error object.
 
@@ -97,103 +95,39 @@ class FirebaseWebAuthnError extends Error {
 }
 ```
 ### Caveats
+- If you are using biometrics to confirm an action happening server-side, use the `lastPresent` and `lastVerified` methods from [@firebase-web-authn/server](libs/server).
 - The `webAuthnUsers` collection should not have read or write access from users. Your app should use a separate `users`/`profiles` document.
-- Your backend security logic should depend on the `lastPresent` and `lastVerified` fields in the user's document which is updated automatically on successful operations.
-  - `WebAuthnUserDocument` is exported from [@firebase-web-authn/types](libs/types).
-  - See [User Presence vs User Verification](https://developers.yubico.com/WebAuthn/WebAuthn_Developer_Guide/User_Presence_vs_User_Verification.html).
 - The `name` parameter is not automatically stored anywhere except in the passkey. Changes made to this value in a passkey manager are not detectable by the app.
   - If FirebaseWebAuthn is configured as an MFA provider, pass the existing identifier.
   - If FirebaseWebAuthn is your only auth provider, you can pass any recognizable value. If you expect users to have multiple usernameless accounts, `name` can be a user-generated account name ("Personal"/"Work"/etc.). With generic `name` values consider passing something like "${FIRST_NAME} | Personal" for users who share a device with others.
 - An anonymous user linked with a passkey is the same as a user created with `createUserWithPasskey`, and appears in Firebase as having no identifier and no provider. Users created this way are not deleted after 30 days with auto clean-up.
 - When using `createUserWithPasskey`, you will find that no `onAuthStateChanged` callback fires when converting an anonymous account to a providerless account. Your callback should be passed to `onIdTokenChanged` instead.
-## [@firebase-web-authn/functions](libs/functions)
-This package contains a Firebase Function that registers and authenticates WebAuthn passkeys, manages public key credentials in Firestore, and cleans up data if the user cancels the process or unlinks a passkey.
+## [@firebase-web-authn/server](libs/server)
+This package contains four tree-shakeable async methods for using FirebaseWebAuthn in a secure context.
 
-[![FirebaseWebAuthn version](https://img.shields.io/npm/v/@firebase-web-authn/functions?logo=npm)](https://www.npmjs.com/package/@firebase-web-authn/functions)
-[![Firebase-Functions version](https://img.shields.io/npm/dependency-version/@firebase-web-authn/functions/firebase-functions?logo=firebase)](https://www.npmjs.com/package/firebase-functions)
-### Firebase Extension deployment
-See [@firebase-web-authn/extension](https://github.com/gavinsawyer/firebase-web-authn/tree/main/libs/extension) for installation instructions using `firebase ext:install`.
-### Custom deployment
-If you would rather deploy FirebaseWebAuthn from your existing Firebase Functions package,
-1. Run:
-
-`% npm install @firebase-web-authn/functions --save-dev`
-
-2. Export the API from your Firebase Functions package's `main` file by calling `getFirebaseWebAuthnApi` with a config object.
+[![FirebaseWebAuthn version](https://img.shields.io/npm/v/@firebase-web-authn/server?logo=npm)](https://www.npmjs.com/package/@firebase-web-authn/server)
+[![FirebaseAdmin version](https://img.shields.io/npm/dependency-version/@firebase-web-authn/server/firebase-admin?logo=firebase)](https://www.npmjs.com/package/firebase-admin)
+#### Demo: https://firebase-web-authn.dev
+### Methods
 ```ts
-import { initializeApp }          from "firebase-admin/app";
-import { HttpsFunction }          from "firebase-functions";
-import { getFirebaseWebAuthnApi } from "@firebase-web-authn/functions";
-
-
+  backupEligible: (uid: string, app?: App) => Promise<boolean | null>;
+backupSuccessful: (uid: string, app?: App) => Promise<boolean | null>;
+     lastPresent: (uid: string, app?: App) => Promise<Timestamp | null>;
+    lastVerified: (uid: string, app?: App) => Promise<Timestamp | null>;
+```
+Designed to be used within Firebase Functions or another secure context with access to Firestore to check users' status with FirebaseWebAuthn:
+```ts
+import { getApps, initializeApp } from "firebase-admin/app";
+import { lastVerified }           from "@firebase-web-authn/server";
+```
+```ts
 getApps().length === 0 && initializeApp();
 
-export const firebaseWebAuthnAPI: HttpsFunction = getFirebaseWebAuthnApi({...});
-
-// Other functions...
+// If the user was verified within the past 30 seconds, proceed. Otherwise, ask for reverification:
+(await lastVerified(uid)).seconds > (Date.now() / 1000) - 30 ?
+  proceed() :
+  askForReverification();
 ```
-```ts
-interface FirebaseWebAuthnConfig {
-  authenticatorAttachment: AuthenticatorAttachment,          // Preferred authenticator attachment modality. "cross-platform" allows security keys. "platform" allows passkey managers.
-  relyingPartyName: string,                                  // Your app's display name in the passkey popup on some browsers.
-  userVerificationRequirement?: UserVerificationRequirement, // Your app's user verification requirement. "preferred" is default.
-}
-```
-3. Deploy your Firebase Functions:
-
-`% firebase deploy --only functions`
-### Additional setup
-1. The browser must reach FirebaseWebAuthn from the same domain as your website. Modify your `firebase.json` to include a rewrite on each app where you'd like to use passkeys:
-```json
-{
-  "hosting": [
-    {
-      "target": "...",
-      "rewrites": [
-        {
-          "source": "/firebase-web-authn-api",
-          "function": "firebaseWebAuthnAPI"
-        }
-      ]
-    }
-  ]
-}
-```
-2. Set up these services in your Firebase project:
-- App Check
-- Authentication with the anonymous provider
-- Firestore Database
-- Functions
-3. Grant the `Cloud Datastore User` and `Service Account Token Creator` roles to the `App Engine default service account` principal in [Service accounts](https://console.cloud.google.com/iam-admin/serviceaccounts) under `App Engine default service account` > Permissions.
-4. Grant the `Cloud Functions Invoker` role to the `allUsers` principal in [Cloud Functions](https://console.cloud.google.com/functions/list) under `firebaseWebAuthnAPI` > Permissions.
-## [@firebase-web-authn/types](libs/types)
-This package contains types and interfaces used internally by FirebaseWebAuthn and for implementing it in a secure context.
-
-[![FirebaseWebAuthn version](https://img.shields.io/npm/v/@firebase-web-authn/types?logo=npm)](https://www.npmjs.com/package/@firebase-web-authn/types)
-#### WebAuthnUserCredential
-Information about the public key credential associated with the user
-```ts
-import { WebAuthnUserCredential } from "@firebase-web-authn/types";
-```
-```ts
-interface WebAuthnUserCredential {
-  "backupEligible": boolean,   // Whether the private key is eligible to be backed up.
-  "backupSuccessful": boolean, // Whether the private key has been backed up successfully.
-  "counter": number,           // Updated automatically by some browsers to help prevent replay attacks.
-  "id": Uint8Array,            // ID associated with the credential.
-  "publicKey": Uint8Array,     // Public key associated with the credential.
-}
-```
-#### WebAuthnUserDocument
-Document in the `webAuthnUsers` collection. This should not have read or write access from users.
-```ts
-import { WebAuthnUserDocument } from "@firebase-web-authn/types";
-```
-```ts
-interface WebAuthnUserDocument {
-  "challenge"?: string,                  // Only present between operations and cleaned up if the user cancels.
-  "credential"?: WebAuthnUserCredential, // Information about the public key credential associated with the user.
-  "lastPresent"?: Timestamp,             // Automatically updated on successful operations.
-  "lastVerified"?: Timestamp,            // Automatically updated on successful operations that verified the user with biometrics.
-}
-```
+## Other packages
+- [@firebase-web-authn/functions](libs/functions): This package contains a Firebase Function that registers and authenticates WebAuthn passkeys, manages public key credentials in Firestore, and cleans up data if the user cancels the process or unlinks a passkey.
+- [@firebase-web-authn/types](libs/types): This package contains types and interfaces used internally by FirebaseWebAuthn and for implementing it in a secure context.

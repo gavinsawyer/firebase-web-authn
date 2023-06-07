@@ -64,11 +64,8 @@ class FirebaseWebAuthnError extends Error {
 ```
 
 #### Caveats
-
+- If you are using biometrics to confirm an action happening server-side, use the `lastPresent` and `lastVerified` methods from [@firebase-web-authn/server](https://github.com/gavinsawyer/firebase-web-authn/tree/main/libs/server).
 - The `webAuthnUsers` collection should not have read or write access from users. Your app should use a separate `users`/`profiles` document.
-- Your backend security logic should depend on the `lastPresent` and `lastVerified` fields in the user's document which is updated automatically on sign-in or verification.
-  - `WebAuthnUserDocument` is exported from [@firebase-web-authn/types](https://github.com/gavinsawyer/firebase-web-authn/tree/main/libs/types).
-  - See [User Presence vs User Verification](https://developers.yubico.com/WebAuthn/WebAuthn_Developer_Guide/User_Presence_vs_User_Verification.html).
 - The `name` parameter is not automatically stored anywhere except in the passkey. Changes made to this value in a passkey manager are not detectable by the app.
   - If FirebaseWebAuthn is configured as an MFA provider, pass the existing identifier.
   - If FirebaseWebAuthn is your only auth provider, you can pass any recognizable value. If you expect users to have multiple usernameless accounts, `name` can be a user-generated account name ("Personal"/"Work"/etc.). With generic `name` values consider passing something like "${FIRST_NAME} | Personal" for users who share a device with others.

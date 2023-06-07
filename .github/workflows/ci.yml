@@ -6,6 +6,11 @@ on:
       - main
   pull_request:
 
+env:
+  APP_CHECK_TOKEN_WEBSITE: ${{ secrets.APP_CHECK_TOKEN_WEBSITE }}
+  NPM_ACCESS_TOKEN:        ${{ secrets.NPM_ACCESS_TOKEN }}
+  NX_CLOUD_ACCESS_TOKEN:   ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -28,26 +33,15 @@ jobs:
           token_format:     access_token
       - run: npx nx run-many --target deploy --all
         env:
-          APP_CHECK_TOKEN_WEBSITE: ${{ secrets.APP_CHECK_TOKEN_WEBSITE }}
-          FIREBASE_TOKEN:          ${{ steps.auth.outputs.access_token }}
-          NX_CLOUD_ACCESS_TOKEN:   ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
+          FIREBASE_TOKEN: ${{ steps.auth.outputs.access_token }}
       - run: npx nx run-many --target build --all
-        env:
-          APP_CHECK_TOKEN_WEBSITE: ${{ secrets.APP_CHECK_TOKEN_WEBSITE }}
-          NX_CLOUD_ACCESS_TOKEN:   ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
-      - run: npm publish dist/libs/types
-        env:
-          NPM_ACCESS_TOKEN: ${{ secrets.NPM_ACCESS_TOKEN }}
+      - run:               npm publish dist/libs/types
         continue-on-error: true
-      - run: npm publish dist/libs/browser
-        env:
-          NPM_ACCESS_TOKEN: ${{ secrets.NPM_ACCESS_TOKEN }}
-        continue-on-error:  true
-      - run: npm publish dist/libs/functions
-        env:
-          NPM_ACCESS_TOKEN: ${{ secrets.NPM_ACCESS_TOKEN }}
-        continue-on-error:  true
-      - run: npm publish dist/libs/extension
-        env:
-          NPM_ACCESS_TOKEN: ${{ secrets.NPM_ACCESS_TOKEN }}
-        continue-on-error:  true
+      - run:               npm publish dist/libs/browser
+        continue-on-error: true
+      - run:               npm publish dist/libs/functions
+        continue-on-error: true
+      - run:               npm publish dist/libs/server --access public
+        continue-on-error: true
+      - run:               npm publish dist/libs/extension
+        continue-on-error: true

@@ -2,6 +2,7 @@ import { FunctionRequest, FunctionResponse, WebAuthnUserDocument }              
 import { generateAuthenticationOptions, generateRegistrationOptions, VerifiedAuthenticationResponse, VerifiedRegistrationResponse, verifyAuthenticationResponse, verifyRegistrationResponse } from "@simplewebauthn/server";
 import { PublicKeyCredentialCreationOptionsJSON, PublicKeyCredentialRequestOptionsJSON }                                                                                                      from "@simplewebauthn/typescript-types";
 import { FirebaseError }                                                                                                                                                                      from "firebase-admin";
+import { App }                                                                                                                                                                                from "firebase-admin/app";
 import { Auth, getAuth }                                                                                                                                                                      from "firebase-admin/auth";
 import { DocumentReference, DocumentSnapshot, FieldValue, Firestore, getFirestore, Timestamp }                                                                                                from "firebase-admin/firestore";
 import { HttpsFunction, runWith }                                                                                                                                                             from "firebase-functions";
@@ -10,9 +11,10 @@ import { FirebaseWebAuthnConfig }                                               
 
 /**
  * @param firebaseWebAuthnConfig - Configuration for your WebAuthn Cloud Function.
+ * @param app - An optional {@link App} to use with Firebase Auth and Firestore.
  * @returns An {@link HttpsFunction} which will need to be exported from your Firebase Functions package index.
  */
-export const getFirebaseWebAuthnApi: (firebaseWebAuthnConfig: FirebaseWebAuthnConfig) => HttpsFunction = (firebaseWebAuthnConfig: FirebaseWebAuthnConfig): HttpsFunction => runWith({
+export const getFirebaseWebAuthnApi: (firebaseWebAuthnConfig: FirebaseWebAuthnConfig, app?: App) => HttpsFunction = (firebaseWebAuthnConfig: FirebaseWebAuthnConfig, app?: App): HttpsFunction => runWith({
   enforceAppCheck: true,
   ingressSettings: "ALLOW_ALL",
 })
@@ -400,7 +402,7 @@ export const getFirebaseWebAuthnApi: (firebaseWebAuthnConfig: FirebaseWebAuthnCo
     success: false,
   })) : ((): never => {
     throw new Error("Invalid function request type.");
-  })())(getAuth(), getFirestore()) : {
+  })())(app ? getAuth(app) : getAuth(), app ? getFirestore(app) : getFirestore()) : {
     code: "missing-auth",
     message: "No user is signed in.",
     operation: functionRequest.operation,
