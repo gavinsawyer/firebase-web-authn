@@ -5,7 +5,7 @@ This package contains four tree-shakeable async methods for using FirebaseWebAut
 
 [![GitHub workflow status](https://img.shields.io/github/actions/workflow/status/gavinsawyer/firebase-web-authn/ci.yml)](https://github.com/gavinsawyer/firebase-web-authn/actions/workflows/ci.yml)
 [![FirebaseWebAuthn version](https://img.shields.io/npm/v/@firebase-web-authn/server?logo=npm)](https://www.npmjs.com/package/@firebase-web-authn/server)
-[![FirebaseAdmin version](https://img.shields.io/npm/dependency-version/@firebase-web-authn/server/firebase-admin?logo=firebase)](https://www.npmjs.com/package/firebase-admin)
+[![Firebase Admin SDK version](https://img.shields.io/npm/dependency-version/@firebase-web-authn/server/firebase-admin?label=Firebase%20Admin%20SDK&logo=firebase)](https://www.npmjs.com/package/firebase-admin)
 #### Demo: https://firebase-web-authn.dev
 ### Methods
 ```ts
@@ -20,11 +20,10 @@ import { getApps, initializeApp } from "firebase-admin/app";
 import { lastVerified }           from "@firebase-web-authn/server";
 ```
 ```ts
-getApps()
-  .length === 0 && initializeApp();
+getApps().length === 0 && initializeApp();
 
 // If the user was verified within the past 30 seconds, proceed. Otherwise, ask for reverification:
-(await lastVerified(user.uid)).seconds > (Date.now() / 1000) - 30 ?
+(await lastVerified(user.uid))?.seconds > (Date.now() / 1000) - 30 ?
   proceed() :
   askForReverification();
 ```

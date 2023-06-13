@@ -1,8 +1,79 @@
-Use this extension and the associated [browser library](https://github.com/gavinsawyer/firebase-web-authn/tree/main/libs/browser) to create and sign in users with passkeys, link and unlink existing users to passkeys, and prompt signed-in users with a biometric verification request.
+#### [Full Docs](https://github.com/gavinsawyer/firebase-web-authn)
+
+Use this extension and the [browser library](https://github.com/gavinsawyer/firebase-web-authn#firebase-web-authnbrowser) to create and sign in users with passkeys, link and unlink existing users to passkeys, and prompt signed-in users with a biometric verification request:
+
+#### Methods
+
+```ts
+createUserWithPasskey: (auth: Auth, functions: Functions, name: string) => Promise<UserCredential>;
+    signInWithPasskey: (auth: Auth, functions: Functions)               => Promise<UserCredential>;
+      linkWithPasskey: (auth: Auth, functions: Functions, name: string) => Promise<UserCredential>;
+        unlinkPasskey: (auth: Auth, functions: Functions)               => Promise<void>;
+verifyUserWithPasskey: (auth: Auth, functions: Functions)               => Promise<void>;
+```
+
+Designed to be used like the Firebase JavaScript SDK:
+
+```ts
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { createUserWithPasskey }          from "@firebase-web-authn/browser";
+```
+
+```ts
+class SignUpComponent {
+
+  constructor(
+    private readonly auth: Auth,
+    private readonly functions: Functions,
+  ) {
+    // Firebase JavaScript SDK usage
+    this
+      .createUserWithEmailAndPassword = (email: string, password: string) => createUserWithEmailAndPassword(auth, email, password)
+      .then(() => void(0));
+
+    // FirebaseWebAuthn usage
+    this
+      .createUserWithPasskey = (name: string) => createUserWithPasskey(auth, functions, name)
+      .then(() => void(0));
+
+  }
+
+  public readonly createUserWithEmailAndPassword: (email: string, password: string) => Promise<void>;
+  public readonly createUserWithPasskey: (name: string) => Promise<void>;
+
+}
+```
+
+Use the [server library](https://github.com/gavinsawyer/firebase-web-authn#firebase-web-authnserver) to confirm important actions happening server-side:
+
+#### Methods
+
+```ts
+  backupEligible: (uid: string, app?: App) => Promise<boolean | null>;
+backupSuccessful: (uid: string, app?: App) => Promise<boolean | null>;
+     lastPresent: (uid: string, app?: App) => Promise<Timestamp | null>;
+    lastVerified: (uid: string, app?: App) => Promise<Timestamp | null>;
+```
+
+Designed to be used within Firebase Functions or another secure context with access to Firestore to check users' status with FirebaseWebAuthn:
+
+```ts
+import { getApps, initializeApp } from "firebase-admin/app";
+import { lastVerified }           from "@firebase-web-authn/server";
+```
+
+```ts
+getApps().length === 0 && initializeApp();
+
+// If the user was verified within the past 30 seconds, proceed. Otherwise, ask for reverification:
+(await lastVerified(user.uid))?.seconds > (Date.now() / 1000) - 30 ?
+  proceed() :
+  askForReverification();
+```
 
 ### Additional Setup
 
-1. As of May 2023, [supported roles for Firebase Extensions](https://firebase.google.com/docs/extensions/publishers/access#supported-roles) do not include `iam.serviceAccounts.signBlob` which is needed for custom auth providers.
+1. As of June 2023, [supported roles for Firebase Extensions](https://firebase.google.com/docs/extensions/publishers/access#supported-roles) do not include `iam.serviceAccounts.signBlob` which is needed for custom auth providers.
    - After deploying the extension, grant the `Service Account Token Creator` role to the extension's service account in [IAM](https://console.cloud.google.com/iam-admin/iam) under `Firebase Extensions firebase-web-authn service account` > Edit > Assign roles.
    - If the service account isn't appearing, click `Grant Access` and enter its address as `ext-firebase-web-authn@${PROJECT_ID}.iam.gserviceaccount.com`
 2. The browser must reach FirebaseWebAuthn from the same domain as your website. Modify your `firebase.json` to include a rewrite on each app where you'd like to use passkeys:

@@ -3,12 +3,10 @@ A Firebase Extension for authentication with WebAuthn passkeys.
 
 This package contains a Firebase Function that registers and authenticates WebAuthn passkeys, manages public key credentials in Firestore, and cleans up data if the user cancels the process or unlinks a passkey.
 
-[![GitHub workflow status](https://img.shields.io/github/actions/workflow/status/gavinsawyer/firebase-web-authn/ci.yml)](https://github.com/gavinsawyer/firebase-web-authn/actions/workflows/ci.yml)
 [![FirebaseWebAuthn version](https://img.shields.io/npm/v/@firebase-web-authn/functions?logo=npm)](https://www.npmjs.com/package/@firebase-web-authn/functions)
-[![FirebaseFunctions version](https://img.shields.io/npm/dependency-version/@firebase-web-authn/functions/firebase-functions?logo=firebase)](https://www.npmjs.com/package/firebase-functions)
-#### Demo: https://firebase-web-authn.dev
+[![Firebase SDK for Cloud Functions version](https://img.shields.io/npm/dependency-version/@firebase-web-authn/functions/firebase-functions?label=Firebase%20SDK%20for%20Cloud%20Functions&logo=firebase)](https://www.npmjs.com/package/firebase-functions)
 ### Firebase Extension deployment
-See [@firebase-web-authn/extension](https://github.com/gavinsawyer/firebase-web-authn/tree/main/libs/extension) for installation instructions using `firebase ext:install`.
+See [@firebase-web-authn/extension](https://github.com/gavinsawyer/firebase-web-authn#firebase-web-authnextension) for simplified installation using `firebase ext:install`.
 ### Custom deployment
 If you would rather deploy FirebaseWebAuthn from your existing Firebase Functions package,
 1. Run:

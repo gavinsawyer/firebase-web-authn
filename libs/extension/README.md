@@ -1,14 +1,25 @@
-## Authenticate with WebAuthn
+## @firebase-web-authn/extension
+A Firebase Extension for authentication with WebAuthn passkeys.
 
-**Author**: Gavin Sawyer (**[https://gavinsawyer.dev](https://gavinsawyer.dev)**)
+This package conforms to the Firebase Extensions spec and is available from either NPM or the Extensions Hub.
 
-**Description**: Adds support for biometrics as a primary or multi-factor auth provider using WebAuthn passkeys.
-
-**Details**: Use this extension and the associated [browser library](https://github.com/gavinsawyer/firebase-web-authn/tree/main/libs/browser) to create and sign in users with passkeys, link and unlink existing users to passkeys, and prompt signed-in users with a biometric verification request.
-
-### Additional setup
-
-1. As of May 2023, [supported roles for Firebase Extensions](https://firebase.google.com/docs/extensions/publishers/access#supported-roles) do not include `iam.serviceAccounts.signBlob` which is needed for custom auth providers.
+[![GitHub workflow status](https://img.shields.io/github/actions/workflow/status/gavinsawyer/firebase-web-authn/ci.yml)](https://github.com/gavinsawyer/firebase-web-authn/actions/workflows/ci.yml)
+[![Latest version in NPM](https://img.shields.io/npm/v/@firebase-web-authn/extension?logo=npm)](https://www.npmjs.com/package/@firebase-web-authn/extension)
+[![Install](https://img.shields.io/static/v1?label=&message=Install%20in%20Firebase%20console&logo=firebase&color=blue)](https://console.firebase.google.com/u/0/project/_/extensions/install?ref=gavinsawyer%2Ffirebase-web-authn)
+#### Demo: https://firebase-web-authn.dev
+### Installation
+To install from NPM, run the following commands in your project root:
+```
+% npm i @firebase-web-authn/extension --save-dev
+% firebase ext:install ./node_modules/@firebase-web-authn/extension
+```
+To install from the Extensions Hub, [use the Firebase console](https://console.firebase.google.com/u/0/project/_/extensions/install?ref=gavinsawyer%2Ffirebase-web-authn) or run the following commands in your project root:
+```
+% firebase ext:install gavinsawyer/firebase-web-authn
+```
+Using NPM is recommended to receive updates to the extension alongside other FirebaseWebAuthn dependencies.
+### Additional setup:
+1. As of June 2023, [supported roles for Firebase Extensions](https://firebase.google.com/docs/extensions/publishers/access#supported-roles) do not include `iam.serviceAccounts.signBlob` which is needed for custom auth providers.
    - After deploying the extension, grant the `Service Account Token Creator` role to the extension's service account in [IAM](https://console.cloud.google.com/iam-admin/iam) under `Firebase Extensions firebase-web-authn service account` > Edit > Assign roles.
    - If the service account isn't appearing, click `Grant Access` and enter its address as `ext-firebase-web-authn@${PROJECT_ID}.iam.gserviceaccount.com`
 2. The browser must reach FirebaseWebAuthn from the same domain as your website. Modify your `firebase.json` to include a rewrite on each app where you'd like to use passkeys:
@@ -28,16 +39,3 @@
       ]
     }
     ```
-
-### Configuration parameters
-
-- Cloud Functions location: Where do you want to deploy the functions created for this extension? You usually want a location close to your database. For help selecting a location, refer to the [location selection guide](https://firebase.google.com/docs/functions/locations).
-- Authenticator attachment: What [authenticator attachment](https://www.w3.org/TR/webauthn-2/#enum-attachment) modality would you like to use with WebAuthn? "cross-platform" allows security keys. "platform" allows passkey managers.
-- Relying party name: What relying party name would you like to use with WebAuthn? This appears in the passkey window in some browsers in place of your domain name.
-- User verification requirement: What [user verification requirement](https://www.w3.org/TR/webauthn/#enumdef-userverificationrequirement) would you like to use with WebAuthn? See [User Presence vs. User Verification](https://developers.yubico.com/WebAuthn/WebAuthn_Developer_Guide/User_Presence_vs_User_Verification.html).
-
-### Billing
-
-To install an extension, your project must be on the Blaze (pay as you go) plan. This extension uses other Firebase and Google Cloud Platform services, which have associated charges if you exceed the service’s no-cost tier:
-- Firestore Database
-- Functions (Node.js 18 runtime)
