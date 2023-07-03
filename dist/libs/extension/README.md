@@ -31,7 +31,7 @@ Using NPM is recommended to receive updates to the extension alongside other Fir
           "target": "...",
           "rewrites": [
             {
-              "source": "/firebase-web-authn",
+              "source": "/firebase-web-authn-api",
               "function": "ext-firebase-web-authn-api"
             }
           ]
