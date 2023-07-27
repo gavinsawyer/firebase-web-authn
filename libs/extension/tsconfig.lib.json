@@ -8,7 +8,7 @@
   "files": [],
   "include": [
     "functions/**/*.ts",
-    "functions/index.ts"
+    "functions/main.ts"
   ],
   "exclude": [
     "jest.config.ts",

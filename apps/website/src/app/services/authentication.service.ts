@@ -19,7 +19,7 @@ export class AuthenticationService {
     private readonly auth: Auth,
   ) {
     this
-      .user = isPlatformBrowser(platformId) ? toSignal<User | null>(new Observable<User | null>((userObserver: Observer<User | null>): TeardownLogic => onIdTokenChanged(auth, (user: User | null) => userObserver.next(user))).pipe<User | null, User | null, User | null>(
+      .user = isPlatformBrowser(platformId) ? toSignal<User | null>(new Observable<User | null>((userObserver: Observer<User | null>): TeardownLogic => onIdTokenChanged(auth, (user: User | null): void => userObserver.next(user))).pipe<User | null, User | null, User | null>(
         tap<User | null>(async (user: User | null): Promise<void> => user === null ? signInAnonymously(auth).then<void>((): void => void (0)).catch<void>((reason: any): void => console.error(reason)) : void(0)),
         startWith<User | null>(auth.currentUser),
         takeUntilDestroyed<User | null>(),

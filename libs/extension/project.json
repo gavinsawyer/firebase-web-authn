@@ -5,8 +5,7 @@
   "projectType": "library",
   "targets": {
     "build": {
-      "executor": "@nrwl/js:tsc",
-      "outputs": ["{options.outputPath}"],
+      "executor": "@nx/js:tsc",
       "options": {
         "assets": [
           {
@@ -48,16 +47,31 @@
         "main": "libs/extension/functions/index.ts",
         "outputPath": "dist/libs/extension",
         "rootDir": "libs/extension",
-        "tsConfig": "libs/extension/tsconfig.lib.json",
-        "updateBuildableProjectDepsInPackageJson": false
+        "tsConfig": "libs/extension/tsconfig.lib.json"
+      },
+      "outputs": [
+        "{options.outputPath}"
+      ]
+    },
+    "deploy": {
+      "dependsOn": [
+        "build"
+      ],
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "firebase deploy --only extensions"
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
-      "outputs": ["{options.outputFile}"],
+      "executor": "@nx/linter:eslint",
       "options": {
-        "lintFilePatterns": ["libs/website-functions/**/*.ts"]
-      }
+        "lintFilePatterns": [
+          "libs/extension/**/*.ts"
+        ]
+      },
+      "outputs": [
+        "{options.outputFile}"
+      ]
     }
   },
   "tags": []

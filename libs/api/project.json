@@ -1,7 +1,7 @@
 {
-  "name": "browser",
+  "name": "api",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/browser/src",
+  "sourceRoot": "libs/api/src",
   "projectType": "library",
   "targets": {
     "build": {
@@ -10,13 +10,13 @@
         "assets": [
           {
             "glob": "README.md",
-            "input": "libs/browser",
+            "input": "libs/api",
             "output": "."
           }
         ],
-        "main": "libs/browser/src/index.ts",
-        "outputPath": "dist/libs/browser",
-        "tsConfig": "libs/browser/tsconfig.lib.json"
+        "main": "libs/api/src/index.ts",
+        "outputPath": "dist/libs/api",
+        "tsConfig": "libs/api/tsconfig.lib.json"
       },
       "outputs": [
         "{options.outputPath}"
@@ -26,7 +26,7 @@
       "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": [
-          "libs/browser/**/*.ts"
+          "libs/api/**/*.ts"
         ]
       },
       "outputs": [

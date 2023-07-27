@@ -1,47 +1,23 @@
-# See http://help.github.com/ignore-files/ for more about ignoring files.
-
-# compiled output
-dist/apps
-dist/libs/browser
-dist/libs/functions
-dist/libs/server
-dist/libs/types
-tmp
-/out-tsc
-
-# dependencies
-node_modules
-
-# IDEs and editors
-/.idea
-.project
-.classpath
-.c9/
-*.launch
-.settings/
-*.sublime-workspace
-
-# misc
-/.sass-cache
-/connect.lock
-/coverage
-/libpeerconnection.log
-npm-debug.log
-yarn-error.log
-testem.log
-/typings
-
-# System Files
-.DS_Store
-Thumbs.db
-
-.angular
-
-# Firebase
-.firebase
+# System files
 *-debug.log
+.DS_Store
+.angular
+.idea
+node_modules
+tmp
+
+# Sensitive Firebase files
+.firebase
 .runtimeconfig.json
 gha-creds-*.json
 
+# Version side-effect files
 apps/*/src/git-info.ts
 apps/*/src/package-version.ts
+
+# Compiled output
+dist/apps
+dist/libs/api
+dist/libs/browser
+dist/libs/server
+dist/libs/types

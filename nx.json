@@ -1,31 +1,11 @@
 {
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
-  "npmScope": "firebase-web-authn",
   "affected": {
     "defaultBase": "main"
   },
-  "tasksRunnerOptions": {
-    "default": {
-      "runner": "@nrwl/nx-cloud",
-      "options": {
-        "cacheableOperations": ["browser", "server", "build"],
-        "accessToken": "${NX_CLOUD_ACCESS_TOKEN}"
-      }
-    }
-  },
-  "targetDefaults": {
-    "browser": {
-      "dependsOn": ["^browser"]
-    },
-    "server": {
-      "dependsOn": ["^server"]
-    },
-    "build": {
-      "dependsOn": ["^build"]
-    }
-  },
+  "defaultProject": "website",
   "generators": {
-    "@nrwl/angular:application": {
+    "@nx/angular:application": {
       "style": "sass",
       "linter": "eslint",
       "unitTestRunner": "none",
@@ -34,26 +14,59 @@
       "skipTests": true,
       "standalone": true
     },
-    "@nrwl/angular:library": {
-      "linter": "eslint",
-      "unitTestRunner": "none",
-      "skipModule": true
-    },
-    "@nrwl/angular:component": {
+    "@nx/angular:component": {
       "style": "sass",
       "displayBlock": true,
       "export": true,
       "skipTests": true,
       "standalone": true
     },
-    "@nrwl/js:library": {
+    "@nx/angular:library": {
+      "linter": "eslint",
+      "unitTestRunner": "none",
+      "skipModule": true
+    },
+    "@nx/js:library": {
       "unitTestRunner": "none"
     }
   },
-  "defaultProject": "website",
   "namedInputs": {
-    "default": ["{projectRoot}/**/*", "sharedGlobals"],
-    "production": ["default", "!{projectRoot}/.eslintrc.json"],
+    "default": [
+      "{projectRoot}/**/*",
+      "sharedGlobals"
+    ],
+    "production": [
+      "default",
+      "!{projectRoot}/.eslintrc.json"
+    ],
     "sharedGlobals": []
+  },
+  "npmScope": "firebase-web-authn",
+  "targetDefaults": {
+    "build": {
+      "dependsOn": ["^build"],
+      "inputs": ["production", "^production"]
+    },
+    "lint": {
+      "inputs": [
+        "default",
+        "{workspaceRoot}/.eslintrc.json",
+        "{workspaceRoot}/.eslintignore"
+      ]
+    }
+  },
+  "tasksRunnerOptions": {
+    "default": {
+      "options": {
+        "accessToken": "${NX_CLOUD_ACCESS_TOKEN}",
+        "cacheableOperations": [
+          "browser",
+          "server",
+          "build",
+          "lint"
+        ]
+      },
+      "runner": "nx-cloud"
+    }
   }
 }

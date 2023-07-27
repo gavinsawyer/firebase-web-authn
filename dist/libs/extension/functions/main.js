@@ -5,4 +5,4 @@ const app_1 = require("firebase-admin/app");
 (0, app_1.getApps)()
     .length === 0 && (0, app_1.initializeApp)();
 tslib_1.__exportStar(require("./lib/api"), exports);
-//# sourceMappingURL=index.js.map
+//# sourceMappingURL=main.js.map

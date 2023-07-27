@@ -1,30 +1,30 @@
-## @firebase-web-authn/functions
+## @firebase-web-authn/api
 A Firebase Extension for authentication with WebAuthn passkeys.
 
 This package contains a Firebase Function that registers and authenticates WebAuthn passkeys, manages public key credentials in Firestore, and cleans up data if the user cancels the process or unlinks a passkey.
 
-[![FirebaseWebAuthn version](https://img.shields.io/npm/v/@firebase-web-authn/functions?logo=npm)](https://www.npmjs.com/package/@firebase-web-authn/functions)
-[![Firebase SDK for Cloud Functions version](https://img.shields.io/npm/dependency-version/@firebase-web-authn/functions/firebase-functions?label=Firebase%20SDK%20for%20Cloud%20Functions&logo=firebase)](https://www.npmjs.com/package/firebase-functions)
+[![FirebaseWebAuthn version](https://img.shields.io/npm/v/@firebase-web-authn/api?logo=npm)](https://www.npmjs.com/package/@firebase-web-authn/api)
+[![Firebase SDK for Cloud Functions version](https://img.shields.io/npm/dependency-version/@firebase-web-authn/api/firebase-functions?label=Firebase%20SDK%20for%20Cloud%20Functions&logo=firebase)](https://www.npmjs.com/package/firebase-functions)
 ### Firebase Extension deployment
 See [@firebase-web-authn/extension](https://github.com/gavinsawyer/firebase-web-authn#firebase-web-authnextension) for simplified installation using `firebase ext:install`.
 ### Custom deployment
-If you would rather deploy FirebaseWebAuthn from your existing Firebase Functions package,
+If you would rather deploy the API from your existing Firebase Functions package,
 1. Run:
 
-`% npm install @firebase-web-authn/functions --save-dev`
+`% npm install @firebase-web-authn/api --save-dev`
 
 2. Export the API from your Firebase Functions package's `main` file by calling `getFirebaseWebAuthnApi` with a config object.
 ```ts
 import { initializeApp }          from "firebase-admin/app";
 import { HttpsFunction }          from "firebase-functions";
-import { getFirebaseWebAuthnApi } from "@firebase-web-authn/functions";
+import { getFirebaseWebAuthnApi } from "@firebase-web-authn/api";
 
 
 getApps().length === 0 && initializeApp();
 
 export const firebaseWebAuthnAPI: HttpsFunction = getFirebaseWebAuthnApi({...});
 
-// Other functions...
+// Other api...
 ```
 ```ts
 interface FirebaseWebAuthnConfig {

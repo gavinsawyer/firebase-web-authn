@@ -1,2 +1,17 @@
+# System files
+*-debug.log
+.DS_Store
+.angular
+.idea
+dist
 node_modules
+tmp
 
+# Sensitive Firebase files
+.firebase
+.runtimeconfig.json
+gha-creds-*.json
+
+# Version side-effect files
+apps/*/src/git-info.ts
+apps/*/src/package-version.ts

@@ -44,6 +44,6 @@
     "indexes": "firestore.indexes.json"
   },
   "extensions": {
-    "firebase-web-authn": "gavinsawyer/firebase-web-authn@9.5.3"
+    "firebase-web-authn": "./dist/libs/extension"
   }
 }

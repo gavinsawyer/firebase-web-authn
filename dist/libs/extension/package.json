@@ -1,6 +1,6 @@
 {
   "name": "@firebase-web-authn/extension",
-  "version": "9.5.3",
+  "version": "9.6.0",
   "homepage": "https://firebase-web-authn.dev",
   "author": {
     "name": "Gavin Sawyer",
@@ -10,13 +10,18 @@
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/gavinsawyer/firebase-web-authn.git"
-  },
-  "peerDependencies": {
-    "@firebase-web-authn/functions": "^9",
-    "tslib": "^2"
+    "url": "git+https://github.com/gavinsawyer/firebase-web-authn.git",
+    "directory": "libs/extension"
   },
   "private": false,
+  "dependencies": {
+    "@simplewebauthn/typescript-types": "7.0.0"
+  },
+  "peerDependencies": {
+    "@firebase-web-authn/api": "9.6.0",
+    "@firebase-web-authn/types": "9.6.0",
+    "tslib": "2.5.3"
+  },
   "main": "./functions/index.js",
   "types": "./functions/index.d.ts"
 }

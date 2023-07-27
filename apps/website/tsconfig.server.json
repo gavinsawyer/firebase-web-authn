@@ -1,10 +1,15 @@
 {
-  "extends": "./tsconfig.app.json",
   "compilerOptions": {
     "outDir": "../../out-tsc/server",
     "target": "ES2022",
-    "types": ["node"],
+    "types": [
+      "node"
+    ],
     "useDefineForClassFields": false
   },
-  "files": ["src/main.server.ts", "server.ts"]
+  "extends": "./tsconfig.app.json",
+  "files": [
+    "src/main.server.ts",
+    "server.ts"
+  ]
 }

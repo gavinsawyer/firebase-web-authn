@@ -31,17 +31,17 @@ jobs:
         with:
           credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_FIR_WEB_AUTHN }}
           token_format:     access_token
+      - run: npx nx run-many --target build --all
+      - run:               npm publish dist/libs/types --access public
+        continue-on-error: true
+      - run:               npm publish dist/libs/api --access public
+        continue-on-error: true
+      - run:               npm publish dist/libs/browser --access public
+        continue-on-error: true
+      - run:               npm publish dist/libs/server --access public
+        continue-on-error: true
+      - run:               npm publish dist/libs/extension --access public
+        continue-on-error: true
       - run: npx nx run-many --target deploy --all
         env:
           FIREBASE_TOKEN: ${{ steps.auth.outputs.access_token }}
-      - run: npx nx run-many --target build --projects types,browser,functions,server,extension
-      - run:               npm publish dist/libs/types
-        continue-on-error: true
-      - run:               npm publish dist/libs/browser
-        continue-on-error: true
-      - run:               npm publish dist/libs/functions
-        continue-on-error: true
-      - run:               npm publish dist/libs/server
-        continue-on-error: true
-      - run:               npm publish dist/libs/extension
-        continue-on-error: true

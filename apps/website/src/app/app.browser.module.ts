@@ -1,4 +1,4 @@
-import { Injector, NgModule }                                                                    from "@angular/core";
+import { APP_ID, Injector, NgModule }                                                            from "@angular/core";
 import { Analytics, getAnalytics, provideAnalytics, ScreenTrackingService, UserTrackingService } from "@angular/fire/analytics";
 import { FirebaseApp, initializeApp, provideFirebaseApp }                                        from "@angular/fire/app";
 import { AppCheck, initializeAppCheck, provideAppCheck }                                         from "@angular/fire/app-check";
@@ -23,9 +23,7 @@ const baseTitle = "FirebaseWebAuthn";
   imports: [
     AsideComponent,
     BrowserAnimationsModule,
-    BrowserModule.withServerTransition({
-      appId: "serverApp",
-    }),
+    BrowserModule,
     provideAnalytics((): Analytics => getAnalytics()),
     provideAppCheck((injector: Injector): AppCheck => initializeAppCheck(undefined, injector.get(AppCheckOptionsService).appCheckOptions(environment.app, environment.recaptchaSiteKey))),
     provideAuth((): Auth => getAuth()),
@@ -57,6 +55,10 @@ const baseTitle = "FirebaseWebAuthn";
   providers: [
     ScreenTrackingService,
     UserTrackingService,
+    {
+      provide: APP_ID,
+      useValue: "serverApp",
+    }
   ],
   bootstrap: [AppComponent],
 })

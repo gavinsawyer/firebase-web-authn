@@ -1,14 +1,14 @@
 {
-  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "module": "es6",
     "forceConsistentCasingInFileNames": true,
-    "strict": true,
+    "module": "es6",
+    "noFallthroughCasesInSwitch": true,
     "noImplicitOverride": true,
-    "noPropertyAccessFromIndexSignature": true,
     "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true
+    "noPropertyAccessFromIndexSignature": true,
+    "strict": true
   },
+  "extends": "../../tsconfig.base.json",
   "files": [],
   "include": [],
   "references": [

@@ -15,8 +15,8 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@firebase-web-authn/api": ["libs/api/src/index.ts"],
       "@firebase-web-authn/browser": ["libs/browser/src/index.ts"],
-      "@firebase-web-authn/functions": ["libs/functions/src/index.ts"],
       "@firebase-web-authn/server": ["libs/server/src/index.ts"],
       "@firebase-web-authn/types": ["libs/types/src/index.ts"],
       "@firebase-web-authn/website": ["apps/website/src/index.ts"],

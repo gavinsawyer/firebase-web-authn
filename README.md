@@ -24,7 +24,7 @@ To install from the Extensions Hub, [use the Firebase console](https://console.f
 ```
 Using NPM is recommended to receive updates to the extension alongside other FirebaseWebAuthn dependencies.
 ### Additional setup:
-1. As of June 2023, [supported roles for Firebase Extensions](https://firebase.google.com/docs/extensions/publishers/access#supported-roles) do not include `iam.serviceAccounts.signBlob` which is needed for custom auth providers.
+1. As of July 2023, [supported roles for Firebase Extensions](https://firebase.google.com/docs/extensions/publishers/access#supported-roles) do not include `iam.serviceAccounts.signBlob` which is needed for custom auth providers.
    - After deploying the extension, grant the `Service Account Token Creator` role to the extension's service account in [IAM](https://console.cloud.google.com/iam-admin/iam) under `Firebase Extensions firebase-web-authn service account` > Edit > Assign roles.
    - If the service account isn't appearing, click `Grant Access` and enter its address as `ext-firebase-web-authn@${PROJECT_ID}.iam.gserviceaccount.com`
 2. The browser must reach FirebaseWebAuthn from the same domain as your website. Modify your `firebase.json` to include a rewrite on each app where you'd like to use passkeys:
@@ -132,5 +132,5 @@ getApps().length === 0 && initializeApp();
   askForReverification();
 ```
 ## Other packages
-- [@firebase-web-authn/functions](libs/functions): This package contains a Firebase Function that registers and authenticates WebAuthn passkeys, manages public key credentials in Firestore, and cleans up data if the user cancels the process or unlinks a passkey.
+- [@firebase-web-authn/api](libs/api): This package contains a Firebase Function that registers and authenticates WebAuthn passkeys, manages public key credentials in Firestore, and cleans up data if the user cancels the process or unlinks a passkey.
 - [@firebase-web-authn/types](libs/types): This package contains types and interfaces used internally by FirebaseWebAuthn and for implementing it in a secure context.

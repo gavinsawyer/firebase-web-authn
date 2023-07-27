@@ -1,29 +1,32 @@
 {
   "name": "firebase-web-authn-functions",
+  "version": "9.6.0",
+  "homepage": "https://firebase-web-authn.dev",
   "author": {
     "name": "Gavin Sawyer",
     "email": "g@vinsawyer.dev",
     "url": "https://gavinsawyer.dev"
   },
-  "scripts": {
-    "build": ""
-  },
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/gavinsawyer/firebase-web-authn.git"
+    "url": "git+https://github.com/gavinsawyer/firebase-web-authn.git",
+    "directory": "libs/extension/functions"
   },
-  "engines": {
-    "node": "18"
+  "private": true,
+  "scripts": {
+    "build": ""
   },
-  "main": "./index.js",
   "dependencies": {
     "@simplewebauthn/typescript-types": "^7",
     "firebase-functions": "^4"
   },
   "peerDependencies": {
-    "@firebase-web-authn/functions": "^9",
+    "@firebase-web-authn/api": "^9",
     "tslib": "^2"
   },
-  "private": true
+  "engines": {
+    "node": "18"
+  },
+  "main": "./main.js"
 }
