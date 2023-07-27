@@ -1,26 +1,43 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
-    "rootDir": ".",
-    "sourceMap": true,
+    "baseUrl": ".",
     "declaration": false,
-    "moduleResolution": "node",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "importHelpers": true,
-    "target": "es2015",
+    "lib": [
+      "es2017",
+      "dom"
+    ],
     "module": "esnext",
-    "lib": ["es2017", "dom"],
-    "skipLibCheck": true,
-    "skipDefaultLibCheck": true,
-    "baseUrl": ".",
+    "moduleResolution": "node",
     "paths": {
-      "@firebase-web-authn/api": ["libs/api/src/index.ts"],
-      "@firebase-web-authn/browser": ["libs/browser/src/index.ts"],
-      "@firebase-web-authn/server": ["libs/server/src/index.ts"],
-      "@firebase-web-authn/types": ["libs/types/src/index.ts"],
-      "@firebase-web-authn/website": ["apps/website/src/index.ts"],
-    }
+      "@firebase-web-authn/api": [
+        "libs/api/src/index.ts"
+      ],
+      "@firebase-web-authn/browser": [
+        "libs/browser/src/index.ts"
+      ],
+      "@firebase-web-authn/server": [
+        "libs/server/src/index.ts"
+      ],
+      "@firebase-web-authn/types": [
+        "libs/types/src/index.ts"
+      ],
+      "@firebase-web-authn/website": [
+        "apps/website/src/index.ts"
+      ]
+    },
+    "rootDir": ".",
+    "skipDefaultLibCheck": true,
+    "skipLibCheck": true,
+    "sourceMap": true,
+    "target": "es2015"
   },
-  "exclude": ["node_modules", "tmp", "**/README.md"]
+  "exclude": [
+    "node_modules",
+    "tmp",
+    "**/README.md"
+  ]
 }

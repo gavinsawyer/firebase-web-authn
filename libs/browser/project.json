@@ -1,9 +1,21 @@
 {
-  "name": "browser",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/browser/src",
+  "name": "browser",
   "projectType": "library",
+  "sourceRoot": "libs/browser/src",
+  "tags": [],
   "targets": {
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "libs/browser/**/*.ts"
+        ]
+      },
+      "outputs": [
+        "{options.outputFile}"
+      ]
+    },
     "build": {
       "executor": "@nx/js:tsc",
       "options": {
@@ -21,18 +33,6 @@
       "outputs": [
         "{options.outputPath}"
       ]
-    },
-    "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": [
-          "libs/browser/**/*.ts"
-        ]
-      },
-      "outputs": [
-        "{options.outputFile}"
-      ]
     }
-  },
-  "tags": []
+  }
 }

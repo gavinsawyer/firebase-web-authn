@@ -1,9 +1,21 @@
 {
-  "name": "api",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/api/src",
+  "name": "api",
   "projectType": "library",
+  "sourceRoot": "libs/api/src",
+  "tags": [],
   "targets": {
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "libs/api/**/*.ts"
+        ]
+      },
+      "outputs": [
+        "{options.outputFile}"
+      ]
+    },
     "build": {
       "executor": "@nx/js:tsc",
       "options": {
@@ -21,18 +33,6 @@
       "outputs": [
         "{options.outputPath}"
       ]
-    },
-    "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": [
-          "libs/api/**/*.ts"
-        ]
-      },
-      "outputs": [
-        "{options.outputFile}"
-      ]
     }
-  },
-  "tags": []
+  }
 }

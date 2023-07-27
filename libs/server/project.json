@@ -1,12 +1,23 @@
 {
-  "name": "server",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/server/src",
+  "name": "server",
   "projectType": "library",
+  "sourceRoot": "libs/server/src",
+  "tags": [],
   "targets": {
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "libs/server/**/*.ts"
+        ]
+      },
+      "outputs": [
+        "{options.outputFile}"
+      ]
+    },
     "build": {
       "executor": "@nx/js:tsc",
-      "outputs": ["{options.outputPath}"],
       "options": {
         "assets": [
           {
@@ -18,19 +29,10 @@
         "main": "libs/server/src/index.ts",
         "outputPath": "dist/libs/server",
         "tsConfig": "libs/server/tsconfig.lib.json"
-      }
-    },
-    "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": [
-          "libs/server/**/*.ts"
-        ]
       },
       "outputs": [
-        "{options.outputFile}"
+        "{options.outputPath}"
       ]
     }
-  },
-  "tags": []
+  }
 }

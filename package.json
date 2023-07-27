@@ -1,6 +1,6 @@
 {
   "name": "@firebase-web-authn/source",
-  "version": "9.6.0",
+  "version": "9.6.3",
   "homepage": "https://firebase-web-authn.dev",
   "author": {
     "name": "Gavin Sawyer",
@@ -32,7 +32,7 @@
     "@angular/router": "^16.1.7",
     "@nguniversal/express-engine": "^16.1.1",
     "rxjs": "^7.8.1",
-    "tslib": "^2.6.1"
+    "tslib": "^2.5.3"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^16.1.6",
@@ -50,12 +50,12 @@
     "@nx/linter": "^16",
     "@nx/workspace": "^16",
     "@schematics/angular": "^16",
-    "@simplewebauthn/browser": "^7.2.0",
-    "@simplewebauthn/server": "^7.3.1",
+    "@simplewebauthn/browser": "^7.4.0",
+    "@simplewebauthn/server": "^7.4.0",
     "@typescript-eslint/eslint-plugin": "^5.62.0",
     "@typescript-eslint/parser": "^5.62.0",
     "eslint": "^8.45.0",
-    "eslint-config-prettier": "^8.8.0",
+    "eslint-config-prettier": "^8.9.0",
     "eslint-plugin-tsdoc": "^0.2.17",
     "firebase-admin": "^11.10.1",
     "firebase-functions": "^4.4.1",

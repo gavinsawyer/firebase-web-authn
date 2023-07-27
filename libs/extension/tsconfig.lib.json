@@ -1,18 +1,20 @@
 {
-  "extends": "./tsconfig.json",
   "compilerOptions": {
-    "outDir": "../../dist/out-tsc",
     "declaration": true,
-    "types": ["node"]
+    "outDir": "../../dist/out-tsc",
+    "types": [
+      "node"
+    ]
   },
-  "files": [],
-  "include": [
-    "functions/**/*.ts",
-    "functions/main.ts"
-  ],
   "exclude": [
     "jest.config.ts",
     "functions/**/*.spec.ts",
     "functions/**/*.test.ts"
+  ],
+  "extends": "./tsconfig.json",
+  "files": [],
+  "include": [
+    "functions/**/*.ts",
+    "functions/main.ts"
   ]
 }

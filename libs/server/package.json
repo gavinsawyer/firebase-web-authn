@@ -1,6 +1,6 @@
 {
   "name": "@firebase-web-authn/server",
-  "version": "9.6.0",
+  "version": "9.6.3",
   "homepage": "https://firebase-web-authn.dev",
   "author": {
     "name": "Gavin Sawyer",

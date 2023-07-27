@@ -1,6 +1,6 @@
 {
   "name": "@firebase-web-authn/extension",
-  "version": "9.6.0",
+  "version": "9.6.3",
   "homepage": "https://firebase-web-authn.dev",
   "author": {
     "name": "Gavin Sawyer",
@@ -15,11 +15,11 @@
   },
   "private": false,
   "dependencies": {
-    "@simplewebauthn/typescript-types": "7.0.0"
+    "@simplewebauthn/typescript-types": "7.4.0"
   },
   "peerDependencies": {
-    "@firebase-web-authn/api": "9.6.0",
-    "@firebase-web-authn/types": "9.6.0",
+    "@firebase-web-authn/api": "9.6.3",
+    "@firebase-web-authn/types": "9.6.3",
     "tslib": "2.5.3"
   },
   "main": "./functions/index.js",

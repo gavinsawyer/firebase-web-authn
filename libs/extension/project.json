@@ -1,9 +1,21 @@
 {
-  "name": "extension",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "/src",
+  "name": "extension",
   "projectType": "library",
+  "sourceRoot": "/src",
+  "tags": [],
   "targets": {
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "libs/extension/**/*.ts"
+        ]
+      },
+      "outputs": [
+        "{options.outputFile}"
+      ]
+    },
     "build": {
       "executor": "@nx/js:tsc",
       "options": {
@@ -61,18 +73,6 @@
       "options": {
         "command": "firebase deploy --only extensions"
       }
-    },
-    "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": [
-          "libs/extension/**/*.ts"
-        ]
-      },
-      "outputs": [
-        "{options.outputFile}"
-      ]
     }
-  },
-  "tags": []
+  }
 }
