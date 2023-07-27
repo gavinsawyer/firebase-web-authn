@@ -1,6 +1,6 @@
 {
   "name": "@firebase-web-authn/browser",
-  "version": "9.6.3",
+  "version": "9.6.4",
   "homepage": "https://firebase-web-authn.dev",
   "author": {
     "name": "Gavin Sawyer",
@@ -13,5 +13,8 @@
     "url": "git+https://github.com/gavinsawyer/firebase-web-authn.git",
     "directory": "libs/browser"
   },
-  "private": false
+  "private": false,
+  "dependencies": {
+    "@simplewebauthn/browser": "^7.4.0"
+  }
 }
