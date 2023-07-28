@@ -31,6 +31,9 @@ jobs:
         with:
           credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_FIR_WEB_AUTHN }}
           token_format:     access_token
+      - run: npx nx run website:deploy
+        env:
+          FIREBASE_TOKEN: ${{ steps.auth.outputs.access_token }}
       - run: npx nx run-many --target build --all
       - run:               npm publish dist/libs/types --access public
         continue-on-error: true
@@ -42,6 +45,3 @@ jobs:
         continue-on-error: true
       - run:               npm publish dist/libs/extension --access public
         continue-on-error: true
-      - run: npx nx run-many --target deploy --all
-        env:
-          FIREBASE_TOKEN: ${{ steps.auth.outputs.access_token }}

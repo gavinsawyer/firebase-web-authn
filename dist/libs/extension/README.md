@@ -5,17 +5,18 @@ This package conforms to the Firebase Extensions spec and is available from eith
 
 [![GitHub workflow status](https://img.shields.io/github/actions/workflow/status/gavinsawyer/firebase-web-authn/ci.yml)](https://github.com/gavinsawyer/firebase-web-authn/actions/workflows/ci.yml)
 [![Latest version in NPM](https://img.shields.io/npm/v/@firebase-web-authn/extension?logo=npm)](https://www.npmjs.com/package/@firebase-web-authn/extension)
-[![Install](https://img.shields.io/static/v1?label=&message=Install%20in%20Firebase%20console&logo=firebase&color=blue)](https://console.firebase.google.com/u/0/project/_/extensions/install?ref=gavinsawyer%2Ffirebase-web-authn)
 #### Demo: https://firebase-web-authn.dev
 ### Installation
+[![Install](https://img.shields.io/static/v1?label=&message=Install%20in%20Firebase%20console&logo=firebase&color=blue)](https://console.firebase.google.com/u/0/project/_/extensions/install?ref=gavinsawyer%2Ffirebase-web-authn)
+
+To install from the Extensions Hub, click the button above or run the following commands in your project root:
+```
+% firebase ext:install gavinsawyer/firebase-web-authn
+```
 To install from NPM, run the following commands in your project root:
 ```
 % npm i @firebase-web-authn/extension --save-dev
 % firebase ext:install ./node_modules/@firebase-web-authn/extension
-```
-To install from the Extensions Hub, [use the Firebase console](https://console.firebase.google.com/u/0/project/_/extensions/install?ref=gavinsawyer%2Ffirebase-web-authn) or run the following commands in your project root:
-```
-% firebase ext:install gavinsawyer/firebase-web-authn
 ```
 Using NPM is recommended to receive updates to the extension alongside other FirebaseWebAuthn dependencies.
 ### Additional setup:
@@ -39,3 +40,7 @@ Using NPM is recommended to receive updates to the extension alongside other Fir
       ]
     }
     ```
+
+## More packages
+- [@firebase-web-authn/browser](https://github.com/gavinsawyer/firebase-web-authn/tree/main/libs/browser)
+- [@firebase-web-authn/server](https://github.com/gavinsawyer/firebase-web-authn/tree/main/libs/server)

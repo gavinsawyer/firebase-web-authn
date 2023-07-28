@@ -1,6 +1,6 @@
 {
   "name": "@firebase-web-authn/types",
-  "version": "9.6.4",
+  "version": "9.6.5",
   "homepage": "https://firebase-web-authn.dev",
   "author": {
     "name": "Gavin Sawyer",
@@ -13,5 +13,9 @@
     "url": "git+https://github.com/gavinsawyer/firebase-web-authn.git",
     "directory": "libs/types"
   },
-  "private": false
+  "private": false,
+  "devDependencies": {
+    "@simplewebauthn/typescript-types": "^7.4.0",
+    "firebase-admin": "^11.10.1"
+  }
 }

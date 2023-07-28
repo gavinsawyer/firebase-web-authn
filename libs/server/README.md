@@ -5,7 +5,7 @@ This package contains four tree-shakeable async methods for using FirebaseWebAut
 
 [![GitHub workflow status](https://img.shields.io/github/actions/workflow/status/gavinsawyer/firebase-web-authn/ci.yml)](https://github.com/gavinsawyer/firebase-web-authn/actions/workflows/ci.yml)
 [![FirebaseWebAuthn version](https://img.shields.io/npm/v/@firebase-web-authn/server?logo=npm)](https://www.npmjs.com/package/@firebase-web-authn/server)
-[![Firebase Admin SDK version](https://img.shields.io/npm/dependency-version/@firebase-web-authn/server/firebase-admin?label=Firebase%20Admin%20SDK&logo=firebase)](https://www.npmjs.com/package/firebase-admin)
+[![Firebase Admin SDK version](https://img.shields.io/npm/dependency-version/@firebase-web-authn/server/dev/firebase-admin?label=Firebase%20Admin%20SDK&logo=firebase)](https://www.npmjs.com/package/firebase-admin)
 #### Demo: https://firebase-web-authn.dev
 ### Methods
 ```ts
@@ -27,3 +27,6 @@ getApps().length === 0 && initializeApp();
   proceed() :
   askForReverification();
 ```
+## More packages
+- [@firebase-web-authn/extension](https://github.com/gavinsawyer/firebase-web-authn/tree/main/libs/extension)
+- [@firebase-web-authn/browser](https://github.com/gavinsawyer/firebase-web-authn/tree/main/libs/browser)

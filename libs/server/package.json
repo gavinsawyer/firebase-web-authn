@@ -1,6 +1,6 @@
 {
   "name": "@firebase-web-authn/server",
-  "version": "9.6.4",
+  "version": "9.6.5",
   "homepage": "https://firebase-web-authn.dev",
   "author": {
     "name": "Gavin Sawyer",
@@ -13,5 +13,8 @@
     "url": "git+https://github.com/gavinsawyer/firebase-web-authn.git",
     "directory": "libs/server"
   },
-  "private": false
+  "private": false,
+  "devDependencies": {
+    "firebase-admin": "^11.10.1"
+  }
 }

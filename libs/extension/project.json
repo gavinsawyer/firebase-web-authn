@@ -64,15 +64,6 @@
       "outputs": [
         "{options.outputPath}"
       ]
-    },
-    "deploy": {
-      "dependsOn": [
-        "build"
-      ],
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "firebase deploy --only extensions"
-      }
     }
   }
 }

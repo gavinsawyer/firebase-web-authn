@@ -60,10 +60,10 @@
       "options": {
         "accessToken": "${NX_CLOUD_ACCESS_TOKEN}",
         "cacheableOperations": [
+          "lint",
           "browser",
           "server",
-          "build",
-          "lint"
+          "build"
         ]
       },
       "runner": "nx-cloud"
