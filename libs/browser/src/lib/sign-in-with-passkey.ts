@@ -19,7 +19,7 @@ import { handleVerifyFunctionResponse }                                   from "
  */
 export const signInWithPasskey: (auth: Auth, functions: Functions) => Promise<UserCredential> = (auth: Auth, functions: Functions): Promise<UserCredential> => ((handler: () => Promise<UserCredential>): Promise<UserCredential> => auth.currentUser ? handler() : signInAnonymously(auth).then<UserCredential>((): Promise<UserCredential> => handler()).catch<never>((firebaseError): never => {
   throw new FirebaseWebAuthnError({
-    code: firebaseError.code,
+    code: firebaseError.code.replace("firebaseWebAuthn/", ""),
     message: firebaseError.message,
     method: "signInAnonymously",
   });
@@ -44,7 +44,7 @@ export const signInWithPasskey: (auth: Auth, functions: Functions) => Promise<Us
   });
 })()).catch<never>((firebaseError): never => {
   throw new FirebaseWebAuthnError({
-    code: firebaseError.code,
+    code: firebaseError.code.replace("firebaseWebAuthn/", ""),
     message: firebaseError.message,
     method: "httpsCallableFromURL",
     operation: "create authentication challenge",

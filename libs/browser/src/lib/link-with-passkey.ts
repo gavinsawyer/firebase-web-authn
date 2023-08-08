@@ -43,7 +43,7 @@ export const linkWithPasskey: (auth: Auth, functions: Functions, name: string) =
   })())
   .catch<never>((firebaseError): never => {
     throw new FirebaseWebAuthnError({
-      code: firebaseError.code,
+      code: firebaseError.code.replace("firebaseWebAuthn/", ""),
       message: firebaseError.message,
       method: "httpsCallableFromURL",
       operation: "create registration challenge",

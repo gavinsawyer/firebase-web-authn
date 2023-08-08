@@ -23,7 +23,7 @@ export const unlinkPasskey: (auth: Auth, functions: Functions) => Promise<void> 
   })() : void(0))
   .catch<never>((firebaseError): never => {
     throw new FirebaseWebAuthnError({
-      code: firebaseError.code,
+      code: firebaseError.code.replace("firebaseWebAuthn/", ""),
       message: firebaseError.message,
       method: "httpsCallableFromURL",
       operation: "clear challenge",

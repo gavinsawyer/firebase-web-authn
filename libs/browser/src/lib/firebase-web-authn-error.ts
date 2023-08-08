@@ -19,11 +19,20 @@ interface FirebaseWebAuthnErrorOptions {
  */
 export class FirebaseWebAuthnError extends Error {
 
+  public override readonly message!: FirebaseWebAuthnErrorOptions["message"];
+  public override readonly name!: string;
+
+  public readonly code: `firebaseWebAuthn/${FirebaseWebAuthnErrorOptions["code"]}`;
+  public readonly method?: FirebaseWebAuthnErrorOptions["method"];
+  public readonly operation?: FirebaseWebAuthnErrorOptions["operation"];
+
   constructor(
     private readonly firebaseWebAuthnErrorOptions: FirebaseWebAuthnErrorOptions,
   ) {
     super(firebaseWebAuthnErrorOptions.message);
 
+    this
+      .name = "FirebaseWebAuthnError";
     this
       .code = `firebaseWebAuthn/${firebaseWebAuthnErrorOptions.code}`;
     this
@@ -33,11 +42,5 @@ export class FirebaseWebAuthnError extends Error {
       .operation = firebaseWebAuthnErrorOptions
       .operation;
   }
-
-  public override readonly message!: FirebaseWebAuthnErrorOptions["message"];
-
-  public readonly code: `firebaseWebAuthn/${FirebaseWebAuthnErrorOptions["code"]}`;
-  public readonly method?: FirebaseWebAuthnErrorOptions["method"];
-  public readonly operation?: FirebaseWebAuthnErrorOptions["operation"];
 
 }

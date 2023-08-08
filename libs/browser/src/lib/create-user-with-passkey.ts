@@ -21,7 +21,7 @@ export const createUserWithPasskey: (auth: Auth, functions: Functions, name: str
   .then<UserCredential>((): Promise<UserCredential> => linkWithPasskey(auth, functions, name))
   .catch<never>((firebaseError): never => {
     throw new FirebaseWebAuthnError({
-      code: firebaseError.code,
+      code: firebaseError.code.replace("firebaseWebAuthn/", ""),
       message: firebaseError.message,
       method: "signInAnonymously",
     });

@@ -8,7 +8,7 @@ export const handleVerifyFunctionResponse: (auth: Auth, functionResponse: Functi
 })() : "customToken" in functionResponse ? signInWithCustomToken(auth, functionResponse.customToken)
   .catch<never>((firebaseError): never => {
     throw new FirebaseWebAuthnError({
-      code: firebaseError.code,
+      code: firebaseError.code.replace("firebaseWebAuthn/", ""),
       message: firebaseError.message,
       method: "signInWithCustomToken",
     });

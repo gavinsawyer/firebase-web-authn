@@ -3,6 +3,7 @@
 .DS_Store
 .angular
 .idea
+.run
 node_modules
 tmp
 

@@ -1,6 +1,6 @@
 {
   "name": "firebase-web-authn-functions",
-  "version": "9.6.5",
+  "version": "9.6.6",
   "homepage": "https://firebase-web-authn.dev",
   "author": {
     "name": "Gavin Sawyer",
@@ -24,7 +24,7 @@
     "@simplewebauthn/typescript-types": "^7.4.0"
   },
   "peerDependencies": {
-    "@firebase-web-authn/api": "^9.6.5",
+    "@firebase-web-authn/api": "^9.6.6",
     "tslib": "^2.5.3"
   },
   "engines": {
