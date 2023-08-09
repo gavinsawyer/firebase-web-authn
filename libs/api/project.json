@@ -1,36 +1,36 @@
 {
-  "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "name": "api",
+  "$schema":     "../../node_modules/nx/schemas/project-schema.json",
+  "name":        "api",
   "projectType": "library",
-  "sourceRoot": "libs/api/src",
-  "tags": [],
-  "targets": {
-    "lint": {
+  "sourceRoot":  "libs/api/src",
+  "tags":        [],
+  "targets":     {
+    "lint":  {
       "executor": "@nx/linter:eslint",
-      "options": {
+      "options":  {
         "lintFilePatterns": [
           "libs/api/**/*.ts"
         ]
       },
-      "outputs": [
+      "outputs":  [
         "{options.outputFile}"
       ]
     },
     "build": {
       "executor": "@nx/js:tsc",
-      "options": {
-        "assets": [
+      "options":  {
+        "assets":     [
           {
-            "glob": "README.md",
-            "input": "libs/api",
+            "glob":   "README.md",
+            "input":  "libs/api",
             "output": "."
           }
         ],
-        "main": "libs/api/src/index.ts",
+        "main":       "libs/api/src/index.ts",
         "outputPath": "dist/libs/api",
-        "tsConfig": "libs/api/tsconfig.lib.json"
+        "tsConfig":   "libs/api/tsconfig.lib.json"
       },
-      "outputs": [
+      "outputs":  [
         "{options.outputPath}"
       ]
     }

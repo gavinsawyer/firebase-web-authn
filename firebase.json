@@ -2,48 +2,48 @@
   "extensions": {
     "firebase-web-authn": "./dist/libs/extension"
   },
-  "firestore": {
+  "firestore":  {
     "indexes": "firestore.indexes.json",
-    "rules": "firestore.rules"
+    "rules":   "firestore.rules"
   },
-  "hosting": {
-    "headers": [
+  "hosting":    {
+    "headers":  [
       {
         "headers": [
           {
-            "key": "Cache-Control",
+            "key":   "Cache-Control",
             "value": "public,max-age=31536000,immutable"
           }
         ],
-        "source": "*.[0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f].+(css|js)"
+        "source":  "*.[0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f].+(css|js)"
       },
       {
         "headers": [
           {
-            "key": "Cache-Control",
+            "key":   "Cache-Control",
             "value": "no-cache"
           }
         ],
-        "source": "/@(ngsw-worker.js|ngsw.json)"
+        "source":  "/@(ngsw-worker.js|ngsw.json)"
       }
     ],
-    "ignore": [
+    "ignore":   [
       "**/.*"
     ],
-    "public": "dist/apps/website/browser",
+    "public":   "dist/apps/website/browser",
     "rewrites": [
       {
         "function": "ext-firebase-web-authn-api",
-        "source": "/firebase-web-authn-api"
+        "source":   "/firebase-web-authn-api"
       },
       {
-        "run": {
-          "pinTag": true,
+        "run":    {
+          "pinTag":    true,
           "serviceId": "ssr-website"
         },
         "source": "**"
       }
     ],
-    "target": "website"
+    "target":   "website"
   }
 }

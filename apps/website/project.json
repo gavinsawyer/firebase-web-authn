@@ -1,184 +1,187 @@
 {
-  "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "name": "website",
-  "prefix": "website-app",
+  "$schema":     "../../node_modules/nx/schemas/project-schema.json",
+  "name":        "website",
+  "prefix":      "website-app",
   "projectType": "application",
-  "sourceRoot": "apps/website/src",
-  "tags": [],
-  "targets": {
+  "sourceRoot":  "apps/website/src",
+  "tags":        [],
+  "targets":     {
     "prebuild": {
       "executor": "nx:run-commands",
-      "options": {
-        "command": "node -p \"'export const packageVersion = ' + JSON.stringify(require('./package.json').version) + ';'\" > apps/website/src/package-version.ts && node -p \"'import { GitInfo } from \\'git-describe\\';\\n\\n\\nexport const gitInfo: Partial<GitInfo> = ' + JSON.stringify(((gitInfo) => ({dirty: gitInfo.dirty,hash: gitInfo.hash}))(require('git-describe').gitDescribeSync())) + ';'\" > apps/website/src/git-info.ts"
+      "options":  {
+        "command": "node -p \"'export const packageVersion = ' + JSON.stringify(require('./package.json').version) + ';'\" > apps/website/src/.package-version.ts && node -p \"'import { GitInfo } from \\'git-describe\\';\\n\\n\\nexport const gitInfo: Partial<GitInfo> = ' + JSON.stringify(((gitInfo) => ({dirty: gitInfo.dirty,hash: gitInfo.hash}))(require('git-describe').gitDescribeSync())) + ';'\" > apps/website/src/.git-info.ts"
       }
     },
-    "lint": {
+    "lint":     {
       "dependsOn": [
         "prebuild"
       ],
-      "executor": "@nrwl/linter:eslint",
-      "options": {
+      "executor":  "@nrwl/linter:eslint",
+      "options":   {
         "lintFilePatterns": [
           "apps/website/**/*.ts",
           "apps/website/**/*.html"
         ]
       }
     },
-    "browser": {
-      "configurations": {
+    "browser":  {
+      "configurations":       {
         "development": {
-          "buildOptimizer": false,
+          "buildOptimizer":  false,
           "extractLicenses": false,
-          "namedChunks": true,
-          "optimization": true,
-          "sourceMap": true,
-          "vendorChunk": true
+          "namedChunks":     true,
+          "optimization":    true,
+          "sourceMap":       true,
+          "vendorChunk":     true
         },
-        "production": {
-          "budgets": [
+        "production":  {
+          "budgets":          [
             {
-              "maximumError": "2mb",
+              "maximumError":   "2mb",
               "maximumWarning": "1mb",
-              "type": "initial"
+              "type":           "initial"
             },
             {
-              "maximumError": "4kb",
+              "maximumError":   "4kb",
               "maximumWarning": "2kb",
-              "type": "anyComponentStyle"
+              "type":           "anyComponentStyle"
             }
           ],
           "fileReplacements": [
             {
-              "replace": "apps/website/src/environments/environment.ts",
-              "with": "apps/website/src/environments/environment.prod.ts"
+              "replace": "apps/website/src/environment.ts",
+              "with":    "apps/website/src/environment.prod.ts"
             }
           ],
-          "outputHashing": "all"
+          "outputHashing":    "all"
         }
       },
       "defaultConfiguration": "production",
-      "dependsOn": [
+      "dependsOn":            [
         "prebuild"
       ],
-      "executor": "@angular-devkit/build-angular:browser",
-      "options": {
-        "assets": [
+      "executor":             "@angular-devkit/build-angular:browser",
+      "options":              {
+        "allowedCommonJsDependencies": [
+          "url",
+          "xhr2"
+        ],
+        "assets":                      [
           "apps/website/src/robots.txt",
           "apps/website/src/sitemap.xml"
         ],
-        "index": "apps/website/src/index.html",
-        "inlineStyleLanguage": "sass",
-        "main": "apps/website/src/main.ts",
-        "outputPath": "dist/apps/website/browser",
-        "polyfills": "apps/website/src/polyfills.ts",
-        "scripts": [],
-        "styles": [
-          "apps/website/src/custom-theme.sass",
+        "index":                       "apps/website/src/index.html",
+        "inlineStyleLanguage":         "sass",
+        "main":                        "apps/website/src/main.ts",
+        "outputPath":                  "dist/apps/website/browser",
+        "polyfills":                   "apps/website/src/polyfills.ts",
+        "scripts":                     [],
+        "styles":                      [
           "apps/website/src/styles.sass"
         ],
-        "tsConfig": "apps/website/tsconfig.app.json"
+        "tsConfig":                    "apps/website/tsconfig.app.json"
       },
-      "outputs": [
+      "outputs":              [
         "{options.outputPath}"
       ]
     },
-    "server": {
-      "configurations": {
+    "server":   {
+      "configurations":       {
         "development": {
           "extractLicenses": false,
-          "optimization": false,
-          "sourceMap": true
+          "optimization":    false,
+          "sourceMap":       true
         },
-        "production": {
+        "production":  {
           "fileReplacements": [
             {
-              "replace": "apps/website/src/environments/environment.ts",
-              "with": "apps/website/src/environments/environment.prod.ts"
+              "replace": "apps/website/src/environment.ts",
+              "with":    "apps/website/src/environment.prod.ts"
             }
           ],
-          "outputHashing": "media"
+          "outputHashing":    "media"
         }
       },
       "defaultConfiguration": "production",
-      "dependsOn": [
+      "dependsOn":            [
         "prebuild"
       ],
-      "development": {
+      "development":          {
         "extractLicenses": false,
-        "optimization": false,
-        "sourceMap": true
+        "optimization":    false,
+        "sourceMap":       true
       },
-      "executor": "@angular-devkit/build-angular:server",
-      "options": {
+      "executor":             "@angular-devkit/build-angular:server",
+      "options":              {
         "inlineStyleLanguage": "sass",
-        "main": "apps/website/server.ts",
-        "outputPath": "dist/apps/website/server",
-        "tsConfig": "apps/website/tsconfig.server.json"
+        "main":                "apps/website/server.ts",
+        "outputPath":          "dist/apps/website/server",
+        "tsConfig":            "apps/website/tsconfig.server.json"
       },
-      "production": {
+      "production":           {
         "fileReplacements": [
           {
-            "replace": "apps/website/src/environments/environment.ts",
-            "with": "apps/website/src/environments/environment.prod.ts"
+            "replace": "apps/website/src/environment.ts",
+            "with":    "apps/website/src/environment.prod.ts"
           }
         ],
-        "outputHashing": "media"
+        "outputHashing":    "media"
       }
     },
-    "build": {
-      "configurations": {
+    "build":    {
+      "configurations":       {
         "development": {
           "browserTarget": "website:browser:development",
-          "serverTarget": "website:server:development"
+          "serverTarget":  "website:server:development"
         },
-        "production": {
+        "production":  {
           "browserTarget": "website:browser:production",
-          "serverTarget": "website:server:production"
+          "serverTarget":  "website:server:production"
         }
       },
       "defaultConfiguration": "production",
-      "dependsOn": [
+      "dependsOn":            [
         "prebuild"
       ],
-      "executor": "@nguniversal/builders:prerender",
-      "options": {
+      "executor":             "@nguniversal/builders:prerender",
+      "options":              {
         "routesFile": "apps/website/src/routes.txt"
       }
     },
-    "deploy": {
-      "dependsOn": [
-        "prebuild",
-        "build"
-      ],
-      "executor": "@angular/fire:deploy",
-      "options": {
-        "browserTarget": "website:browser:production",
-        "firebaseHostingSite": "fir-web-authn",
-        "firebaseProject": "fir-web-authn",
-        "functionName": "ssr-website",
-        "functionsNodeVersion": "18.16",
-        "outputPath": "dist/apps/website/run",
-        "prerender": true,
-        "prerenderTarget": "website:build:production",
-        "region": "us-central1",
-        "serverTarget": "website:server:production",
-        "ssr": "cloud-run"
-      }
-    },
-    "serve": {
-      "configurations": {
+    "serve":    {
+      "configurations":       {
         "development": {
           "browserTarget": "website:browser:development"
         },
-        "production": {
+        "production":  {
           "browserTarget": "website:browser:production"
         }
       },
       "defaultConfiguration": "development",
-      "dependsOn": [
+      "dependsOn":            [
         "prebuild"
       ],
-      "executor": "@angular-devkit/build-angular:dev-server"
+      "executor":             "@angular-devkit/build-angular:dev-server"
+    },
+    "deploy":   {
+      "dependsOn": [
+        "prebuild",
+        "build"
+      ],
+      "executor":  "@angular/fire:deploy",
+      "options":   {
+        "browserTarget":        "website:browser:production",
+        "firebaseHostingSite":  "fir-web-authn",
+        "firebaseProject":      "fir-web-authn",
+        "functionName":         "ssr-website",
+        "functionsNodeVersion": "18.16",
+        "outputPath":           "dist/apps/website/run",
+        "prerender":            true,
+        "prerenderTarget":      "website:build:production",
+        "region":               "us-central1",
+        "serverTarget":         "website:server:production",
+        "ssr":                  "cloud-run"
+      }
     }
   }
 }

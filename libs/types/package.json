@@ -1,21 +1,21 @@
 {
-  "name": "@firebase-web-authn/types",
-  "version": "9.6.6",
-  "homepage": "https://firebase-web-authn.dev",
-  "author": {
-    "name": "Gavin Sawyer",
+  "name":            "@firebase-web-authn/types",
+  "version":         "9.6.6",
+  "homepage":        "https://firebase-web-authn.dev",
+  "author":          {
+    "name":  "Gavin Sawyer",
     "email": "g@vinsawyer.dev",
-    "url": "https://gavinsawyer.dev"
+    "url":   "https://gavinsawyer.dev"
   },
-  "license": "Apache-2.0",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/gavinsawyer/firebase-web-authn.git",
+  "license":         "Apache-2.0",
+  "repository":      {
+    "type":      "git",
+    "url":       "git+https://github.com/gavinsawyer/firebase-web-authn.git",
     "directory": "libs/types"
   },
-  "private": false,
+  "private":         false,
   "devDependencies": {
     "@simplewebauthn/typescript-types": "^7.4.0",
-    "firebase-admin": "^11.10.1"
+    "firebase-admin":                   "^11.10.1"
   }
 }

@@ -1,67 +1,67 @@
 {
-  "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "name": "extension",
+  "$schema":     "../../node_modules/nx/schemas/project-schema.json",
+  "name":        "extension",
   "projectType": "library",
-  "sourceRoot": "/src",
-  "tags": [],
-  "targets": {
-    "lint": {
+  "sourceRoot":  "/src",
+  "tags":        [],
+  "targets":     {
+    "lint":  {
       "executor": "@nx/linter:eslint",
-      "options": {
+      "options":  {
         "lintFilePatterns": [
           "libs/extension/**/*.ts"
         ]
       },
-      "outputs": [
+      "outputs":  [
         "{options.outputFile}"
       ]
     },
     "build": {
       "executor": "@nx/js:tsc",
-      "options": {
-        "assets": [
+      "options":  {
+        "assets":     [
           {
-            "glob": "CHANGELOG.md",
-            "input": "libs/extension",
+            "glob":   "CHANGELOG.md",
+            "input":  "libs/extension",
             "output": "."
           },
           {
-            "glob": "extension.yaml",
-            "input": "libs/extension",
+            "glob":   "extension.yaml",
+            "input":  "libs/extension",
             "output": "."
           },
           {
-            "glob": "icon.png",
-            "input": "libs/extension",
+            "glob":   "icon.png",
+            "input":  "libs/extension",
             "output": "."
           },
           {
-            "glob": "package.json",
-            "input": "libs/extension/functions",
+            "glob":   "package.json",
+            "input":  "libs/extension/functions",
             "output": "./functions"
           },
           {
-            "glob": "POSTINSTALL.md",
-            "input": "libs/extension",
+            "glob":   "POSTINSTALL.md",
+            "input":  "libs/extension",
             "output": "."
           },
           {
-            "glob": "PREINSTALL.md",
-            "input": "libs/extension",
+            "glob":   "PREINSTALL.md",
+            "input":  "libs/extension",
             "output": "."
           },
           {
-            "glob": "README.md",
-            "input": "libs/extension",
+            "glob":   "README.md",
+            "input":  "libs/extension",
             "output": "."
           }
         ],
-        "main": "libs/extension/functions/index.ts",
+        "main":       "libs/extension/functions/index.ts",
         "outputPath": "dist/libs/extension",
-        "rootDir": "libs/extension",
-        "tsConfig": "libs/extension/tsconfig.lib.json"
+        "rootDir":    "libs/extension",
+        "tsConfig":   "libs/extension/tsconfig.lib.json"
       },
-      "outputs": [
+      "outputs":  [
         "{options.outputPath}"
       ]
     }

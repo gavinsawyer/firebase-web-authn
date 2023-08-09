@@ -3,8 +3,10 @@ import { AuthenticatorAttachment, UserVerificationRequirement } from "@simpleweb
 import { HttpsFunction }                                        from "firebase-functions";
 
 
-export const api: HttpsFunction = getFirebaseWebAuthnApi({
-  authenticatorAttachment: process.env["AUTHENTICATOR_ATTACHMENT"] as AuthenticatorAttachment,
-  relyingPartyName: process.env["RELYING_PARTY_NAME"] as string,
-  userVerificationRequirement: process.env["USER_VERIFICATION_REQUIREMENT"] as UserVerificationRequirement,
-});
+export const api: HttpsFunction = getFirebaseWebAuthnApi(
+  {
+    authenticatorAttachment:     process.env["AUTHENTICATOR_ATTACHMENT"] as AuthenticatorAttachment,
+    relyingPartyName:            process.env["RELYING_PARTY_NAME"] as string,
+    userVerificationRequirement: process.env["USER_VERIFICATION_REQUIREMENT"] as UserVerificationRequirement,
+  },
+);

@@ -1,19 +1,19 @@
 {
   "compilerOptions": {
     "declaration": true,
-    "outDir": "../../dist/out-tsc",
-    "types": [
+    "outDir":      "../../dist/out-tsc",
+    "types":       [
       "node"
     ]
   },
-  "exclude": [
+  "exclude":         [
     "jest.config.ts",
     "functions/**/*.spec.ts",
     "functions/**/*.test.ts"
   ],
-  "extends": "./tsconfig.json",
-  "files": [],
-  "include": [
+  "extends":         "./tsconfig.json",
+  "files":           [],
+  "include":         [
     "functions/**/*.ts",
     "functions/main.ts"
   ]

@@ -9,4 +9,6 @@ import { DocumentReference, DocumentSnapshot, Firestore, getFirestore, Timestamp
  *
  * @returns A {@link Timestamp} for when the user was last verified or null if no passkey was found.
  */
-export const lastVerified: (uid: string, app?: App) => Promise<Timestamp | null> = (uid: string, app?: App): Promise<Timestamp | null> => ((firestore: Firestore): Promise<Timestamp | null> => (firestore.collection("webAuthnUsers").doc(uid) as DocumentReference<WebAuthnUserDocument>).get().then((documentSnapshot: DocumentSnapshot<WebAuthnUserDocument>): Timestamp | null => documentSnapshot.data()?.lastVerified || null))(app ? getFirestore(app) : getFirestore());
+export const lastVerified: (uid: string, app?: App) => Promise<Timestamp | null> = (uid: string, app?: App): Promise<Timestamp | null> => ((firestore: Firestore): Promise<Timestamp | null> => (firestore.collection("webAuthnUsers").doc(uid) as DocumentReference<WebAuthnUserDocument>).get().then(
+  (documentSnapshot: DocumentSnapshot<WebAuthnUserDocument>): Timestamp | null => documentSnapshot.data()?.lastVerified || null,
+))(app ? getFirestore(app) : getFirestore());

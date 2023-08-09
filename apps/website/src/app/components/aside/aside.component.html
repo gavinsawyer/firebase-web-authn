@@ -1,4 +1,0 @@
-<aside>
-  <website-app-profile-card *ngIf="authenticationService.user()?.isAnonymous === false"></website-app-profile-card>
-  <website-app-sign-in-card *ngIf="authenticationService.user()?.isAnonymous === true || profileService.profileDocument() === null"></website-app-sign-in-card>
-</aside>

@@ -8,7 +8,7 @@
  * @see {@link https://developers.yubico.com/WebAuthn/WebAuthn_Developer_Guide/User_Presence_vs_User_Verification.html User Presence vs User Verification}}
  */
 export interface FirebaseWebAuthnConfig {
-  authenticatorAttachment: AuthenticatorAttachment,
-  relyingPartyName: string,
-  userVerificationRequirement?: UserVerificationRequirement,
+  "authenticatorAttachment": AuthenticatorAttachment,
+  "relyingPartyName": string,
+  "userVerificationRequirement"?: UserVerificationRequirement,
 }

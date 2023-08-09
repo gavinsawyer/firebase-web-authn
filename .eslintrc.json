@@ -2,7 +2,7 @@
   "ignorePatterns": [
     "**/*"
   ],
-  "overrides": [
+  "overrides":      [
     {
       "files": [
         "*.ts",
@@ -14,45 +14,45 @@
         "@nx/enforce-module-boundaries": [
           "error",
           {
-            "allow": [],
-            "depConstraints": [
+            "allow":                         [],
+            "depConstraints":                [
               {
                 "onlyDependOnLibsWithTags": [
                   "*"
                 ],
-                "sourceTag": "*"
+                "sourceTag":                "*"
               }
             ],
             "enforceBuildableLibDependency": true
           }
         ],
-        "tsdoc/syntax": "warn"
+        "tsdoc/syntax":                  "warn"
       }
     },
     {
       "extends": [
         "plugin:@nx/typescript"
       ],
-      "files": [
+      "files":   [
         "*.ts",
         "*.tsx"
       ],
-      "rules": {}
+      "rules":   {}
     },
     {
       "extends": [
         "plugin:@nx/javascript"
       ],
-      "files": [
+      "files":   [
         "*.js",
         "*.jsx"
       ],
-      "rules": {}
+      "rules":   {}
     }
   ],
-  "plugins": [
+  "plugins":        [
     "eslint-plugin-tsdoc",
     "@nx"
   ],
-  "root": true
+  "root":           true
 }

@@ -19,39 +19,67 @@ import { handleVerifyFunctionResponse }                         from "./handle-v
  * @throws {@link FirebaseWebAuthnError}
  */
 export const linkWithPasskey: (auth: Auth, functions: Functions, name: string) => Promise<UserCredential> = (auth: Auth, functions: Functions, name: string): Promise<UserCredential> => auth
-  .currentUser ? httpsCallableFromURL<FunctionRequest, FunctionResponse>(functions, "/firebase-web-authn-api")({
-    name: name,
-    operation: "create registration challenge",
-  })
-  .then<UserCredential>(({ data: functionResponse }: HttpsCallableResult<FunctionResponse>): Promise<UserCredential> => "code" in functionResponse ? ((): never => {
-    throw new FirebaseWebAuthnError(functionResponse);
-  })() : "creationOptions" in functionResponse ? startRegistration(functionResponse.creationOptions).then<UserCredential>((registrationResponse: RegistrationResponseJSON): Promise<UserCredential> => httpsCallableFromURL<FunctionRequest, FunctionResponse>(functions, "/firebase-web-authn-api")({
-    registrationResponse: registrationResponse,
-    operation: "verify registration",
-  }).then<UserCredential>(({ data: functionResponse }: HttpsCallableResult<FunctionResponse>): Promise<UserCredential> => handleVerifyFunctionResponse(auth, functionResponse))).catch<never>((): Promise<never> => clearChallenge(functions).then<never>((): never => {
-    throw new FirebaseWebAuthnError({
-      code: "cancelled",
-      message: "Cancelled by user.",
-      operation: "verify registration",
-    });
-  })) : ((): never => {
-    throw new FirebaseWebAuthnError({
-      code: "invalid",
-      message: "Invalid function response.",
-      operation: functionResponse.operation,
-    });
-  })())
-  .catch<never>((firebaseError): never => {
-    throw new FirebaseWebAuthnError({
-      code: firebaseError.code.replace("firebaseWebAuthn/", ""),
-      message: firebaseError.message,
-      method: "httpsCallableFromURL",
+  .currentUser ? httpsCallableFromURL<FunctionRequest, FunctionResponse>(
+    functions,
+    "/firebase-web-authn-api",
+  )(
+    {
+      name:      name,
       operation: "create registration challenge",
-    });
-  }) : ((): never => {
+    },
+  )
+  .then<UserCredential>(
+    ({ data: functionResponse }: HttpsCallableResult<FunctionResponse>): Promise<UserCredential> => "code" in functionResponse ? ((): never => {
+      throw new FirebaseWebAuthnError(functionResponse);
+    })() : "creationOptions" in functionResponse ? startRegistration(functionResponse.creationOptions).then<UserCredential>(
+      (registrationResponse: RegistrationResponseJSON): Promise<UserCredential> => httpsCallableFromURL<FunctionRequest, FunctionResponse>(
+        functions,
+        "/firebase-web-authn-api",
+      )(
+        {
+          registrationResponse: registrationResponse,
+          operation:            "verify registration",
+        },
+      ).then<UserCredential>(
+        ({ data: functionResponse }: HttpsCallableResult<FunctionResponse>): Promise<UserCredential> => handleVerifyFunctionResponse(
+          auth,
+          functionResponse,
+        ),
+      ),
+    ).catch<never>(
+      (): Promise<never> => clearChallenge(functions).then<never>(
+        (): never => {
+          throw new FirebaseWebAuthnError({
+            code:      "cancelled",
+            message:   "Cancelled by user.",
+            operation: "verify registration",
+          });
+        },
+      ),
+    ) : ((): never => {
+      throw new FirebaseWebAuthnError({
+        code:      "invalid",
+        message:   "Invalid function response.",
+        operation: functionResponse.operation,
+      });
+    })(),
+  )
+  .catch<never>(
+    (firebaseError): never => {
+      throw new FirebaseWebAuthnError({
+        code:      firebaseError.code.replace(
+          "firebaseWebAuthn/",
+          "",
+        ),
+        message:   firebaseError.message,
+        method:    "httpsCallableFromURL",
+        operation: "create registration challenge",
+      });
+    },
+  ) : ((): never => {
     throw new FirebaseWebAuthnError({
-      code: "missing-auth",
-      message: "No user is signed in.",
+      code:      "missing-auth",
+      message:   "No user is signed in.",
       operation: "create reauthentication challenge",
     });
   })();

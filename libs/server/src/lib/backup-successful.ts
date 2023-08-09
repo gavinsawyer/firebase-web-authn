@@ -9,4 +9,6 @@ import { DocumentReference, DocumentSnapshot, Firestore, getFirestore } from "fi
  *
  * @returns A {@link Promise} which resolves with either a boolean for whether the user's passkey is backed up successfully or null if no passkey was found.
  */
-export const backupSuccessful: (uid: string, app?: App) => Promise<boolean | null> = (uid: string, app?: App): Promise<boolean | null> => ((firestore: Firestore): Promise<boolean | null> => (firestore.collection("webAuthnUsers").doc(uid) as DocumentReference<WebAuthnUserDocument>).get().then((documentSnapshot: DocumentSnapshot<WebAuthnUserDocument>): boolean | null => documentSnapshot.data()?.credential?.backupSuccessful || null))(app ? getFirestore(app) : getFirestore());
+export const backupSuccessful: (uid: string, app?: App) => Promise<boolean | null> = (uid: string, app?: App): Promise<boolean | null> => ((firestore: Firestore): Promise<boolean | null> => (firestore.collection("webAuthnUsers").doc(uid) as DocumentReference<WebAuthnUserDocument>).get().then(
+  (documentSnapshot: DocumentSnapshot<WebAuthnUserDocument>): boolean | null => documentSnapshot.data()?.credential?.backupSuccessful || null,
+))(app ? getFirestore(app) : getFirestore());

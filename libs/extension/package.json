@@ -1,17 +1,17 @@
 {
-  "name": "@firebase-web-authn/extension",
-  "version": "9.6.6",
-  "homepage": "https://firebase-web-authn.dev",
-  "author": {
-    "name": "Gavin Sawyer",
+  "name":       "@firebase-web-authn/extension",
+  "version":    "9.6.6",
+  "homepage":   "https://firebase-web-authn.dev",
+  "author":     {
+    "name":  "Gavin Sawyer",
     "email": "g@vinsawyer.dev",
-    "url": "https://gavinsawyer.dev"
+    "url":   "https://gavinsawyer.dev"
   },
-  "license": "Apache-2.0",
+  "license":    "Apache-2.0",
   "repository": {
-    "type": "git",
-    "url": "git+https://github.com/gavinsawyer/firebase-web-authn.git",
+    "type":      "git",
+    "url":       "git+https://github.com/gavinsawyer/firebase-web-authn.git",
     "directory": "libs/extension"
   },
-  "private": false
+  "private":    false
 }

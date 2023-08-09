@@ -1,23 +1,23 @@
 {
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
-    "strictInjectionParameters": true,
-    "strictInputAccessModifiers": true,
-    "strictTemplates": true
+    "strictInjectionParameters":       true,
+    "strictInputAccessModifiers":      true,
+    "strictTemplates":                 true
   },
-  "compilerOptions": {
-    "forceConsistentCasingInFileNames": true,
-    "noFallthroughCasesInSwitch": true,
-    "noImplicitOverride": true,
-    "noImplicitReturns": true,
+  "compilerOptions":        {
+    "forceConsistentCasingInFileNames":   true,
+    "noFallthroughCasesInSwitch":         true,
+    "noImplicitOverride":                 true,
+    "noImplicitReturns":                  true,
     "noPropertyAccessFromIndexSignature": true,
-    "strict": true,
-    "target": "es2020"
+    "strict":                             true,
+    "target":                             "es2020"
   },
-  "extends": "../../tsconfig.base.json",
-  "files": [],
-  "include": [],
-  "references": [
+  "extends":                "../../tsconfig.base.json",
+  "files":                  [],
+  "include":                [],
+  "references":             [
     {
       "path": "./tsconfig.app.json"
     },

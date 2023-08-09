@@ -17,12 +17,27 @@ import { linkWithPasskey }                                                from "
 export const createUserWithPasskey: (auth: Auth, functions: Functions, name: string) => Promise<UserCredential> = (auth: Auth, functions: Functions, name: string): Promise<UserCredential> => auth
   .currentUser && auth
   .currentUser
-  .isAnonymous ? linkWithPasskey(auth, functions, name) : signInAnonymously(auth)
-  .then<UserCredential>((): Promise<UserCredential> => linkWithPasskey(auth, functions, name))
-  .catch<never>((firebaseError): never => {
-    throw new FirebaseWebAuthnError({
-      code: firebaseError.code.replace("firebaseWebAuthn/", ""),
-      message: firebaseError.message,
-      method: "signInAnonymously",
-    });
-  });
+  .isAnonymous ? linkWithPasskey(
+    auth,
+    functions,
+    name,
+  ) : signInAnonymously(auth)
+  .then<UserCredential>(
+    (): Promise<UserCredential> => linkWithPasskey(
+      auth,
+      functions,
+      name,
+    ),
+  )
+  .catch<never>(
+    (firebaseError): never => {
+      throw new FirebaseWebAuthnError({
+        code:    firebaseError.code.replace(
+          "firebaseWebAuthn/",
+          "",
+        ),
+        message: firebaseError.message,
+        method:  "signInAnonymously",
+      });
+    },
+  );

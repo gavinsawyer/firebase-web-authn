@@ -1,53 +1,58 @@
 {
-  "$schema": "./node_modules/nx/schemas/nx-schema.json",
-  "affected": {
+  "$schema":            "./node_modules/nx/schemas/nx-schema.json",
+  "affected":           {
     "defaultBase": "main"
   },
-  "defaultProject": "website",
-  "generators": {
+  "defaultProject":     "website",
+  "generators":         {
     "@nx/angular:application": {
-      "style": "sass",
-      "linter": "eslint",
+      "style":          "sass",
+      "linter":         "eslint",
       "unitTestRunner": "none",
-      "e2eTestRunner": "none",
-      "routing": true,
-      "skipTests": true,
-      "standalone": true
+      "e2eTestRunner":  "none",
+      "routing":        true,
+      "skipTests":      true,
+      "standalone":     true
     },
-    "@nx/angular:component": {
-      "style": "sass",
+    "@nx/angular:component":   {
+      "style":        "sass",
       "displayBlock": true,
-      "export": true,
-      "skipTests": true,
-      "standalone": true
+      "export":       true,
+      "skipTests":    true,
+      "standalone":   true
     },
-    "@nx/angular:library": {
-      "linter": "eslint",
+    "@nx/angular:library":     {
+      "linter":         "eslint",
       "unitTestRunner": "none",
-      "skipModule": true
+      "skipModule":     true
     },
-    "@nx/js:library": {
+    "@nx/js:library":          {
       "unitTestRunner": "none"
     }
   },
-  "namedInputs": {
-    "default": [
+  "namedInputs":        {
+    "default":       [
       "{projectRoot}/**/*",
       "sharedGlobals"
     ],
-    "production": [
+    "production":    [
       "default",
       "!{projectRoot}/.eslintrc.json"
     ],
     "sharedGlobals": []
   },
-  "npmScope": "firebase-web-authn",
-  "targetDefaults": {
+  "npmScope":           "firebase-web-authn",
+  "targetDefaults":     {
     "build": {
-      "dependsOn": ["^build"],
-      "inputs": ["production", "^production"]
+      "dependsOn": [
+        "^build"
+      ],
+      "inputs":    [
+        "production",
+        "^production"
+      ]
     },
-    "lint": {
+    "lint":  {
       "inputs": [
         "default",
         "{workspaceRoot}/.eslintrc.json",
@@ -58,7 +63,7 @@
   "tasksRunnerOptions": {
     "default": {
       "options": {
-        "accessToken": "${NX_CLOUD_ACCESS_TOKEN}",
+        "accessToken":         "${NX_CLOUD_ACCESS_TOKEN}",
         "cacheableOperations": [
           "lint",
           "browser",
@@ -66,7 +71,7 @@
           "build"
         ]
       },
-      "runner": "nx-cloud"
+      "runner":  "nx-cloud"
     }
   }
 }

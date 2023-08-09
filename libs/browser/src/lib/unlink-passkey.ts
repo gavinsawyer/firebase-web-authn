@@ -4,7 +4,6 @@ import { Functions, httpsCallableFromURL, HttpsCallableResult } from "firebase/f
 import { FirebaseWebAuthnError }                                from "./firebase-web-authn-error";
 
 
-
 /**
  * Asynchronously deletes stored public key credentials associated with the signed-in user.
  *
@@ -15,23 +14,35 @@ import { FirebaseWebAuthnError }                                from "./firebase
  * @throws {@link FirebaseWebAuthnError}
  */
 export const unlinkPasskey: (auth: Auth, functions: Functions) => Promise<void> = (auth: Auth, functions: Functions): Promise<void> => auth
-  .currentUser ? httpsCallableFromURL<FunctionRequest, FunctionResponse>(functions, "/firebase-web-authn-api")({
-    operation: "clear user doc",
-  })
-  .then<void>(({ data: functionResponse }: HttpsCallableResult<FunctionResponse>): void => "code" in functionResponse ? ((): never => {
-    throw new FirebaseWebAuthnError(functionResponse);
-  })() : void(0))
-  .catch<never>((firebaseError): never => {
+  .currentUser ? httpsCallableFromURL<FunctionRequest, FunctionResponse>(
+    functions,
+    "/firebase-web-authn-api",
+  )(
+    {
+      operation: "clear user doc",
+    },
+  )
+  .then<void>(
+    ({ data: functionResponse }: HttpsCallableResult<FunctionResponse>): void => "code" in functionResponse ? ((): never => {
+      throw new FirebaseWebAuthnError(functionResponse);
+    })() : void (0),
+  )
+  .catch<never>(
+    (firebaseError): never => {
+      throw new FirebaseWebAuthnError({
+        code:      firebaseError.code.replace(
+          "firebaseWebAuthn/",
+          "",
+        ),
+        message:   firebaseError.message,
+        method:    "httpsCallableFromURL",
+        operation: "clear challenge",
+      });
+    },
+  ) : ((): never => {
     throw new FirebaseWebAuthnError({
-      code: firebaseError.code.replace("firebaseWebAuthn/", ""),
-      message: firebaseError.message,
-      method: "httpsCallableFromURL",
-      operation: "clear challenge",
-    });
-  }) : ((): never => {
-    throw new FirebaseWebAuthnError({
-      code: "missing-auth",
-      message: "No user is signed in.",
+      code:      "missing-auth",
+      message:   "No user is signed in.",
       operation: "create reauthentication challenge",
     });
   })();

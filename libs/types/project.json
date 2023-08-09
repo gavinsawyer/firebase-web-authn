@@ -1,36 +1,36 @@
 {
-  "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "name": "types",
+  "$schema":     "../../node_modules/nx/schemas/project-schema.json",
+  "name":        "types",
   "projectType": "library",
-  "sourceRoot": "libs/types/src",
-  "tags": [],
-  "targets": {
-    "lint": {
+  "sourceRoot":  "libs/types/src",
+  "tags":        [],
+  "targets":     {
+    "lint":  {
       "executor": "@nx/linter:eslint",
-      "options": {
+      "options":  {
         "lintFilePatterns": [
           "libs/types/**/*.ts"
         ]
       },
-      "outputs": [
+      "outputs":  [
         "{options.outputFile}"
       ]
     },
     "build": {
       "executor": "@nx/js:tsc",
-      "options": {
-        "assets": [
+      "options":  {
+        "assets":     [
           {
-            "glob": "README.md",
-            "input": "libs/types",
+            "glob":   "README.md",
+            "input":  "libs/types",
             "output": "."
           }
         ],
-        "main": "libs/types/src/index.ts",
+        "main":       "libs/types/src/index.ts",
         "outputPath": "dist/libs/types",
-        "tsConfig": "libs/types/tsconfig.lib.json"
+        "tsConfig":   "libs/types/tsconfig.lib.json"
       },
-      "outputs": [
+      "outputs":  [
         "{options.outputPath}"
       ]
     }

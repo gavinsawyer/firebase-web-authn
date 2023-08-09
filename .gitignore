@@ -13,8 +13,8 @@ tmp
 gha-creds-*.json
 
 # Version side-effect files
-apps/*/src/git-info.ts
-apps/*/src/package-version.ts
+apps/*/src/.git-info.ts
+apps/*/src/.package-version.ts
 
 # Compiled output
 dist/apps
