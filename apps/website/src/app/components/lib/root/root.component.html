@@ -7,9 +7,7 @@
 <footer>
   <div>
     <div>
-      <span>
-        NPM
-      </span>
+      <span>NPM</span>
     </div>
     <div>
       <span>
@@ -18,8 +16,6 @@
     </div>
   </div>
   <div>
-    <span>
-      v{{ packageVersion + (gitInfo.dirty ? "-next" : "") }}+<a [href]="'https://github.com/gavinsawyer/firebase-web-authn/commit/' + gitInfo.hash">{{ gitInfo.hash }}</a>
-    </span>
+    <span>v{{ packageVersion + (gitInfo.dirty ? "-next" : "") }}+<a [href]="'https://github.com/gavinsawyer/firebase-web-authn/commit/' + gitInfo.hash">{{ gitInfo.hash }}</a></span>
   </div>
 </footer>

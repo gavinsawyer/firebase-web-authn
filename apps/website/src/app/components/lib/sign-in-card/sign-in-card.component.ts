@@ -11,8 +11,8 @@ import { MatIconModule }                                                   from 
 import { MatInputModule }                                                  from "@angular/material/input";
 import { MatSnackBar, MatSnackBarModule }                                  from "@angular/material/snack-bar";
 import { createUserWithPasskey, FirebaseWebAuthnError, signInWithPasskey } from "@firebase-web-authn/browser";
-import { ProfileDocument }                                                 from "../../../../../../interfaces";
-import { AuthenticationService }                                           from "../../../../../../services";
+import { ProfileDocument }                                                 from "../../../interfaces";
+import { AuthenticationService }                                           from "../../../services";
 
 
 interface SignInForm {
@@ -128,7 +128,7 @@ export class SignInCardComponent {
           );
       })() : void (0))(
         this.formGroup.value.name,
-        authenticationService.user(),
+        authenticationService.user$(),
       ) : void (0);
   }
 

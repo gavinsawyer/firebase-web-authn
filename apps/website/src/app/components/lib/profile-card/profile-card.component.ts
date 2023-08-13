@@ -6,7 +6,7 @@ import { MatButtonModule }                                                 from 
 import { MatCardModule }                                                   from "@angular/material/card";
 import { MatSnackBar, MatSnackBarModule }                                  from "@angular/material/snack-bar";
 import { FirebaseWebAuthnError, signInWithPasskey, verifyUserWithPasskey } from "@firebase-web-authn/browser";
-import { ProfileService }                                                  from "../../../../../../services";
+import { ProfileService }                                                  from "../../../services";
 
 
 @Component({

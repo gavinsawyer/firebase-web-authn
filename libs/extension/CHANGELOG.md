@@ -5,6 +5,13 @@ A Firebase Extension for authentication with WebAuthn passkeys.
 [![Latest version in NPM](https://img.shields.io/npm/v/@firebase-web-authn/extension?logo=npm)](https://www.npmjs.com/package/@firebase-web-authn/extension)
 [![Install](https://img.shields.io/static/v1?label=&message=Install%20in%20Firebase%20console&logo=firebase&color=blue)](https://console.firebase.google.com/u/0/project/_/extensions/install?ref=gavinsawyer%2Ffirebase-web-authn)
 
+## v10.0.0
+
+- Updated dependencies.
+- Moved to v10 to reflect compatibility with Firebase JavaScript SDK v10.
+- Added provideClientHydration() to website.
+- Fixes #7
+
 ## v9.6.6
 
 - Fixes #4: Malformed FirebaseWebAuthnError

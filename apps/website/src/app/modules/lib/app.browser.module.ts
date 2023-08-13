@@ -6,7 +6,7 @@ import { Auth, getAuth, provideAuth }                                           
 import { Firestore, getFirestore, provideFirestore }                                             from "@angular/fire/firestore";
 import { Functions, getFunctions, provideFunctions }                                             from "@angular/fire/functions";
 import { ReactiveFormsModule }                                                                   from "@angular/forms";
-import { BrowserModule }                                                                         from "@angular/platform-browser";
+import { BrowserModule, provideClientHydration }                                                 from "@angular/platform-browser";
 import { BrowserAnimationsModule }                                                               from "@angular/platform-browser/animations";
 import { RouterModule }                                                                          from "@angular/router";
 import { TransferHttpCacheModule }                                                               from "@nguniversal/common";
@@ -73,6 +73,7 @@ import { AppCheckOptionsService }                                               
     TransferHttpCacheModule,
   ],
   providers:    [
+    provideClientHydration(),
     ScreenTrackingService,
     UserTrackingService,
     {

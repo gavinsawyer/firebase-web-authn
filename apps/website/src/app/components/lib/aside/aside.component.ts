@@ -1,7 +1,8 @@
-import { CommonModule }                              from "@angular/common";
-import { Component }                                 from "@angular/core";
-import { AuthenticationService, ProfileService }     from "../../../services";
-import { ProfileCardComponent, SignInCardComponent } from "./components";
+import { CommonModule }                          from "@angular/common";
+import { Component }                             from "@angular/core";
+import { AuthenticationService, ProfileService } from "../../../services";
+import { ProfileCardComponent }                  from "../profile-card/profile-card.component";
+import { SignInCardComponent }                   from "../sign-in-card/sign-in-card.component";
 
 
 @Component({
