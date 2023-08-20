@@ -1,7 +1,7 @@
 ## @firebase-web-authn/server
 A Firebase Extension for authentication with WebAuthn passkeys.
 
-This package contains four tree-shakeable async methods for using FirebaseWebAuthn in a secure context.
+This package contains five tree-shakeable async methods for using FirebaseWebAuthn in a secure context.
 
 [![GitHub workflow status](https://img.shields.io/github/actions/workflow/status/gavinsawyer/firebase-web-authn/ci.yml)](https://github.com/gavinsawyer/firebase-web-authn/actions/workflows/ci.yml)
 [![FirebaseWebAuthn version](https://img.shields.io/npm/v/@firebase-web-authn/server?logo=npm)](https://www.npmjs.com/package/@firebase-web-authn/server)
@@ -11,6 +11,7 @@ This package contains four tree-shakeable async methods for using FirebaseWebAut
 ```ts
   backupEligible: (uid: string, app?: App) => Promise<boolean | null>;
 backupSuccessful: (uid: string, app?: App) => Promise<boolean | null>;
+      credential: (uid: string, app?: App) => Promise<WebAuthnUserCredential>;
      lastPresent: (uid: string, app?: App) => Promise<Timestamp | null>;
     lastVerified: (uid: string, app?: App) => Promise<Timestamp | null>;
 ```

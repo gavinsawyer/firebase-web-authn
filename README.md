@@ -24,6 +24,12 @@ To install from NPM, run the following commands in your project root:
 % firebase ext:install ./node_modules/@firebase-web-authn/extension
 ```
 Using NPM is recommended to receive updates to the extension alongside other FirebaseWebAuthn dependencies.
+### Prerequisites
+Before installing this extension, you'll need to set up these services in your Firebase project:
+- App Check
+- Authentication with the anonymous provider
+- Firestore Database
+- Functions
 ### Additional setup:
 1. As of August 2023, [supported roles for Firebase Extensions](https://firebase.google.com/docs/extensions/publishers/access#supported-roles) do not include `iam.serviceAccounts.signBlob` which is needed for custom auth providers.
    - After deploying the extension, grant the `Service Account Token Creator` role to the extension's service account in [IAM](https://console.cloud.google.com/iam-admin/iam) under `Firebase Extensions firebase-web-authn service account` > Edit > Assign roles.
@@ -100,15 +106,16 @@ class FirebaseWebAuthnError extends Error {
 }
 ```
 ### Caveats
-- If you are using biometrics to confirm an action happening server-side, use the `lastPresent` and `lastVerified` methods from [@firebase-web-authn/server](libs/server).
-- The `webAuthnUsers` collection should not have read or write access from users. Your app should use a separate `users`/`profiles` document.
-- The `name` parameter is not automatically stored anywhere except in the passkey. Changes made to this value in a passkey manager are not detectable by the app.
-  - If FirebaseWebAuthn is configured as an MFA provider, pass the existing identifier.
+- The anonymous sign-in provider must be enabled in Firebase.
+- `onAuthStateChanged` callbacks are only fired upon starting auth or registration if your user is not already signed in anonymously.
+- `onIdTokenChanged` callbacks are fired upon successfully converting from an anonymous account to a WebAuthn account.
+- If you are using biometrics to confirm an action that will happen server-side, use methods from [@firebase-web-authn/server](libs/server).
+- The `firebase-web-authn` database should not have Firestore rules permitting client-side access for security pattern reasons.
+- The `name` parameter is only used by the passkey manager and changes to it are not detectable by the browser.
+  - If FirebaseWebAuthn is configured as an MFA provider, pass the existing identifier. This way it is stored alongside the user's primary credential.
   - If FirebaseWebAuthn is your only auth provider, you can pass any recognizable value. If you expect users to have multiple usernameless accounts, `name` can be a user-generated account name ("Personal"/"Work"/etc.). With generic `name` values consider passing something like "${FIRST_NAME} | Personal" for users who share a device with others.
-- An anonymous user linked with a passkey is the same as a user created with `createUserWithPasskey`, and appears in Firebase as having no identifier and no provider. Users created this way are not deleted after 30 days with auto clean-up.
-- When using `createUserWithPasskey`, you will find that no `onAuthStateChanged` callback fires when converting an anonymous account to a providerless account. Your callback should be passed to `onIdTokenChanged` instead.
 ## [@firebase-web-authn/server](libs/server)
-This package contains four tree-shakeable async methods for using FirebaseWebAuthn in a secure context.
+This package contains five tree-shakeable async methods for using FirebaseWebAuthn in a secure context.
 
 [![FirebaseWebAuthn version](https://img.shields.io/npm/v/@firebase-web-authn/server?logo=npm)](https://www.npmjs.com/package/@firebase-web-authn/server)
 [![Firebase Admin SDK version](https://img.shields.io/npm/dependency-version/@firebase-web-authn/server/dev/firebase-admin?label=Firebase%20Admin%20SDK&logo=firebase)](https://www.npmjs.com/package/firebase-admin)
@@ -116,6 +123,7 @@ This package contains four tree-shakeable async methods for using FirebaseWebAut
 ```ts
   backupEligible: (uid: string, app?: App) => Promise<boolean | null>;
 backupSuccessful: (uid: string, app?: App) => Promise<boolean | null>;
+      credential: (uid: string, app?: App) => Promise<WebAuthnUserCredential>;
      lastPresent: (uid: string, app?: App) => Promise<Timestamp | null>;
     lastVerified: (uid: string, app?: App) => Promise<Timestamp | null>;
 ```

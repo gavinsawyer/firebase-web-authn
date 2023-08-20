@@ -1,6 +1,6 @@
 {
   "name":            "@firebase-web-authn/browser",
-  "version":         "10.0.0",
+  "version":         "10.1.0",
   "homepage":        "https://firebase-web-authn.dev",
   "author":          {
     "name":  "Gavin Sawyer",
@@ -16,7 +16,7 @@
   "private":         false,
   "dependencies":    {
     "@simplewebauthn/browser": "^7.4.0",
-    "firebase":                "^10.1.0"
+    "firebase":                "^10.2.0"
   },
   "devDependencies": {
     "@simplewebauthn/typescript-types": "^7.4.0"

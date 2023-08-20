@@ -19,6 +19,12 @@ To install from NPM, run the following commands in your project root:
 % firebase ext:install ./node_modules/@firebase-web-authn/extension
 ```
 Using NPM is recommended to receive updates to the extension alongside other FirebaseWebAuthn dependencies.
+### Prerequisites
+Before installing this extension, you'll need to set up these services in your Firebase project:
+- App Check
+- Authentication with the anonymous provider
+- Firestore Database
+- Functions
 ### Additional setup:
 1. As of August 2023, [supported roles for Firebase Extensions](https://firebase.google.com/docs/extensions/publishers/access#supported-roles) do not include `iam.serviceAccounts.signBlob` which is needed for custom auth providers.
    - After deploying the extension, grant the `Service Account Token Creator` role to the extension's service account in [IAM](https://console.cloud.google.com/iam-admin/iam) under `Firebase Extensions firebase-web-authn service account` > Edit > Assign roles.
@@ -40,6 +46,8 @@ Using NPM is recommended to receive updates to the extension alongside other Fir
       ]
     }
     ```
+
+3.
 
 ## More packages
 - [@firebase-web-authn/browser](https://github.com/gavinsawyer/firebase-web-authn/tree/main/libs/browser)

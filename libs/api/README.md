@@ -9,11 +9,16 @@ This package contains a Firebase Function that registers and authenticates WebAu
 See [@firebase-web-authn/extension](https://github.com/gavinsawyer/firebase-web-authn#firebase-web-authnextension) for simplified installation using `firebase ext:install`.
 ### Custom deployment
 If you would rather deploy the API from your existing Firebase Functions package,
-1. Run:
+1. Set up these services in your Firebase project:
+  - App Check
+  - Authentication with the anonymous provider
+  - Firestore Database
+  - Functions
+2. Run:
 
 `% npm install @firebase-web-authn/api --save-dev`
 
-2. Export the API from your Firebase Functions package's `main` file by calling `getFirebaseWebAuthnApi` with a config object.
+3. Export the API from your Firebase Functions package's `main` file by calling `getFirebaseWebAuthnApi` with a config object.
 ```ts
 import { initializeApp }          from "firebase-admin/app";
 import { HttpsFunction }          from "firebase-functions";
@@ -53,13 +58,8 @@ interface FirebaseWebAuthnConfig {
       ]
     }
     ```
-2. Set up these services in your Firebase project:
-   - App Check
-   - Authentication with the anonymous provider
-   - Firestore Database
-   - Functions
-3. Grant the `Cloud Datastore User` and `Service Account Token Creator` roles to the `App Engine default service account` principal in [Service accounts](https://console.cloud.google.com/iam-admin/serviceaccounts) under `App Engine default service account` > Permissions.
-4. Grant the `Cloud Functions Invoker` role to the `allUsers` principal in [Cloud Functions](https://console.cloud.google.com/functions/list) under `firebaseWebAuthnAPI` > Permissions.
+2. Grant the `Cloud Datastore User` and `Service Account Token Creator` roles to the `App Engine default service account` principal in [Service accounts](https://console.cloud.google.com/iam-admin/serviceaccounts) under `App Engine default service account` > Permissions.
+3. Grant the `Cloud Functions Invoker` role to the `allUsers` principal in [Cloud Functions](https://console.cloud.google.com/functions/list) under `firebaseWebAuthnAPI` > Permissions.
 ## More packages
 - [@firebase-web-authn/extension](https://github.com/gavinsawyer/firebase-web-authn/tree/main/libs/extension)
 - [@firebase-web-authn/browser](https://github.com/gavinsawyer/firebase-web-authn/tree/main/libs/browser)
