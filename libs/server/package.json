@@ -1,20 +1,20 @@
 {
-  "name":            "@firebase-web-authn/server",
-  "version":         "10.1.0",
-  "homepage":        "https://firebase-web-authn.dev",
-  "author":          {
+  "name":         "@firebase-web-authn/server",
+  "version":      "10.1.2",
+  "homepage":     "https://firebase-web-authn.dev",
+  "license":      "Apache-2.0",
+  "private":      false,
+  "author":       {
     "name":  "Gavin Sawyer",
     "email": "g@vinsawyer.dev",
     "url":   "https://gavinsawyer.dev"
   },
-  "license":         "Apache-2.0",
-  "repository":      {
+  "repository":   {
     "type":      "git",
     "url":       "git+https://github.com/gavinsawyer/firebase-web-authn.git",
     "directory": "libs/server"
   },
-  "private":         false,
-  "devDependencies": {
+  "dependencies": {
     "firebase-admin": "^11.10.1"
   }
 }

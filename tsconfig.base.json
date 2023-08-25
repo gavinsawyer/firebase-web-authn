@@ -7,11 +7,11 @@
     "experimentalDecorators": true,
     "importHelpers": true,
     "lib": [
-      "es2017",
-      "dom"
+      "ES2020",
+      "DOM"
     ],
-    "module":                 "esnext",
-    "moduleResolution":       "node",
+    "module":                 "ESNext",
+    "moduleResolution":       "Node",
     "paths":                  {
       "@firebase-web-authn/api":     [
         "libs/api/src/index.ts"
@@ -30,7 +30,7 @@
     "skipDefaultLibCheck":    true,
     "skipLibCheck":           true,
     "sourceMap":              true,
-    "target":                 "es2015"
+    "target":                 "ESNext"
   },
   "exclude":         [
     "node_modules",

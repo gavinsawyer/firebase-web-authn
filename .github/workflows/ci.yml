@@ -34,7 +34,8 @@ jobs:
       - run: npx nx run website:deploy
         env:
           FIREBASE_TOKEN: ${{ steps.auth.outputs.access_token }}
-      - run: npx nx run-many --target build --all
+        continue-on-error: true
+      - run: npx nx run-many --target build --projects types,api,browser,server,extension
       - run:               npm publish dist/libs/types --access public
         continue-on-error: true
       - run:               npm publish dist/libs/api --access public

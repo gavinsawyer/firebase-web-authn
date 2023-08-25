@@ -12,7 +12,8 @@
     "noImplicitReturns":                  true,
     "noPropertyAccessFromIndexSignature": true,
     "strict":                             true,
-    "target":                             "es2020"
+    "target":                             "ES2022",
+    "useDefineForClassFields":            false
   },
   "extends":                "../../tsconfig.base.json",
   "files":                  [],

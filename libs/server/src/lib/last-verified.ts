@@ -11,7 +11,4 @@ import { DocumentReference, DocumentSnapshot, Firestore, getFirestore, Timestamp
  */
 export const lastVerified: (uid: string, app?: App) => Promise<Timestamp | null> = (uid: string, app?: App): Promise<Timestamp | null> => ((firestore: Firestore): Promise<Timestamp | null> => (firestore.collection("users").doc(uid) as DocumentReference<WebAuthnUserDocument>).get().then(
   (documentSnapshot: DocumentSnapshot<WebAuthnUserDocument>): Timestamp | null => documentSnapshot.data()?.lastVerified || null,
-))(app ? getFirestore(
-  app,
-  "firebase-web-authn",
-) : getFirestore("firebase-web-authn"));
+))(app ? getFirestore(app) : getFirestore());

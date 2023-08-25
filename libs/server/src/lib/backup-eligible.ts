@@ -11,7 +11,4 @@ import { DocumentReference, DocumentSnapshot, Firestore, getFirestore } from "fi
  */
 export const backupEligible: (uid: string, app?: App) => Promise<boolean | null> = (uid: string, app?: App): Promise<boolean | null> => ((firestore: Firestore): Promise<boolean | null> => (firestore.collection("users").doc(uid) as DocumentReference<WebAuthnUserDocument>).get().then(
   (documentSnapshot: DocumentSnapshot<WebAuthnUserDocument>): boolean | null => documentSnapshot.data()?.credential?.backupEligible || null,
-))(app ? getFirestore(
-  app,
-  "firebase-web-authn",
-) : getFirestore("firebase-web-authn"));
+))(app ? getFirestore(app) : getFirestore());

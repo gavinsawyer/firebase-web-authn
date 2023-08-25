@@ -2,7 +2,7 @@
   "$schema":     "../../node_modules/nx/schemas/project-schema.json",
   "name":        "extension",
   "projectType": "library",
-  "sourceRoot":  "/src",
+  "sourceRoot":  "libs/extension/src",
   "tags":        [],
   "targets":     {
     "lint":  {
@@ -56,9 +56,8 @@
             "output": "."
           }
         ],
-        "main":       "libs/extension/functions/index.ts",
+        "main":       "libs/extension/functions/main.ts",
         "outputPath": "dist/libs/extension",
-        "rootDir":    "libs/extension",
         "tsConfig":   "libs/extension/tsconfig.lib.json"
       },
       "outputs":  [

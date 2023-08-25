@@ -61,7 +61,7 @@ class FirebaseWebAuthnError extends Error {
 - `onAuthStateChanged` callbacks are only fired upon starting auth or registration if your user is not already signed in anonymously.
 - `onIdTokenChanged` callbacks are fired upon successfully converting from an anonymous account to a WebAuthn account.
 - If you are using biometrics to confirm an action that will happen server-side, use methods from [@firebase-web-authn/server](https://github.com/gavinsawyer/firebase-web-authn/tree/main/libs/server).
-- The `firebase-web-authn` database should not have Firestore rules permitting client-side access for security pattern reasons.
+- The `webAuthnUsers` collection should not have Firestore rules permitting client-side access for security pattern reasons.
 - The `name` parameter is only used by the passkey manager and changes to it are not detectable by the browser.
   - If FirebaseWebAuthn is configured as an MFA provider, pass the existing identifier. This way it is stored alongside the user's primary credential.
   - If FirebaseWebAuthn is your only auth provider, you can pass any recognizable value. If you expect users to have multiple usernameless accounts, `name` can be a user-generated account name ("Personal"/"Work"/etc.). With generic `name` values consider passing something like "${FIRST_NAME} | Personal" for users who share a device with others.

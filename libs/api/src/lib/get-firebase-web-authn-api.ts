@@ -71,7 +71,10 @@ export const getFirebaseWebAuthnApi: (firebaseWebAuthnConfig: FirebaseWebAuthnCo
       message:   firebaseError.message,
       operation: functionRequest.operation,
       success:   false,
-    })) : functionRequest.operation === "create authentication challenge" ? ((publicKeyCredentialRequestOptionsJSON: PublicKeyCredentialRequestOptionsJSON): Promise<FunctionResponse> => (firestore.collection("users").doc(callableContext.auth?.uid || "") as DocumentReference<WebAuthnUserDocument>).set(
+    })) : functionRequest.operation === "create authentication challenge" ? generateAuthenticationOptions({
+      rpID:             callableContext.rawRequest.hostname,
+      userVerification: firebaseWebAuthnConfig.userVerificationRequirement,
+    }).then((publicKeyCredentialRequestOptionsJSON: PublicKeyCredentialRequestOptionsJSON): Promise<FunctionResponse> => (firestore.collection("users").doc(callableContext.auth?.uid || "") as DocumentReference<WebAuthnUserDocument>).set(
       {
         challenge: publicKeyCredentialRequestOptionsJSON.challenge,
       },
@@ -87,10 +90,16 @@ export const getFirebaseWebAuthnApi: (firebaseWebAuthnConfig: FirebaseWebAuthnCo
       message:   firebaseError.message,
       operation: functionRequest.operation,
       success:   false,
-    })))(generateAuthenticationOptions({
+    }))) : functionRequest.operation === "create reauthentication challenge" ? (firestore.collection("users").doc(callableContext.auth?.uid || "") as DocumentReference<WebAuthnUserDocument>).get().then<FunctionResponse>((userDocumentSnapshot: DocumentSnapshot<WebAuthnUserDocument>): Promise<FunctionResponse> => (async (userDocument: WebAuthnUserDocument | undefined): Promise<FunctionResponse> => userDocument ? userDocument.credential ? generateAuthenticationOptions({
+      allowCredentials: [
+        {
+          id:   userDocument.credential.id,
+          type: "public-key",
+        },
+      ],
       rpID:             callableContext.rawRequest.hostname,
       userVerification: firebaseWebAuthnConfig.userVerificationRequirement,
-    })) : functionRequest.operation === "create reauthentication challenge" ? (firestore.collection("users").doc(callableContext.auth?.uid || "") as DocumentReference<WebAuthnUserDocument>).get().then<FunctionResponse>((userDocumentSnapshot: DocumentSnapshot<WebAuthnUserDocument>): Promise<FunctionResponse> => (async (userDocument: WebAuthnUserDocument | undefined): Promise<FunctionResponse> => userDocument ? userDocument.credential ? ((publicKeyCredentialRequestOptions: PublicKeyCredentialRequestOptionsJSON): Promise<FunctionResponse> => (firestore.collection("users").doc(callableContext.auth?.uid || "") as DocumentReference<WebAuthnUserDocument>).set(
+    }).then((publicKeyCredentialRequestOptions: PublicKeyCredentialRequestOptionsJSON): Promise<FunctionResponse> => (firestore.collection("users").doc(callableContext.auth?.uid || "") as DocumentReference<WebAuthnUserDocument>).set(
       {
         challenge: publicKeyCredentialRequestOptions.challenge,
       },
@@ -106,16 +115,7 @@ export const getFirebaseWebAuthnApi: (firebaseWebAuthnConfig: FirebaseWebAuthnCo
       message:   firebaseError.message,
       operation: functionRequest.operation,
       success:   false,
-    })))(generateAuthenticationOptions({
-      allowCredentials: [
-        {
-          id:   userDocument.credential.id,
-          type: "public-key",
-        },
-      ],
-      rpID:             callableContext.rawRequest.hostname,
-      userVerification: firebaseWebAuthnConfig.userVerificationRequirement,
-    })) : {
+    }))) : {
       code:      "user-doc-missing-passkey-fields",
       message:   "User doc is missing passkey fields from prior operation.",
       operation: functionRequest.operation,
@@ -130,7 +130,17 @@ export const getFirebaseWebAuthnApi: (firebaseWebAuthnConfig: FirebaseWebAuthnCo
       message:   firebaseError.message,
       operation: functionRequest.operation,
       success:   false,
-    })) : functionRequest.operation === "create registration challenge" ? (firestore.collection("users").doc(callableContext.auth?.uid || "") as DocumentReference<WebAuthnUserDocument>).get().then<FunctionResponse>((userDocumentSnapshot: DocumentSnapshot<WebAuthnUserDocument>): Promise<FunctionResponse> => (async (userDocument: WebAuthnUserDocument | undefined): Promise<FunctionResponse> => !userDocument?.credential ? ((publicKeyCredentialCreationOptions: PublicKeyCredentialCreationOptionsJSON): Promise<FunctionResponse> => (firestore.collection("users").doc(callableContext.auth?.uid || "") as DocumentReference<WebAuthnUserDocument>).set({
+    })) : functionRequest.operation === "create registration challenge" ? (firestore.collection("users").doc(callableContext.auth?.uid || "") as DocumentReference<WebAuthnUserDocument>).get().then<FunctionResponse>((userDocumentSnapshot: DocumentSnapshot<WebAuthnUserDocument>): Promise<FunctionResponse> => (async (userDocument: WebAuthnUserDocument | undefined): Promise<FunctionResponse> => !userDocument?.credential ?generateRegistrationOptions({
+      authenticatorSelection: {
+        authenticatorAttachment: firebaseWebAuthnConfig.authenticatorAttachment,
+        residentKey:             "required",
+        userVerification:        firebaseWebAuthnConfig.userVerificationRequirement,
+      },
+      rpID:                   callableContext.rawRequest.hostname,
+      rpName:                 firebaseWebAuthnConfig.relyingPartyName,
+      userID:                 callableContext.auth?.uid || "",
+      userName:               functionRequest.name,
+    }).then((publicKeyCredentialCreationOptions: PublicKeyCredentialCreationOptionsJSON): Promise<FunctionResponse> => (firestore.collection("users").doc(callableContext.auth?.uid || "") as DocumentReference<WebAuthnUserDocument>).set({
       challenge: publicKeyCredentialCreationOptions.challenge,
     }).then<FunctionResponse>((): FunctionResponse => ({
       creationOptions: publicKeyCredentialCreationOptions,
@@ -141,17 +151,7 @@ export const getFirebaseWebAuthnApi: (firebaseWebAuthnConfig: FirebaseWebAuthnCo
       message:   firebaseError.message,
       operation: functionRequest.operation,
       success:   false,
-    })))(generateRegistrationOptions({
-      authenticatorSelection: {
-        authenticatorAttachment: firebaseWebAuthnConfig.authenticatorAttachment,
-        residentKey:             "required",
-        userVerification:        firebaseWebAuthnConfig.userVerificationRequirement,
-      },
-      rpID:                   callableContext.rawRequest.hostname,
-      rpName:                 firebaseWebAuthnConfig.relyingPartyName,
-      userID:                 callableContext.auth?.uid || "",
-      userName:               functionRequest.name,
-    })) : {
+    }))) : {
       code:      "no-op",
       message:   "No operation is needed.",
       operation: functionRequest.operation,
@@ -411,10 +411,7 @@ export const getFirebaseWebAuthnApi: (firebaseWebAuthnConfig: FirebaseWebAuthnCo
       throw new Error("Invalid function request type.");
     })())(
       app ? getAuth(app) : getAuth(),
-      app ? getFirestore(
-        app,
-        "firebase-web-authn",
-      ) : getFirestore("firebase-web-authn"),
+      app ? getFirestore(app) : getFirestore(),
     ) : {
       code:      "missing-auth",
       message:   "No user is signed in.",

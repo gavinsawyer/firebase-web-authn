@@ -5,6 +5,13 @@ A Firebase Extension for authentication with WebAuthn passkeys.
 [![Latest version in NPM](https://img.shields.io/npm/v/@firebase-web-authn/extension?logo=npm)](https://www.npmjs.com/package/@firebase-web-authn/extension)
 [![Install](https://img.shields.io/static/v1?label=&message=Install%20in%20Firebase%20console&logo=firebase&color=blue)](https://console.firebase.google.com/u/0/project/_/extensions/install?ref=gavinsawyer%2Ffirebase-web-authn)
 
+## v10.1.2
+
+- Moved to SimpleWebAuthn v8
+- Reversed breaking changes in 10.1.0
+- Build improvements
+- TSDoc improvements
+
 ## v10.1.0
 
 - Breaking changes: Now using separate database `firebase-web-authn`.

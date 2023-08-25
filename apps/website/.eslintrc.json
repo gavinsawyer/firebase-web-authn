@@ -32,15 +32,6 @@
           }
         ]
       }
-    },
-    {
-      "extends": [
-        "plugin:@nx/angular-template"
-      ],
-      "files":   [
-        "*.html"
-      ],
-      "rules":   {}
     }
   ]
 }
