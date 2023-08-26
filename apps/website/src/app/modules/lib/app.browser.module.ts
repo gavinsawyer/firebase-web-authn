@@ -35,7 +35,7 @@ import { AppCheckOptionsService }                                               
     provideAppCheck(
       (injector: Injector): AppCheck => initializeAppCheck(
         undefined,
-        injector.get(AppCheckOptionsService).appCheckOptions(),
+        injector.get(AppCheckOptionsService).appCheckOptions,
       ),
     ),
     provideAuth(

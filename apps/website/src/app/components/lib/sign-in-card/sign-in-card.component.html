@@ -13,9 +13,10 @@
           autocomplete="name"
           formControlName="name"
           matInput=""
-          [required]="true"
           type="text" />
-        <mat-error *ngIf="formGroup.controls.name?.hasError('required')">This is required.</mat-error>
+        <mat-error *ngIf="formGroup.controls.name.errors?.['required']">
+          This is required.
+        </mat-error>
       </mat-form-field>
     </mat-card-content>
     <mat-card-actions align="end">
@@ -32,4 +33,6 @@
 <button
   (click)="signInWithPasskey();"
   color="primary"
-  mat-raised-button="">Sign in with passkey</button>
+  mat-raised-button="">
+  Sign in with passkey
+</button>

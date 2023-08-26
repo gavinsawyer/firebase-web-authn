@@ -10,14 +10,14 @@ import { AppEnvironment }                                                      f
 })
 export class AppCheckOptionsService {
 
-  public readonly appCheckOptions: () => AppCheckOptions;
+  public readonly appCheckOptions: AppCheckOptions;
 
   constructor(
     @Inject(APP_ENVIRONMENT) appEnvironment: AppEnvironment,
     @Inject(PLATFORM_ID)     platformId:     object,
   ) {
     this
-      .appCheckOptions = (): AppCheckOptions => isPlatformBrowser(platformId) ? {
+      .appCheckOptions = isPlatformBrowser(platformId) ? {
         isTokenAutoRefreshEnabled: true,
         provider:                  new ReCaptchaV3Provider(appEnvironment.recaptchaSiteKey),
       } : {

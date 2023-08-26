@@ -1,9 +1,10 @@
 import { CommonModule }                                                    from "@angular/common";
-import { Component, signal, WritableSignal }                               from "@angular/core";
+import { Component, Signal }                                               from "@angular/core";
+import { takeUntilDestroyed, toSignal }                                    from "@angular/core/rxjs-interop";
 import { Auth, User }                                                      from "@angular/fire/auth";
 import { doc, DocumentReference, Firestore, setDoc }                       from "@angular/fire/firestore";
 import { Functions }                                                       from "@angular/fire/functions";
-import { FormControl, FormGroup, ReactiveFormsModule }                     from "@angular/forms";
+import { FormControl, FormGroup, ReactiveFormsModule, Validators }         from "@angular/forms";
 import { MatButtonModule }                                                 from "@angular/material/button";
 import { MatCardModule }                                                   from "@angular/material/card";
 import { MatFormFieldModule }                                              from "@angular/material/form-field";
@@ -11,15 +12,10 @@ import { MatIconModule }                                                   from 
 import { MatInputModule }                                                  from "@angular/material/input";
 import { MatSnackBar, MatSnackBarModule }                                  from "@angular/material/snack-bar";
 import { createUserWithPasskey, FirebaseWebAuthnError, signInWithPasskey } from "@firebase-web-authn/browser";
+import { Observable, ReplaySubject, startWith, Subject }                   from "rxjs";
 import { ProfileDocument }                                                 from "../../../interfaces";
 import { AuthenticationService }                                           from "../../../services";
 
-
-interface SignInForm {
-  "name"?: FormControl<string>,
-}
-
-type Status = "unsent" | "pending" | "complete";
 
 @Component({
   imports:     [
@@ -41,26 +37,40 @@ type Status = "unsent" | "pending" | "complete";
 })
 export class SignInCardComponent {
 
-  public readonly formGroup: FormGroup<SignInForm>;
-  public readonly status:    WritableSignal<Status>;
+  private readonly statusObservable: Observable<"unsent" | "pending" | "complete">;
+  private readonly statusSubject:    Subject<"unsent" | "pending" | "complete">;
+
+  public readonly formGroup: FormGroup<{ "name": FormControl<string> }>;
+  public readonly status$:   Signal<"unsent" | "pending" | "complete">;
 
   public readonly signInWithPasskey: () => Promise<void>;
   public readonly submit:            () => void;
 
   constructor(
-    auth:                  Auth,
-    authenticationService: AuthenticationService,
-    firestore:             Firestore,
-    functions:             Functions,
-    matSnackBar:           MatSnackBar,
+    private readonly auth:                  Auth,
+    private readonly authenticationService: AuthenticationService,
+    private readonly firestore:             Firestore,
+    private readonly functions:             Functions,
+    private readonly matSnackBar:           MatSnackBar,
   ) {
     this
-      .formGroup = new FormGroup<SignInForm>(
+      .statusSubject = new ReplaySubject<"unsent" | "pending" | "complete">(1);
+    this
+      .statusObservable = this
+      .statusSubject
+      .asObservable()
+      .pipe<"unsent" | "pending" | "complete", "unsent" | "pending" | "complete">(
+        startWith<"unsent" | "pending" | "complete", [ "unsent" | "pending" | "complete" ]>("unsent"),
+        takeUntilDestroyed<"unsent" | "pending" | "complete">()
+      );
+    this
+      .formGroup = new FormGroup<{ "name": FormControl<string> }>(
         {
           name: new FormControl(
             "",
             {
               nonNullable: true,
+              validators: Validators.required,
             },
           ),
         },
@@ -85,7 +95,12 @@ export class SignInCardComponent {
         })(),
       );
     this
-      .status = signal<Status>("unsent");
+      .status$ = toSignal<"unsent" | "pending" | "complete">(
+        this.statusObservable,
+        {
+          requireSync: true,
+        },
+      );
     this
       .submit = async (): Promise<void> => this
       .formGroup
@@ -96,8 +111,8 @@ export class SignInCardComponent {
           .disable();
 
         this
-          .status
-          .set("pending");
+          .statusSubject
+          .next("pending");
 
         return createUserWithPasskey(
           auth,

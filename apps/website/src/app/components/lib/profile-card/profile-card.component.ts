@@ -30,11 +30,11 @@ export class ProfileCardComponent {
   public readonly signInWithPasskey:     () => Promise<void>;
 
   constructor(
-    public readonly profileService: ProfileService,
+    private readonly auth:        Auth,
+    private readonly functions:   Functions,
+    private readonly matSnackBar: MatSnackBar,
 
-    auth:        Auth,
-    functions:   Functions,
-    matSnackBar: MatSnackBar,
+    public readonly profileService: ProfileService,
   ) {
     this
       .verifyUserWithPasskey = (): Promise<void> => verifyUserWithPasskey(
