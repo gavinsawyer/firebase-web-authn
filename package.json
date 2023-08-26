@@ -53,8 +53,6 @@
     "@schematics/angular":                    "^16",
     "@simplewebauthn/browser":                "^8.0.2",
     "@simplewebauthn/server":                 "^8.0.1",
-    "@typescript-eslint/eslint-plugin":       "^6.4.1",
-    "@typescript-eslint/parser":              "^6.4.1",
     "eslint":                                 "^8.48.0",
     "eslint-plugin-tsdoc":                    "^0.2.17",
     "firebase":                               "^10.3.0",
