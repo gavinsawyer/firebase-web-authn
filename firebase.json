@@ -1,6 +1,6 @@
 {
   "extensions": {
-    "firebase-web-authn": "dist/libs/extension"
+    "firebase-web-authn": "./dist/libs/extension"
   },
   "firestore":  {
     "indexes": "firestore.indexes.json",

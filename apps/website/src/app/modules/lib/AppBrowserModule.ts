@@ -14,9 +14,9 @@ import { TransferHttpCacheModule }                                              
 import { gitInfo }                                                                               from "../../../.git-info";
 import { packageVersion }                                                                        from "../../../.package-version";
 import { environment }                                                                           from "../../../environment";
-import { AsideComponent, RootComponent, routes }  from "../../components";
-import { ENVIRONMENT, GIT_INFO, PACKAGE_VERSION } from "../../injection tokens";
-import { AppCheckOptionsService }                 from "../../services";
+import { AsideComponent, RootComponent, routes }                                                 from "../../components";
+import { ENVIRONMENT, GIT_INFO, PACKAGE_VERSION }                                                from "../../injection tokens";
+import { AppCheckOptionsService }                                                                from "../../services";
 
 
 @NgModule({
