@@ -5,6 +5,13 @@ A Firebase Extension for authentication with WebAuthn passkeys.
 [![Latest version in NPM](https://img.shields.io/npm/v/@firebase-web-authn/extension?logo=npm)](https://www.npmjs.com/package/@firebase-web-authn/extension)
 [![Install](https://img.shields.io/static/v1?label=&message=Install%20in%20Firebase%20console&logo=firebase&color=blue)](https://console.firebase.google.com/u/0/project/_/extensions/install?ref=gavinsawyer%2Ffirebase-web-authn)
 
+## v10.1.3
+
+- Working demo using @angular/fire-canary
+- Improved demo project structure
+- Removed redundant config
+- TS file naming convention now mirrors export names except for main and index files: ProfileCardComponent.ts contains a component class, GIT_INFO.ts contains an injection token, backupSuccessful.ts contains a constant, etc. Directories are all lowercase and use spaces.
+
 ## v10.1.2
 
 - Moved to SimpleWebAuthn v8

@@ -1,4 +1,5 @@
-export * from "./lib/aside/aside.component";
-export * from "./lib/profile-card/profile-card.component";
-export * from "./lib/root/root.component";
-export * from "./lib/sign-in-card/sign-in-card.component";
+export * from "./lib/aside/AsideComponent";
+export * from "./lib/profile card/ProfileCardComponent";
+export * from "./lib/root/RootComponent";
+export * from "./lib/routes";
+export * from "./lib/sign in card/SignInCardComponent";

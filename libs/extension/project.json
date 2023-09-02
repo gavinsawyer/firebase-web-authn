@@ -2,23 +2,22 @@
   "$schema":     "../../node_modules/nx/schemas/project-schema.json",
   "name":        "extension",
   "projectType": "library",
-  "sourceRoot":  "libs/extension/src",
-  "tags":        [],
+  "sourceRoot":  "libs/extension/functions",
   "targets":     {
     "lint":  {
       "executor": "@nx/linter:eslint",
       "options":  {
         "lintFilePatterns": [
-          "libs/extension/**/*.ts"
+          "libs/extension/functions/**/*.ts"
         ]
-      },
-      "outputs":  [
-        "{options.outputFile}"
-      ]
+      }
     },
     "build": {
-      "executor": "@nx/js:tsc",
-      "options":  {
+      "dependsOn": [
+        "lint"
+      ],
+      "executor":  "@nx/js:tsc",
+      "options":   {
         "assets":     [
           {
             "glob":   "CHANGELOG.md",
@@ -60,7 +59,7 @@
         "outputPath": "dist/libs/extension",
         "tsConfig":   "libs/extension/tsconfig.lib.json"
       },
-      "outputs":  [
+      "outputs":   [
         "{options.outputPath}"
       ]
     }

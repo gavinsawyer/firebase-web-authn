@@ -1,4 +1,5 @@
 import { getFirebaseWebAuthnApi } from "@firebase-web-authn/api";
+// noinspection JSUnusedGlobalSymbols
 export const api = getFirebaseWebAuthnApi({
     authenticatorAttachment: process.env["AUTHENTICATOR_ATTACHMENT"],
     relyingPartyName: process.env["RELYING_PARTY_NAME"],

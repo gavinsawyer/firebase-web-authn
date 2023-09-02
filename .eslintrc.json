@@ -1,22 +1,24 @@
 {
-  "ignorePatterns": [
-    "**/*"
-  ],
-  "overrides":      [
+  "overrides": [
     {
       "extends": [
+        "plugin:@angular-eslint/template/accessibility",
+        "plugin:@angular-eslint/template/recommended",
         "plugin:@nx/angular-template"
       ],
       "files":   [
         "*.html"
-      ],
-      "rules":   {}
+      ]
     },
     {
-      "files": [
+      "extends": [
+        "plugin:@nx/angular",
+        "plugin:@nx/typescript"
+      ],
+      "files":   [
         "*.ts"
       ],
-      "rules": {
+      "rules":   {
         "@nx/enforce-module-boundaries": [
           "error",
           {
@@ -31,23 +33,28 @@
             ],
             "enforceBuildableLibDependency": true
           }
-        ],
-        "tsdoc/syntax":                  "warn"
+        ]
       }
     },
     {
-      "extends": [
-        "plugin:@nx/typescript"
-      ],
       "files":   [
-        "*.ts"
+        "./apps/website/src/app/components/lib/**/*.ts"
       ],
-      "rules":   {}
+      "rules":   {
+        "@angular-eslint/component-selector": [
+          "error",
+          {
+            "prefix": "website",
+            "style":  "kebab-case",
+            "type":   "element"
+          }
+        ]
+      }
     }
   ],
-  "plugins":        [
-    "eslint-plugin-tsdoc",
+  "plugins":   [
+    "@angular-eslint",
     "@nx"
   ],
-  "root":           true
+  "root":      true
 }

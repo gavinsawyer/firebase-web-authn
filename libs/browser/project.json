@@ -3,22 +3,21 @@
   "name":        "browser",
   "projectType": "library",
   "sourceRoot":  "libs/browser/src",
-  "tags":        [],
   "targets":     {
     "lint":  {
       "executor": "@nx/linter:eslint",
       "options":  {
         "lintFilePatterns": [
-          "libs/browser/**/*.ts"
+          "libs/browser/src/**/*.ts"
         ]
-      },
-      "outputs":  [
-        "{options.outputFile}"
-      ]
+      }
     },
     "build": {
-      "executor": "@nx/js:tsc",
-      "options":  {
+      "dependsOn": [
+        "lint"
+      ],
+      "executor":  "@nx/js:tsc",
+      "options":   {
         "assets":     [
           {
             "glob":   "README.md",
@@ -30,7 +29,7 @@
         "outputPath": "dist/libs/browser",
         "tsConfig":   "libs/browser/tsconfig.lib.json"
       },
-      "outputs":  [
+      "outputs":   [
         "{options.outputPath}"
       ]
     }

@@ -1,10 +1,8 @@
 {
   "$schema":     "../../node_modules/nx/schemas/project-schema.json",
   "name":        "website",
-  "prefix":      "website-app",
   "projectType": "application",
   "sourceRoot":  "apps/website/src",
-  "tags":        [],
   "targets":     {
     "prebuild": {
       "executor": "nx:run-commands",
@@ -58,7 +56,8 @@
       },
       "defaultConfiguration": "production",
       "dependsOn":            [
-        "prebuild"
+        "prebuild",
+        "lint"
       ],
       "executor":             "@angular-devkit/build-angular:browser",
       "options":              {
@@ -72,10 +71,9 @@
         ],
         "index":                       "apps/website/src/index.html",
         "inlineStyleLanguage":         "sass",
-        "main":                        "apps/website/src/main.ts",
+        "main":                        "apps/website/src/app/main.browser.ts",
         "outputPath":                  "dist/apps/website/browser",
         "polyfills":                   "apps/website/src/polyfills.ts",
-        "scripts":                     [],
         "styles":                      [
           "apps/website/src/styles.sass"
         ],
@@ -104,7 +102,8 @@
       },
       "defaultConfiguration": "production",
       "dependsOn":            [
-        "prebuild"
+        "prebuild",
+        "lint"
       ],
       "development":          {
         "extractLicenses": false,
@@ -114,9 +113,9 @@
       "executor":             "@angular-devkit/build-angular:server",
       "options":              {
         "inlineStyleLanguage": "sass",
-        "main":                "apps/website/server.ts",
+        "main":                "apps/website/src/app/main.server.ts",
         "outputPath":          "dist/apps/website/server",
-        "tsConfig":            "apps/website/tsconfig.server.json"
+        "tsConfig":            "apps/website/tsconfig.app.json"
       },
       "production":           {
         "fileReplacements": [
@@ -141,11 +140,14 @@
       },
       "defaultConfiguration": "production",
       "dependsOn":            [
-        "prebuild"
+        "prebuild",
+        "lint"
       ],
       "executor":             "@nguniversal/builders:prerender",
       "options":              {
-        "routesFile": "apps/website/src/routes.txt"
+        "routes": [
+          "/"
+        ]
       }
     },
     "serve":    {
@@ -159,22 +161,23 @@
       },
       "defaultConfiguration": "development",
       "dependsOn":            [
-        "prebuild"
+        "prebuild",
+        "lint"
       ],
       "executor":             "@angular-devkit/build-angular:dev-server"
     },
     "deploy":   {
       "dependsOn": [
         "prebuild",
-        "build"
+        "lint"
       ],
-      "executor":  "@angular/fire:deploy",
+      "executor":  "@angular/fire--legacy:deploy",
       "options":   {
         "browserTarget":        "website:browser:production",
         "firebaseHostingSite":  "fir-web-authn",
         "firebaseProject":      "fir-web-authn",
         "functionName":         "ssr-website",
-        "functionsNodeVersion": "18.16",
+        "functionsNodeVersion": "18.17",
         "outputPath":           "dist/apps/website/run",
         "prerender":            true,
         "prerenderTarget":      "website:build:production",

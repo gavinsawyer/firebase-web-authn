@@ -1,4 +1,7 @@
-export const environment = {
+import { Environment } from "./app/interfaces";
+
+
+export const environment: Environment = {
   app: "website",
   firebase: {
     apiKey: "AIzaSyBMw2wD275dSe0GgjMwnnZdH3UeEjhzjAg",

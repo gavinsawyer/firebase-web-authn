@@ -3,22 +3,21 @@
   "name":        "api",
   "projectType": "library",
   "sourceRoot":  "libs/api/src",
-  "tags":        [],
   "targets":     {
     "lint":  {
       "executor": "@nx/linter:eslint",
       "options":  {
         "lintFilePatterns": [
-          "libs/api/**/*.ts"
+          "{projectRoot}/**/*.ts"
         ]
-      },
-      "outputs":  [
-        "{options.outputFile}"
-      ]
+      }
     },
     "build": {
-      "executor": "@nx/js:tsc",
-      "options":  {
+      "dependsOn": [
+        "lint"
+      ],
+      "executor":  "@nx/js:tsc",
+      "options":   {
         "assets":     [
           {
             "glob":   "README.md",
@@ -30,7 +29,7 @@
         "outputPath": "dist/libs/api",
         "tsConfig":   "libs/api/tsconfig.lib.json"
       },
-      "outputs":  [
+      "outputs":   [
         "{options.outputPath}"
       ]
     }

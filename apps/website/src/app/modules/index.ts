@@ -1,2 +1,2 @@
-export * from "./lib/app.browser.module";
-export * from "./lib/app.server.module";
+export * from "./lib/AppBrowserModule";
+export * from "./lib/AppServerModule";

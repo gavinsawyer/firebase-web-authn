@@ -1,9 +1,8 @@
 {
   "name":         "@firebase-web-authn/types",
-  "version":      "10.1.2",
+  "version":      "10.1.3",
   "homepage":     "https://firebase-web-authn.dev",
   "license":      "Apache-2.0",
-  "private":      false,
   "author":       {
     "name":  "Gavin Sawyer",
     "email": "g@vinsawyer.dev",
@@ -14,6 +13,7 @@
     "url":       "git+https://github.com/gavinsawyer/firebase-web-authn.git",
     "directory": "libs/types"
   },
+  "private":      false,
   "dependencies": {
     "@simplewebauthn/typescript-types": "^8.0.0",
     "firebase-admin":                   "^11.10.1"

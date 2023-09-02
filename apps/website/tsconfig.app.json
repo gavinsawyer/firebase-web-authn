@@ -1,16 +1,6 @@
 {
-  "compilerOptions": {
-    "outDir": "../../dist/out-tsc",
-    "target": "ES2022",
-    "types": [],
-    "useDefineForClassFields": false
-  },
-  "extends":         "./tsconfig.json",
-  "files":           [
-    "src/main.ts",
-    "src/polyfills.ts"
-  ],
-  "include":         [
-    "src/**/*.d.ts"
+  "extends": "../../tsconfig.json",
+  "include": [
+    "src/**/*.ts"
   ]
 }

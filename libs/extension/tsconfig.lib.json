@@ -1,12 +1,6 @@
 {
-  "compilerOptions": {
-    "declaration": true,
-    "outDir":      "../../dist/out-tsc"
-  },
-  "extends":         "./tsconfig.json",
-  "files":           [],
-  "include":         [
-    "functions/**/*.ts",
-    "functions/main.ts"
+  "extends": "../../tsconfig.json",
+  "include": [
+    "functions/**/*.ts"
   ]
 }

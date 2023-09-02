@@ -11,7 +11,3 @@ tmp
 .firebase
 .runtimeconfig.json
 gha-creds-*.json
-
-# Version side-effect files
-apps/website/src/.git-info.ts
-apps/website/src/.package-version.ts

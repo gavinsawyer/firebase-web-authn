@@ -3,41 +3,13 @@
   "affected":           {
     "defaultBase": "main"
   },
-  "defaultProject":     "website",
-  "generators":         {
-    "@nx/angular:application": {
-      "style":          "sass",
-      "linter":         "eslint",
-      "unitTestRunner": "none",
-      "e2eTestRunner":  "none",
-      "routing":        true,
-      "skipTests":      true,
-      "standalone":     true
-    },
-    "@nx/angular:component":   {
-      "style":        "sass",
-      "displayBlock": true,
-      "export":       true,
-      "skipTests":    true,
-      "standalone":   true
-    },
-    "@nx/angular:library":     {
-      "linter":         "eslint",
-      "unitTestRunner": "none",
-      "skipModule":     true
-    },
-    "@nx/js:library":          {
-      "unitTestRunner": "none"
-    }
-  },
   "namedInputs":        {
     "default":       [
       "{projectRoot}/**/*",
       "sharedGlobals"
     ],
     "production":    [
-      "default",
-      "!{projectRoot}/.eslintrc.json"
+      "default"
     ],
     "sharedGlobals": []
   },

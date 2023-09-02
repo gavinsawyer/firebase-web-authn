@@ -18,7 +18,7 @@
  * BROWSER POLYFILLS
  */
 
-(window as any)
+window
   .global = window;
 
 /**

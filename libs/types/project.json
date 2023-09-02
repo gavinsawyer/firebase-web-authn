@@ -3,20 +3,19 @@
   "name":        "types",
   "projectType": "library",
   "sourceRoot":  "libs/types/src",
-  "tags":        [],
   "targets":     {
     "lint":  {
       "executor": "@nx/linter:eslint",
       "options":  {
         "lintFilePatterns": [
-          "libs/types/**/*.ts"
+          "libs/types/src/**/*.ts"
         ]
-      },
-      "outputs":  [
-        "{options.outputFile}"
-      ]
+      }
     },
     "build": {
+      "dependsOn": [
+        "lint"
+      ],
       "executor": "@nx/js:tsc",
       "options":  {
         "assets":     [

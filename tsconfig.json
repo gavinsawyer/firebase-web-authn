@@ -1,0 +1,56 @@
+{
+  "angularCompilerOptions": {
+    "enableI18nLegacyMessageIdFormat": false,
+    "strictInjectionParameters":       true,
+    "strictInputAccessModifiers":      true,
+    "strictTemplates":                 true
+  },
+  "compileOnSave":          false,
+  "compilerOptions":        {
+    "baseUrl":                            ".",
+    "declaration":                        true,
+    "emitDecoratorMetadata":              true,
+    "experimentalDecorators":             true,
+    "forceConsistentCasingInFileNames":   true,
+    "importHelpers":                      true,
+    "lib":                                [
+      "ES2020",
+      "DOM"
+    ],
+    "module":                             "ESNext",
+    "moduleResolution":                   "Node",
+    "noFallthroughCasesInSwitch":         true,
+    "noImplicitOverride":                 true,
+    "noImplicitReturns":                  true,
+    "noPropertyAccessFromIndexSignature": true,
+    "outDir":                             "dist/out-tsc",
+    "paths":                              {
+      "@firebase-web-authn/api":     [
+        "libs/api/src/index.ts"
+      ],
+      "@firebase-web-authn/browser": [
+        "libs/browser/src/index.ts"
+      ],
+      "@firebase-web-authn/server":  [
+        "libs/server/src/index.ts"
+      ],
+      "@firebase-web-authn/types":   [
+        "libs/types/src/index.ts"
+      ]
+    },
+    "rootDir":                            ".",
+    "skipDefaultLibCheck":                true,
+    "skipLibCheck":                       true,
+    "sourceMap":                          true,
+    "strict":                             true,
+    "target":                             "ESNext"
+  },
+  "include": [
+    "!**/*.ts"
+  ],
+  "exclude":                [
+    "node_modules",
+    "tmp",
+    "**/README.md"
+  ]
+}
