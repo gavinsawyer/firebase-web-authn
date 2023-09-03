@@ -10,6 +10,6 @@ import { DocumentReference, DocumentSnapshot, Firestore, getFirestore } from "fi
  *
  * @returns A {@link Promise} which resolves with either a WebAuthnUserCredential object or null if no passkey was found.
  */
-export const credential: (uid: string, app?: App) => Promise<WebAuthnUserCredential | null> = (uid: string, app?: App): Promise<WebAuthnUserCredential | null> => ((firestore: Firestore): Promise<WebAuthnUserCredential | null> => (firestore.collection("users").doc(uid) as DocumentReference<WebAuthnUserDocument>).get().then(
+export const credential: (uid: string, app?: App) => Promise<WebAuthnUserCredential | null> = (uid: string, app?: App): Promise<WebAuthnUserCredential | null> => ((firestore: Firestore): Promise<WebAuthnUserCredential | null> => (firestore.collection("webAuthnUsers").doc(uid) as DocumentReference<WebAuthnUserDocument>).get().then(
   (documentSnapshot: DocumentSnapshot<WebAuthnUserDocument>): WebAuthnUserCredential | null => documentSnapshot.data()?.credential || null,
 ))(app ? getFirestore(app) : getFirestore());

@@ -10,6 +10,6 @@ import { DocumentReference, DocumentSnapshot, Firestore, getFirestore, Timestamp
  *
  * @returns A {@link Promise} which resolves with either a {@link Timestamp} for when the user was last present or null if no passkey was found.
  */
-export const lastPresent: (uid: string, app?: App) => Promise<Timestamp | null> = (uid: string, app?: App): Promise<Timestamp | null> => ((firestore: Firestore): Promise<Timestamp | null> => (firestore.collection("users").doc(uid) as DocumentReference<WebAuthnUserDocument>).get().then(
+export const lastPresent: (uid: string, app?: App) => Promise<Timestamp | null> = (uid: string, app?: App): Promise<Timestamp | null> => ((firestore: Firestore): Promise<Timestamp | null> => (firestore.collection("webAuthnUsers").doc(uid) as DocumentReference<WebAuthnUserDocument>).get().then(
   (documentSnapshot: DocumentSnapshot<WebAuthnUserDocument>): Timestamp | null => documentSnapshot.data()?.lastPresent || null,
 ))(app ? getFirestore(app) : getFirestore());

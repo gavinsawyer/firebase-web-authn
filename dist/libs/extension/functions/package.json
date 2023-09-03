@@ -1,6 +1,5 @@
 {
-  "name":         "firebase-web-authn-functions",
-  "version":      "10.1.4",
+  "name":         "ext-firebase-web-authn-functions",
   "homepage":     "https://firebase-web-authn.dev",
   "license":      "Apache-2.0",
   "author":       {
@@ -20,6 +19,6 @@
     "node": "18"
   },
   "dependencies": {
-    "@firebase-web-authn/api": "^10.1.5"
+    "@firebase-web-authn/api": "^10.1.6"
   }
 }
