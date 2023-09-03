@@ -20,8 +20,8 @@ export const getFirebaseWebAuthnApi: (firebaseWebAuthnConfig: FirebaseWebAuthnCo
 })
   .https
   .onCall(
-    async (functionRequest: FunctionRequest, callableContext): Promise<FunctionResponse> => callableContext.auth ? (async (auth: Auth, firestore: Firestore): Promise<FunctionResponse> => functionRequest.operation === "clear challenge" ? (firestore.collection("webAuthnUsers").doc(callableContext.auth?.uid || "") as DocumentReference<WebAuthnUserDocument>).get().then<FunctionResponse, FunctionResponse>(
-      (userDocumentSnapshot: DocumentSnapshot<WebAuthnUserDocument>): Promise<FunctionResponse> => (async (userDocument: WebAuthnUserDocument | undefined): Promise<FunctionResponse> => userDocument ? userDocument.challenge ? userDocument.credential ? (firestore.collection("webAuthnUsers").doc(callableContext.auth?.uid || "") as DocumentReference<WebAuthnUserDocument>).update(
+    async (functionRequest: FunctionRequest, callableContext): Promise<FunctionResponse> => callableContext.auth ? (async (auth: Auth, firestore: Firestore): Promise<FunctionResponse> => functionRequest.operation === "clear challenge" ? (firestore.collection("users").doc(callableContext.auth?.uid || "") as DocumentReference<WebAuthnUserDocument>).get().then<FunctionResponse, FunctionResponse>(
+      (userDocumentSnapshot: DocumentSnapshot<WebAuthnUserDocument>): Promise<FunctionResponse> => (async (userDocument: WebAuthnUserDocument | undefined): Promise<FunctionResponse> => userDocument ? userDocument.challenge ? userDocument.credential ? (firestore.collection("users").doc(callableContext.auth?.uid || "") as DocumentReference<WebAuthnUserDocument>).update(
         {
           challenge: FieldValue.delete(),
         },
@@ -36,7 +36,7 @@ export const getFirebaseWebAuthnApi: (firebaseWebAuthnConfig: FirebaseWebAuthnCo
           operation: functionRequest.operation,
           success:   false,
         }),
-      ) : firestore.collection("webAuthnUsers").doc(callableContext.auth?.uid || "").delete().then<FunctionResponse, FunctionResponse>(
+      ) : firestore.collection("users").doc(callableContext.auth?.uid || "").delete().then<FunctionResponse, FunctionResponse>(
         (): FunctionResponse => ({
           operation: functionRequest.operation,
           success:   true,
@@ -66,8 +66,8 @@ export const getFirebaseWebAuthnApi: (firebaseWebAuthnConfig: FirebaseWebAuthnCo
           success:   false,
         }
       ),
-    ) : functionRequest.operation == "clear user doc" ? firestore.collection("webAuthnUsers").doc(callableContext.auth?.uid || "").get().then<FunctionResponse, FunctionResponse>(
-      (userDocumentSnapshot: DocumentSnapshot<WebAuthnUserDocument>): Promise<FunctionResponse> => (async (userDocument: WebAuthnUserDocument | undefined): Promise<FunctionResponse> => userDocument ? firestore.collection("webAuthnUsers").doc(callableContext.auth?.uid || "").delete().then<FunctionResponse, FunctionResponse>(
+    ) : functionRequest.operation == "clear user doc" ? firestore.collection("users").doc(callableContext.auth?.uid || "").get().then<FunctionResponse, FunctionResponse>(
+      (userDocumentSnapshot: DocumentSnapshot<WebAuthnUserDocument>): Promise<FunctionResponse> => (async (userDocument: WebAuthnUserDocument | undefined): Promise<FunctionResponse> => userDocument ? firestore.collection("users").doc(callableContext.auth?.uid || "").delete().then<FunctionResponse, FunctionResponse>(
         (): FunctionResponse => ({
           operation: functionRequest.operation,
           success:   true,
@@ -96,7 +96,7 @@ export const getFirebaseWebAuthnApi: (firebaseWebAuthnConfig: FirebaseWebAuthnCo
         userVerification: firebaseWebAuthnConfig.userVerificationRequirement,
       },
     ).then<FunctionResponse>(
-      (publicKeyCredentialRequestOptionsJSON: PublicKeyCredentialRequestOptionsJSON): Promise<FunctionResponse> => (firestore.collection("webAuthnUsers").doc(callableContext.auth?.uid || "") as DocumentReference<WebAuthnUserDocument>).set(
+      (publicKeyCredentialRequestOptionsJSON: PublicKeyCredentialRequestOptionsJSON): Promise<FunctionResponse> => (firestore.collection("users").doc(callableContext.auth?.uid || "") as DocumentReference<WebAuthnUserDocument>).set(
         {
           challenge: publicKeyCredentialRequestOptionsJSON.challenge,
         },
@@ -116,7 +116,7 @@ export const getFirebaseWebAuthnApi: (firebaseWebAuthnConfig: FirebaseWebAuthnCo
           success:   false,
         }),
       ),
-    ) : functionRequest.operation === "create reauthentication challenge" ? (firestore.collection("webAuthnUsers").doc(callableContext.auth?.uid || "") as DocumentReference<WebAuthnUserDocument>).get().then<FunctionResponse, FunctionResponse>(
+    ) : functionRequest.operation === "create reauthentication challenge" ? (firestore.collection("users").doc(callableContext.auth?.uid || "") as DocumentReference<WebAuthnUserDocument>).get().then<FunctionResponse, FunctionResponse>(
       (userDocumentSnapshot: DocumentSnapshot<WebAuthnUserDocument>): Promise<FunctionResponse> => (async (userDocument: WebAuthnUserDocument | undefined): Promise<FunctionResponse> => userDocument ? userDocument.credential ? generateAuthenticationOptions(
         {
           allowCredentials: [
@@ -129,7 +129,7 @@ export const getFirebaseWebAuthnApi: (firebaseWebAuthnConfig: FirebaseWebAuthnCo
           userVerification: firebaseWebAuthnConfig.userVerificationRequirement,
         },
       ).then<FunctionResponse>(
-        (publicKeyCredentialRequestOptions: PublicKeyCredentialRequestOptionsJSON): Promise<FunctionResponse> => (firestore.collection("webAuthnUsers").doc(callableContext.auth?.uid || "") as DocumentReference<WebAuthnUserDocument>).set(
+        (publicKeyCredentialRequestOptions: PublicKeyCredentialRequestOptionsJSON): Promise<FunctionResponse> => (firestore.collection("users").doc(callableContext.auth?.uid || "") as DocumentReference<WebAuthnUserDocument>).set(
           {
             challenge: publicKeyCredentialRequestOptions.challenge,
           },
@@ -166,7 +166,7 @@ export const getFirebaseWebAuthnApi: (firebaseWebAuthnConfig: FirebaseWebAuthnCo
         operation: functionRequest.operation,
         success:   false,
       }),
-    ) : functionRequest.operation === "create registration challenge" ? (firestore.collection("webAuthnUsers").doc(callableContext.auth?.uid || "") as DocumentReference<WebAuthnUserDocument>).get().then<FunctionResponse, FunctionResponse>(
+    ) : functionRequest.operation === "create registration challenge" ? (firestore.collection("users").doc(callableContext.auth?.uid || "") as DocumentReference<WebAuthnUserDocument>).get().then<FunctionResponse, FunctionResponse>(
       (userDocumentSnapshot: DocumentSnapshot<WebAuthnUserDocument>): Promise<FunctionResponse> => (async (userDocument: WebAuthnUserDocument | undefined): Promise<FunctionResponse> => !userDocument?.credential ? generateRegistrationOptions(
         {
           authenticatorSelection: {
@@ -180,7 +180,7 @@ export const getFirebaseWebAuthnApi: (firebaseWebAuthnConfig: FirebaseWebAuthnCo
           userName:               functionRequest.name,
         },
       ).then<FunctionResponse>(
-        (publicKeyCredentialCreationOptions: PublicKeyCredentialCreationOptionsJSON): Promise<FunctionResponse> => (firestore.collection("webAuthnUsers").doc(callableContext.auth?.uid || "") as DocumentReference<WebAuthnUserDocument>).set(
+        (publicKeyCredentialCreationOptions: PublicKeyCredentialCreationOptionsJSON): Promise<FunctionResponse> => (firestore.collection("users").doc(callableContext.auth?.uid || "") as DocumentReference<WebAuthnUserDocument>).set(
           {
             challenge: publicKeyCredentialCreationOptions.challenge,
           },
@@ -209,8 +209,8 @@ export const getFirebaseWebAuthnApi: (firebaseWebAuthnConfig: FirebaseWebAuthnCo
         operation: functionRequest.operation,
         success:   false,
       }),
-    ) : functionRequest.operation === "verify authentication" ? functionRequest.authenticationResponse.response.userHandle !== callableContext.auth?.uid ? (firestore.collection("webAuthnUsers").doc(functionRequest.authenticationResponse.response.userHandle || "") as DocumentReference<WebAuthnUserDocument>).get().then<FunctionResponse>(
-      (userDocumentSnapshot: DocumentSnapshot<WebAuthnUserDocument>): Promise<FunctionResponse> => ((userDocument: WebAuthnUserDocument | undefined): Promise<FunctionResponse> => userDocument ? userDocument.credential ? (firestore.collection("webAuthnUsers").doc(callableContext.auth?.uid || "") as DocumentReference<WebAuthnUserDocument>).get().then<FunctionResponse>(
+    ) : functionRequest.operation === "verify authentication" ? functionRequest.authenticationResponse.response.userHandle !== callableContext.auth?.uid ? (firestore.collection("users").doc(functionRequest.authenticationResponse.response.userHandle || "") as DocumentReference<WebAuthnUserDocument>).get().then<FunctionResponse>(
+      (userDocumentSnapshot: DocumentSnapshot<WebAuthnUserDocument>): Promise<FunctionResponse> => ((userDocument: WebAuthnUserDocument | undefined): Promise<FunctionResponse> => userDocument ? userDocument.credential ? (firestore.collection("users").doc(callableContext.auth?.uid || "") as DocumentReference<WebAuthnUserDocument>).get().then<FunctionResponse>(
         (priorUserDocumentSnapshot: DocumentSnapshot<WebAuthnUserDocument>): Promise<FunctionResponse> => ((priorUserDocument: WebAuthnUserDocument | undefined): Promise<FunctionResponse> => priorUserDocument && priorUserDocument.challenge ? verifyAuthenticationResponse(
           {
             authenticator:           {
@@ -225,7 +225,7 @@ export const getFirebaseWebAuthnApi: (firebaseWebAuthnConfig: FirebaseWebAuthnCo
             response:                functionRequest.authenticationResponse,
           },
         ).then<FunctionResponse, FunctionResponse>(
-          (verifiedAuthenticationResponse: VerifiedAuthenticationResponse): Promise<FunctionResponse> => verifiedAuthenticationResponse.verified ? (firestore.collection("webAuthnUsers").doc(functionRequest.authenticationResponse.response.userHandle || "") as DocumentReference<WebAuthnUserDocument>).update(
+          (verifiedAuthenticationResponse: VerifiedAuthenticationResponse): Promise<FunctionResponse> => verifiedAuthenticationResponse.verified ? (firestore.collection("users").doc(functionRequest.authenticationResponse.response.userHandle || "") as DocumentReference<WebAuthnUserDocument>).update(
             {
               challenge:    FieldValue.delete(),
               credential:   {
@@ -237,7 +237,7 @@ export const getFirebaseWebAuthnApi: (firebaseWebAuthnConfig: FirebaseWebAuthnCo
               lastVerified: verifiedAuthenticationResponse.authenticationInfo.userVerified ? Timestamp.fromDate(new Date()) : userDocument["lastVerified"] || FieldValue.delete(),
             },
           ).then<FunctionResponse, FunctionResponse>(
-            (): Promise<FunctionResponse> => priorUserDocument.credential ? (firestore.collection("webAuthnUsers").doc(callableContext.auth?.uid || "") as DocumentReference<WebAuthnUserDocument>).update(
+            (): Promise<FunctionResponse> => priorUserDocument.credential ? (firestore.collection("users").doc(callableContext.auth?.uid || "") as DocumentReference<WebAuthnUserDocument>).update(
               {
                 challenge: FieldValue.delete(),
               },
@@ -261,7 +261,7 @@ export const getFirebaseWebAuthnApi: (firebaseWebAuthnConfig: FirebaseWebAuthnCo
                 operation: functionRequest.operation,
                 success:   false,
               }),
-            ) : firestore.collection("webAuthnUsers").doc(callableContext.auth?.uid || "").delete().then<FunctionResponse, FunctionResponse>(
+            ) : firestore.collection("users").doc(callableContext.auth?.uid || "").delete().then<FunctionResponse, FunctionResponse>(
               (): Promise<FunctionResponse> => auth.createCustomToken(functionRequest.authenticationResponse.response.userHandle || "").then<FunctionResponse, FunctionResponse>(
                 (customToken: string): FunctionResponse => ({
                   customToken: customToken,
@@ -288,7 +288,7 @@ export const getFirebaseWebAuthnApi: (firebaseWebAuthnConfig: FirebaseWebAuthnCo
               operation: functionRequest.operation,
               success:   false,
             }),
-          ) : firestore.collection("webAuthnUsers").doc(callableContext.auth?.uid || "").delete().then<FunctionResponse, FunctionResponse>(
+          ) : firestore.collection("users").doc(callableContext.auth?.uid || "").delete().then<FunctionResponse, FunctionResponse>(
             (): FunctionResponse => ({
               code:      "not-verified",
               message:   "User not verified.",
@@ -302,7 +302,7 @@ export const getFirebaseWebAuthnApi: (firebaseWebAuthnConfig: FirebaseWebAuthnCo
               success:   false,
             }),
           ),
-        ) : firestore.collection("webAuthnUsers").doc(callableContext.auth?.uid || "").delete().then<FunctionResponse, FunctionResponse>(
+        ) : firestore.collection("users").doc(callableContext.auth?.uid || "").delete().then<FunctionResponse, FunctionResponse>(
           (): FunctionResponse => ({
             code:      "user-doc-missing-challenge-field",
             message:   "User doc is missing challenge field from prior operation.",
@@ -316,7 +316,7 @@ export const getFirebaseWebAuthnApi: (firebaseWebAuthnConfig: FirebaseWebAuthnCo
             success:   false,
           }),
         ))(priorUserDocumentSnapshot.data()),
-      ) : firestore.collection("webAuthnUsers").doc(callableContext.auth?.uid || "").delete().then<FunctionResponse, FunctionResponse>(
+      ) : firestore.collection("users").doc(callableContext.auth?.uid || "").delete().then<FunctionResponse, FunctionResponse>(
         (): FunctionResponse => ({
           code:      "user-doc-missing-passkey-fields",
           message:   "User doc is missing passkey fields from prior operation.",
@@ -329,7 +329,7 @@ export const getFirebaseWebAuthnApi: (firebaseWebAuthnConfig: FirebaseWebAuthnCo
           operation: functionRequest.operation,
           success:   false,
         }),
-      ) : firestore.collection("webAuthnUsers").doc(callableContext.auth?.uid || "").delete().then<FunctionResponse, FunctionResponse>(
+      ) : firestore.collection("users").doc(callableContext.auth?.uid || "").delete().then<FunctionResponse, FunctionResponse>(
         (): FunctionResponse => ({
           code:      "missing-user-doc",
           message:   "No user document was found in Firestore.",
@@ -343,7 +343,7 @@ export const getFirebaseWebAuthnApi: (firebaseWebAuthnConfig: FirebaseWebAuthnCo
           success:   false,
         }),
       ))(userDocumentSnapshot.data()),
-    ) : (firestore.collection("webAuthnUsers").doc(callableContext.auth?.uid || "") as DocumentReference<WebAuthnUserDocument>).update(
+    ) : (firestore.collection("users").doc(callableContext.auth?.uid || "") as DocumentReference<WebAuthnUserDocument>).update(
       {
         challenge: FieldValue.delete(),
       },
@@ -360,7 +360,7 @@ export const getFirebaseWebAuthnApi: (firebaseWebAuthnConfig: FirebaseWebAuthnCo
         operation: functionRequest.operation,
         success:   false,
       }),
-    ) : functionRequest.operation === "verify reauthentication" ? (firestore.collection("webAuthnUsers").doc(callableContext.auth?.uid || "") as DocumentReference<WebAuthnUserDocument>).get().then<FunctionResponse>(
+    ) : functionRequest.operation === "verify reauthentication" ? (firestore.collection("users").doc(callableContext.auth?.uid || "") as DocumentReference<WebAuthnUserDocument>).get().then<FunctionResponse>(
       (userDocumentSnapshot: DocumentSnapshot<WebAuthnUserDocument>): Promise<FunctionResponse> => (async (userDocument: WebAuthnUserDocument | undefined): Promise<FunctionResponse> => userDocument ? userDocument.credential ? (async (): Promise<FunctionResponse> => userDocument.challenge ? verifyAuthenticationResponse(
         {
           authenticator:           {
@@ -375,7 +375,7 @@ export const getFirebaseWebAuthnApi: (firebaseWebAuthnConfig: FirebaseWebAuthnCo
           response:                functionRequest.authenticationResponse,
         },
       ).then<FunctionResponse>(
-        (verifiedAuthenticationResponse: VerifiedAuthenticationResponse): Promise<FunctionResponse> => verifiedAuthenticationResponse.verified ? (firestore.collection("webAuthnUsers").doc(callableContext.auth?.uid || "") as DocumentReference<WebAuthnUserDocument>).update(
+        (verifiedAuthenticationResponse: VerifiedAuthenticationResponse): Promise<FunctionResponse> => verifiedAuthenticationResponse.verified ? (firestore.collection("users").doc(callableContext.auth?.uid || "") as DocumentReference<WebAuthnUserDocument>).update(
           {
             challenge:    FieldValue.delete(),
             credential:   {
@@ -406,7 +406,7 @@ export const getFirebaseWebAuthnApi: (firebaseWebAuthnConfig: FirebaseWebAuthnCo
             operation: functionRequest.operation,
             success:   false,
           }),
-        ) : (firestore.collection("webAuthnUsers").doc(callableContext.auth?.uid || "") as DocumentReference<WebAuthnUserDocument>).update(
+        ) : (firestore.collection("users").doc(callableContext.auth?.uid || "") as DocumentReference<WebAuthnUserDocument>).update(
           {
             challenge: FieldValue.delete(),
           },
@@ -429,7 +429,7 @@ export const getFirebaseWebAuthnApi: (firebaseWebAuthnConfig: FirebaseWebAuthnCo
         message:   "User doc is missing challenge field from prior operation.",
         operation: functionRequest.operation,
         success:   false,
-      })() : firestore.collection("webAuthnUsers").doc(callableContext.auth?.uid || "").delete().then<FunctionResponse, FunctionResponse>(
+      })() : firestore.collection("users").doc(callableContext.auth?.uid || "").delete().then<FunctionResponse, FunctionResponse>(
         (): FunctionResponse => ({
           code:      "user-doc-missing-passkey-fields",
           message:   "User doc is missing passkey fields from prior operation.",
@@ -448,7 +448,7 @@ export const getFirebaseWebAuthnApi: (firebaseWebAuthnConfig: FirebaseWebAuthnCo
         operation: functionRequest.operation,
         success:   false,
       })(userDocumentSnapshot.data()),
-    ) : functionRequest.operation === "verify registration" ? (firestore.collection("webAuthnUsers").doc(callableContext.auth?.uid || "") as DocumentReference<WebAuthnUserDocument>).get().then<FunctionResponse, FunctionResponse>(
+    ) : functionRequest.operation === "verify registration" ? (firestore.collection("users").doc(callableContext.auth?.uid || "") as DocumentReference<WebAuthnUserDocument>).get().then<FunctionResponse, FunctionResponse>(
       (userDocumentSnapshot: DocumentSnapshot<WebAuthnUserDocument>): Promise<FunctionResponse> => (async (userDocument: WebAuthnUserDocument | undefined): Promise<FunctionResponse> => userDocument ? userDocument.challenge ? !userDocument.credential ? verifyRegistrationResponse(
         {
           expectedChallenge:       userDocument["challenge"],
@@ -458,7 +458,7 @@ export const getFirebaseWebAuthnApi: (firebaseWebAuthnConfig: FirebaseWebAuthnCo
           response:                functionRequest.registrationResponse,
         },
       ).then<FunctionResponse>(
-        (verifiedRegistrationResponse: VerifiedRegistrationResponse): Promise<FunctionResponse> => verifiedRegistrationResponse.verified && verifiedRegistrationResponse.registrationInfo ? (firestore.collection("webAuthnUsers").doc(callableContext.auth?.uid || "") as DocumentReference<WebAuthnUserDocument | undefined>).update(
+        (verifiedRegistrationResponse: VerifiedRegistrationResponse): Promise<FunctionResponse> => verifiedRegistrationResponse.verified && verifiedRegistrationResponse.registrationInfo ? (firestore.collection("users").doc(callableContext.auth?.uid || "") as DocumentReference<WebAuthnUserDocument | undefined>).update(
           {
             challenge:    FieldValue.delete(),
             credential:   {
@@ -491,7 +491,7 @@ export const getFirebaseWebAuthnApi: (firebaseWebAuthnConfig: FirebaseWebAuthnCo
             operation: functionRequest.operation,
             success:   false,
           }),
-        ) : firestore.collection("webAuthnUsers").doc(callableContext.auth?.uid || "").delete().then<FunctionResponse, FunctionResponse>(
+        ) : firestore.collection("users").doc(callableContext.auth?.uid || "").delete().then<FunctionResponse, FunctionResponse>(
           (): FunctionResponse => ({
             code:      "not-verified",
             message:   "User not verified.",
@@ -505,7 +505,7 @@ export const getFirebaseWebAuthnApi: (firebaseWebAuthnConfig: FirebaseWebAuthnCo
             success:   false,
           }),
         ),
-      ) : (firestore.collection("webAuthnUsers").doc(callableContext.auth?.uid || "") as DocumentReference<WebAuthnUserDocument>).update(
+      ) : (firestore.collection("users").doc(callableContext.auth?.uid || "") as DocumentReference<WebAuthnUserDocument>).update(
         {
           challenge: FieldValue.delete(),
         },
@@ -522,7 +522,7 @@ export const getFirebaseWebAuthnApi: (firebaseWebAuthnConfig: FirebaseWebAuthnCo
           operation: functionRequest.operation,
           success:   false,
         }),
-      ) : firestore.collection("webAuthnUsers").doc(callableContext.auth?.uid || "").delete().then<FunctionResponse, FunctionResponse>(
+      ) : firestore.collection("users").doc(callableContext.auth?.uid || "").delete().then<FunctionResponse, FunctionResponse>(
         (): FunctionResponse => ({
           code:      "user-doc-missing-challenge-field",
           message:   "User doc is missing challenge field from prior operation.",
@@ -551,7 +551,10 @@ export const getFirebaseWebAuthnApi: (firebaseWebAuthnConfig: FirebaseWebAuthnCo
       throw new Error("Invalid function request type.");
     })())(
       app ? getAuth(app) : getAuth(),
-      app ? getFirestore(app) : getFirestore(),
+      app ? getFirestore(
+        app,
+        "ext-firebase-web-authn",
+      ) : getFirestore("ext-firebase-web-authn"),
     ) : {
       code:      "missing-auth",
       message:   "No user is signed in.",

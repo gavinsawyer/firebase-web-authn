@@ -3,7 +3,7 @@ import { WebAuthnUserCredential } from "./WebAuthnUserCredential";
 
 
 /**
- * Document in the `webAuthnUsers` collection. This should not have read or write access from users.
+ * Document in the `users` collection of the `ext-firebase-web-authn` Firestore Database. This should not have read or write access from users.
  */
 export interface WebAuthnUserDocument {
   /**
