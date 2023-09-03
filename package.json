@@ -1,63 +1,63 @@
 {
-  "name":            "@firebase-web-authn/source",
-  "version":         "10.2.0",
-  "homepage":        "https://firebase-web-authn.dev",
-  "license":         "Apache-2.0",
-  "author":          {
-    "name":  "Gavin Sawyer",
+  "name": "@firebase-web-authn/source",
+  "version": "10.2.1",
+  "homepage": "https://firebase-web-authn.dev",
+  "license": "Apache-2.0",
+  "author": {
+    "name": "Gavin Sawyer",
     "email": "g@vinsawyer.dev",
-    "url":   "https://gavinsawyer.dev"
+    "url": "https://gavinsawyer.dev"
   },
-  "repository":      {
+  "repository": {
     "type": "git",
-    "url":  "git+https://github.com/gavinsawyer/firebase-web-authn.git"
+    "url": "git+https://github.com/gavinsawyer/firebase-web-authn.git"
   },
-  "private":         true,
-  "scripts":         {
-    "lint":   "npx nx run-many --target lint --all",
-    "build":  "npx nx run-many --target build --all --parallel 1",
+  "private": true,
+  "scripts": {
+    "lint": "npx nx run-many --target lint --all",
+    "build": "npx nx run-many --target build --all --parallel 1",
     "deploy": "npx nx run-many --target deploy --all"
   },
-  "dependencies":    {
-    "@angular/animations":               "^16.1.7",
-    "@angular/cdk":                      "^16.1.6",
-    "@angular/common":                   "^16.1.7",
-    "@angular/compiler":                 "^16.1.7",
-    "@angular/core":                     "^16.1.7",
-    "@angular/fire":                     "^16.0.0-canary.5793d6f",
-    "@angular/forms":                    "^16.2.3",
-    "@angular/material":                 "^16.2.2",
-    "@angular/platform-browser":         "^16.1.7",
+  "dependencies": {
+    "@angular/animations": "^16.1.7",
+    "@angular/cdk": "^16.1.6",
+    "@angular/common": "^16.1.7",
+    "@angular/compiler": "^16.1.7",
+    "@angular/core": "^16.1.7",
+    "@angular/fire": "^16.0.0-canary.5793d6f",
+    "@angular/forms": "^16.2.3",
+    "@angular/material": "^16.2.2",
+    "@angular/platform-browser": "^16.1.7",
     "@angular/platform-browser-dynamic": "^16.2.3",
-    "@angular/platform-server":          "^16.2.3",
-    "@angular/router":                   "^16.2.3",
-    "@nguniversal/express-engine":       "^16.2.0",
-    "rxjs":                              "^7.8.1",
-    "zone.js":                           "^0.13.1"
+    "@angular/platform-server": "^16.2.3",
+    "@angular/router": "^16.2.3",
+    "@nguniversal/express-engine": "^16.2.0",
+    "rxjs": "^7.8.1",
+    "zone.js": "^0.13.1"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular":          "^16.2.1",
-    "@angular-eslint/eslint-plugin":          "^16.1.1",
+    "@angular-devkit/build-angular": "^16.2.1",
+    "@angular-eslint/eslint-plugin": "^16.1.1",
     "@angular-eslint/eslint-plugin-template": "^16.1.1",
-    "@angular-eslint/template-parser":        "^16.1.1",
-    "@angular/cli":                           "^16.2.1",
-    "@angular/compiler-cli":                  "^16.2.3",
-    "@angular/fire--legacy":                  "npm:@angular/fire@^7.6.1",
-    "@angular/language-service":              "^16.2.3",
-    "@nguniversal/builders":                  "^16.2.0",
-    "@nx/angular":                            "^16.7.4",
-    "@nx/esbuild":                            "^16.7.4",
-    "@nx/eslint-plugin":                      "^16.7.4",
-    "@simplewebauthn/browser":                "^8.0.2",
-    "@simplewebauthn/server":                 "^8.1.0",
-    "@typescript-eslint/eslint-plugin":       "^5.62.0",
-    "eslint":                                 "^8.48.0",
-    "eslint-plugin-tsdoc":                    "^0.2.17",
-    "firebase-functions":                     "^4.4.1",
-    "firebase-tools":                         "^12.5.2",
-    "git-describe":                           "^4.1.1",
-    "nx":                                     "^16.7.4",
-    "nx-cloud":                               "^16.3.0",
-    "url":                                    "^0.11.1"
+    "@angular-eslint/template-parser": "^16.1.1",
+    "@angular/cli": "^16.2.1",
+    "@angular/compiler-cli": "^16.2.3",
+    "@angular/fire--legacy": "npm:@angular/fire@^7.6.1",
+    "@angular/language-service": "^16.2.3",
+    "@nguniversal/builders": "^16.2.0",
+    "@nx/angular": "^16.7.4",
+    "@nx/esbuild": "^16.7.4",
+    "@nx/eslint-plugin": "^16.7.4",
+    "@simplewebauthn/browser": "^8.0.2",
+    "@simplewebauthn/server": "^8.1.0",
+    "@typescript-eslint/eslint-plugin": "^5.62.0",
+    "eslint": "^8.48.0",
+    "eslint-plugin-tsdoc": "^0.2.17",
+    "firebase-functions": "^4.4.1",
+    "firebase-tools": "^12.5.2",
+    "git-describe": "^4.1.1",
+    "nx": "^16.7.4",
+    "nx-cloud": "^16.3.0",
+    "url": "^0.11.1"
   }
 }

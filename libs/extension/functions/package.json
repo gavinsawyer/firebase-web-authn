@@ -19,6 +19,6 @@
     "node": "18"
   },
   "dependencies": {
-    "@firebase-web-authn/api": "^10.2.0"
+    "@firebase-web-authn/api": "^10.2.1"
   }
 }

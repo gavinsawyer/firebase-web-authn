@@ -1,6 +1,6 @@
 {
   "name":         "@firebase-web-authn/types",
-  "version":      "10.2.0",
+  "version":      "10.2.1",
   "homepage":     "https://firebase-web-authn.dev",
   "license":      "Apache-2.0",
   "author":       {
