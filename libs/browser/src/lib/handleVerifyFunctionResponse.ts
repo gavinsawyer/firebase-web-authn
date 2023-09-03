@@ -11,19 +11,23 @@ export const handleVerifyFunctionResponse: (auth: Auth, functionResponse: Functi
 )
   .catch<never>(
     (firebaseError): never => {
-      throw new FirebaseWebAuthnError({
-        code:    firebaseError.code.replace(
-          "firebaseWebAuthn/",
-          "",
-        ),
-        message: firebaseError.message,
-        method:  "signInWithCustomToken",
-      });
+      throw new FirebaseWebAuthnError(
+        {
+          code:    firebaseError.code.replace(
+            "firebaseWebAuthn/",
+            "",
+          ),
+          message: firebaseError.message,
+          method:  "signInWithCustomToken",
+        },
+      );
     },
   ) : ((): never => {
-    throw new FirebaseWebAuthnError({
-      code:      "invalid",
-      message:   "Invalid function response.",
-      operation: functionResponse.operation,
-    });
+    throw new FirebaseWebAuthnError(
+      {
+        code:      "invalid",
+        message:   "Invalid function response.",
+        operation: functionResponse.operation,
+      },
+    );
   })();

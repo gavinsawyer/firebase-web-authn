@@ -3,9 +3,9 @@ import { startAuthentication }                                  from "@simpleweb
 import { AuthenticationResponseJSON }                           from "@simplewebauthn/typescript-types";
 import { Auth }                                                 from "firebase/auth";
 import { Functions, httpsCallableFromURL, HttpsCallableResult } from "firebase/functions";
-import { clearChallenge }               from "./clearChallenge";
-import { FirebaseWebAuthnError }        from "./FirebaseWebAuthnError";
-import { handleVerifyFunctionResponse } from "./handleVerifyFunctionResponse";
+import { clearChallenge }                                       from "./clearChallenge";
+import { FirebaseWebAuthnError }                                from "./FirebaseWebAuthnError";
+import { handleVerifyFunctionResponse }                         from "./handleVerifyFunctionResponse";
 
 
 /**
@@ -28,10 +28,10 @@ export const verifyUserWithPasskey: (auth: Auth, functions: Functions) => Promis
       operation: "create reauthentication challenge",
     },
   )
-  .then<void>(
-    async ({ data: functionResponse }: HttpsCallableResult<FunctionResponse>): Promise<void> => "code" in functionResponse ? ((): never => {
+  .then<void, never>(
+    ({ data: functionResponse }: HttpsCallableResult<FunctionResponse>): Promise<void> => "code" in functionResponse ? ((): never => {
       throw new FirebaseWebAuthnError(functionResponse);
-    })() : "requestOptions" in functionResponse ? startAuthentication(functionResponse.requestOptions).then<void>(
+    })() : "requestOptions" in functionResponse ? startAuthentication(functionResponse.requestOptions).then<void, never>(
       (authenticationResponse: AuthenticationResponseJSON): Promise<void> => httpsCallableFromURL<FunctionRequest, FunctionResponse>(
         functions,
         "/firebase-web-authn-api",
@@ -48,38 +48,45 @@ export const verifyUserWithPasskey: (auth: Auth, functions: Functions) => Promis
           (): void => void (0),
         ),
       ),
-    ).catch<never>(
-      async (): Promise<never> => clearChallenge(functions).then<never>((): never => {
-        throw new FirebaseWebAuthnError({
-          code:      "cancelled",
-          message:   "Cancelled by user.",
-          operation: functionResponse.operation,
-        });
-      }),
+      (): Promise<never> => clearChallenge(functions).then<never>(
+        (): never => {
+          throw new FirebaseWebAuthnError(
+            {
+              code:      "cancelled",
+              message:   "Cancelled by user.",
+              operation: functionResponse.operation,
+            },
+          );
+        },
+      ),
     ) : ((): never => {
-      throw new FirebaseWebAuthnError({
-        code:      "invalid",
-        message:   "Invalid function response.",
-        operation: functionResponse.operation,
-      });
+      throw new FirebaseWebAuthnError(
+        {
+          code:      "invalid",
+          message:   "Invalid function response.",
+          operation: functionResponse.operation,
+        },
+      );
     })(),
-  )
-  .catch<never>(
     (firebaseError): never => {
-      throw new FirebaseWebAuthnError({
-        code:      firebaseError.code.replace(
-          "firebaseWebAuthn/",
-          "",
-        ),
-        message:   firebaseError.message,
-        method:    "httpsCallableFromURL",
-        operation: "create reauthentication challenge",
-      });
+      throw new FirebaseWebAuthnError(
+        {
+          code:      firebaseError.code.replace(
+            "firebaseWebAuthn/",
+            "",
+          ),
+          message:   firebaseError.message || "An unknown error occured.",
+          method:    "httpsCallableFromURL",
+          operation: "create reauthentication challenge",
+        },
+      );
     },
   ) : ((): never => {
-    throw new FirebaseWebAuthnError({
-      code:      "missing-auth",
-      message:   "No user is signed in.",
-      operation: "create reauthentication challenge",
-    });
+    throw new FirebaseWebAuthnError(
+      {
+        code:      "missing-auth",
+        message:   "No user is signed in.",
+        operation: "create reauthentication challenge",
+      },
+    );
   })();

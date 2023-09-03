@@ -3,6 +3,7 @@ import { App }                                                          from "fi
 import { DocumentReference, DocumentSnapshot, Firestore, getFirestore } from "firebase-admin/firestore";
 
 
+// noinspection JSUnusedGlobalSymbols
 /**
  * @param uid - The user's uid.
  * @param app - An optional {@link App} to use with Firestore.

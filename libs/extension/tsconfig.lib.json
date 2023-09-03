@@ -1,8 +1,4 @@
 {
-  "compilerOptions": {
-    "declaration": false,
-    "module": "CommonJS"
-  },
   "extends": "../../tsconfig.json",
   "include": [
     "functions/**/*.ts"

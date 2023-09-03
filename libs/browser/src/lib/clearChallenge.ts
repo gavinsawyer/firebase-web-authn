@@ -11,21 +11,21 @@ export const clearChallenge: (functions: Functions) => Promise<void> = (function
     operation: "clear challenge",
   },
 )
-  .then<void>(
+  .then<void, never>(
     ({ data: functionResponse }: HttpsCallableResult<FunctionResponse>): void => "code" in functionResponse ? ((): never => {
       throw new FirebaseWebAuthnError(functionResponse);
     })() : void (0),
-  )
-  .catch<never>(
     (firebaseError): never => {
-      throw new FirebaseWebAuthnError({
-        code:      firebaseError.code.replace(
-          "firebaseWebAuthn/",
-          "",
-        ),
-        message:   firebaseError.message,
-        method:    "httpsCallableFromURL",
-        operation: "clear challenge",
-      });
+      throw new FirebaseWebAuthnError(
+        {
+          code:      firebaseError.code.replace(
+            "firebaseWebAuthn/",
+            "",
+          ),
+          message:   firebaseError.message,
+          method:    "httpsCallableFromURL",
+          operation: "clear challenge",
+        },
+      );
     },
   );

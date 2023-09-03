@@ -1,20 +1,20 @@
-import { CommonModule }                                                                           from "@angular/common";
-import { Component, Signal }                                                                      from "@angular/core";
-import { takeUntilDestroyed, toSignal }                                                           from "@angular/core/rxjs-interop";
-import { Auth, onAuthStateChanged, User }                                                         from "@angular/fire/auth";
-import { doc, DocumentReference, Firestore, setDoc }                                              from "@angular/fire/firestore";
-import { Functions }                                                                              from "@angular/fire/functions";
-import { FormControl, FormGroup, ReactiveFormsModule, Validators }                                from "@angular/forms";
-import { MatButtonModule }                                                                        from "@angular/material/button";
-import { MatCardModule }                                                                          from "@angular/material/card";
-import { MatFormFieldModule }                                                                     from "@angular/material/form-field";
-import { MatIconModule }                                                                          from "@angular/material/icon";
-import { MatInputModule }                                                                         from "@angular/material/input";
-import { MatSnackBar, MatSnackBarModule }                                                         from "@angular/material/snack-bar";
-import { createUserWithPasskey, FirebaseWebAuthnError, signInWithPasskey }                        from "@firebase-web-authn/browser";
-import { firstValueFrom, Observable, Observer, ReplaySubject, startWith, Subject, TeardownLogic } from "rxjs";
-import { ProfileDocument }                                                                        from "../../../interfaces";
-import { AuthenticationService }                                                                  from "../../../services";
+import { CommonModule }                                                    from "@angular/common";
+import { Component, Signal }                                               from "@angular/core";
+import { takeUntilDestroyed, toSignal }                                    from "@angular/core/rxjs-interop";
+import { Auth, User }                                                      from "@angular/fire/auth";
+import { doc, DocumentReference, Firestore, setDoc }                       from "@angular/fire/firestore";
+import { Functions }                                                       from "@angular/fire/functions";
+import { FormControl, FormGroup, ReactiveFormsModule, Validators }         from "@angular/forms";
+import { MatButtonModule }                                                 from "@angular/material/button";
+import { MatCardModule }                                                   from "@angular/material/card";
+import { MatFormFieldModule }                                              from "@angular/material/form-field";
+import { MatIconModule }                                                   from "@angular/material/icon";
+import { MatInputModule }                                                  from "@angular/material/input";
+import { MatSnackBar, MatSnackBarModule }                                  from "@angular/material/snack-bar";
+import { createUserWithPasskey, FirebaseWebAuthnError, signInWithPasskey } from "@firebase-web-authn/browser";
+import { Observable, ReplaySubject, startWith, Subject }                   from "rxjs";
+import { ProfileDocument }                                                 from "../../../interfaces";
+import { AuthenticationService }                                           from "../../../services";
 
 
 @Component({
@@ -77,15 +77,7 @@ export class SignInCardComponent {
       );
     this
       .signInWithPasskey = (): Promise<void> => signInWithPasskey(
-        {
-          ...this.auth,
-          authStateReady: async (): Promise<void> => firstValueFrom<void>(new Observable<void>(
-            (userObserver: Observer<void>): TeardownLogic => onAuthStateChanged(
-              this.auth,
-              (): void => userObserver.next(),
-            ),
-          ))
-        },
+        this.auth,
         this.functions,
       )
       .then<void>(
@@ -123,19 +115,11 @@ export class SignInCardComponent {
           .next("pending");
 
         return await createUserWithPasskey(
-          {
-            ...this.auth,
-            authStateReady: async (): Promise<void> => firstValueFrom<void>(new Observable<void>(
-              (userObserver: Observer<void>): TeardownLogic => onAuthStateChanged(
-                this.auth,
-                (): void => userObserver.next(),
-              ),
-            )),
-          },
+          this.auth,
           this.functions,
           name,
         )
-          .then<void>(
+          .then<void, never>(
             (): Promise<void> => this.matSnackBar.open(
               "Sign-up successful.",
               "Okay",
@@ -148,8 +132,6 @@ export class SignInCardComponent {
                 name: this.formGroup.value.name,
               },
             ),
-          )
-          .catch<never>(
             (firebaseWebAuthnError: FirebaseWebAuthnError): never => this.matSnackBar.open(
               firebaseWebAuthnError.message,
               "Okay",

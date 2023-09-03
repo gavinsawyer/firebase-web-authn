@@ -16,34 +16,36 @@ import { FirebaseWebAuthnError }                                from "./Firebase
  */
 export const unlinkPasskey: (auth: Auth, functions: Functions) => Promise<void> = (auth: Auth, functions: Functions): Promise<void> => auth
   .currentUser ? httpsCallableFromURL<FunctionRequest, FunctionResponse>(
-    functions,
-    "/firebase-web-authn-api",
-  )(
-    {
-      operation: "clear user doc",
-    },
-  )
-  .then<void>(
+  functions,
+  "/firebase-web-authn-api",
+)(
+  {
+    operation: "clear user doc",
+  },
+)
+  .then<void, never>(
     ({ data: functionResponse }: HttpsCallableResult<FunctionResponse>): void => "code" in functionResponse ? ((): never => {
       throw new FirebaseWebAuthnError(functionResponse);
     })() : void (0),
-  )
-  .catch<never>(
     (firebaseError): never => {
-      throw new FirebaseWebAuthnError({
-        code:      firebaseError.code.replace(
-          "firebaseWebAuthn/",
-          "",
-        ),
-        message:   firebaseError.message,
-        method:    "httpsCallableFromURL",
-        operation: "clear challenge",
-      });
+      throw new FirebaseWebAuthnError(
+        {
+          code:      firebaseError.code.replace(
+            "firebaseWebAuthn/",
+            "",
+          ),
+          message:   firebaseError.message,
+          method:    "httpsCallableFromURL",
+          operation: "clear challenge",
+        },
+      );
     },
   ) : ((): never => {
-    throw new FirebaseWebAuthnError({
+  throw new FirebaseWebAuthnError(
+    {
       code:      "missing-auth",
       message:   "No user is signed in.",
       operation: "create reauthentication challenge",
-    });
-  })();
+    },
+  );
+})();

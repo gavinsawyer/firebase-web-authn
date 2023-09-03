@@ -3,7 +3,6 @@ import { AuthenticatorAttachment, UserVerificationRequirement } from "@simpleweb
 import { HttpsFunction }                                        from "firebase-functions";
 
 
-// noinspection JSUnusedGlobalSymbols
 export const api: HttpsFunction = getFirebaseWebAuthnApi(
   {
     authenticatorAttachment:     process.env["AUTHENTICATOR_ATTACHMENT"] as AuthenticatorAttachment,

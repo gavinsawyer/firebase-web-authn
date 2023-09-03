@@ -1,7 +1,7 @@
 import { Auth, signInAnonymously, UserCredential } from "firebase/auth";
-import { Functions }             from "firebase/functions";
-import { FirebaseWebAuthnError } from "./FirebaseWebAuthnError";
-import { linkWithPasskey }       from "./linkWithPasskey";
+import { Functions }                               from "firebase/functions";
+import { FirebaseWebAuthnError }                   from "./FirebaseWebAuthnError";
+import { linkWithPasskey }                         from "./linkWithPasskey";
 
 
 /**
@@ -18,26 +18,26 @@ export const createUserWithPasskey: (auth: Auth, functions: Functions, name: str
   .currentUser && auth
   .currentUser
   .isAnonymous ? linkWithPasskey(
-    auth,
-    functions,
-    name,
-  ) : signInAnonymously(auth)
-  .then<UserCredential>(
+  auth,
+  functions,
+  name,
+) : signInAnonymously(auth)
+  .then<UserCredential, never>(
     (): Promise<UserCredential> => linkWithPasskey(
       auth,
       functions,
       name,
     ),
-  )
-  .catch<never>(
     (firebaseError): never => {
-      throw new FirebaseWebAuthnError({
-        code:    firebaseError.code.replace(
-          "firebaseWebAuthn/",
-          "",
-        ),
-        message: firebaseError.message,
-        method:  "signInAnonymously",
-      });
+      throw new FirebaseWebAuthnError(
+        {
+          code:    firebaseError.code.replace(
+            "firebaseWebAuthn/",
+            "",
+          ),
+          message: firebaseError.message,
+          method:  "signInAnonymously",
+        },
+      );
     },
   );

@@ -1,6 +1,6 @@
 {
   "name":            "@firebase-web-authn/source",
-  "version":         "10.1.4",
+  "version":         "10.1.5",
   "homepage":        "https://firebase-web-authn.dev",
   "license":         "Apache-2.0",
   "author":          {
@@ -53,7 +53,6 @@
     "@typescript-eslint/eslint-plugin":       "^5.62.0",
     "eslint":                                 "^8.48.0",
     "eslint-plugin-tsdoc":                    "^0.2.17",
-    "firebase":                               "^10.3.1",
     "firebase-functions":                     "^4.4.1",
     "firebase-tools":                         "^12.5.2",
     "git-describe":                           "^4.1.1",

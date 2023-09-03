@@ -16,7 +16,7 @@
       "dependsOn": [
         "lint"
       ],
-      "executor":  "@nx/js:tsc",
+      "executor":  "@nx/esbuild:esbuild",
       "options":   {
         "assets":     [
           {
@@ -56,6 +56,7 @@
           }
         ],
         "main":       "libs/extension/functions/main.ts",
+        "outputFileName": "functions/main.js",
         "outputPath": "dist/libs/extension",
         "tsConfig":   "libs/extension/tsconfig.lib.json"
       },

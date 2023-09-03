@@ -30,8 +30,6 @@ export class AuthenticationService {
           tap<User | null>(
             async (user: User | null): Promise<void> => user === null ? signInAnonymously(this.auth).then<void>(
               (): void => void (0),
-            ).catch<void>(
-              (reason: unknown): void => console.error(reason),
             ) : void (0),
           ),
         ),

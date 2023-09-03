@@ -17,8 +17,8 @@ export class ProfileService {
   constructor(
     @Inject(PLATFORM_ID) private readonly platformId: object,
 
-    private readonly auth:                  Auth,
-    private readonly firestore:             Firestore,
+    private readonly auth:      Auth,
+    private readonly firestore: Firestore,
   ) {
     this
       .profileDocument$ = isPlatformBrowser(this.platformId) ? toSignal<ProfileDocument | undefined>(
@@ -31,7 +31,7 @@ export class ProfileService {
           startWith<User | null, [ User | null ]>(this.auth.currentUser),
           distinctUntilChanged<User | null>(),
           switchMap<User | null, Observable<ProfileDocument | undefined>>(
-            (user: User | null): Observable<ProfileDocument | undefined> => user ? docSnapshots<ProfileDocument>(doc(firestore, "/profiles/" + user.uid) as DocumentReference<ProfileDocument>).pipe<DocumentSnapshot<ProfileDocument>, ProfileDocument | undefined>(
+            (user: User | null): Observable<ProfileDocument | undefined> => user ? docSnapshots<ProfileDocument>(doc(this.firestore, "/profiles/" + user.uid) as DocumentReference<ProfileDocument>).pipe<DocumentSnapshot<ProfileDocument>, ProfileDocument | undefined>(
               catchError<DocumentSnapshot<ProfileDocument>, Observable<DocumentSnapshot<ProfileDocument>>>(
                 () => new Observable<DocumentSnapshot<ProfileDocument>>(),
               ),
@@ -43,7 +43,7 @@ export class ProfileService {
         ),
         {
           requireSync: true,
-        }
+        },
       ) : signal<ProfileDocument | undefined>(undefined);
   }
 

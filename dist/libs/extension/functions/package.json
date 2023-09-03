@@ -14,11 +14,12 @@
     "directory": "libs/extension/functions"
   },
   "main":         "./main.js",
+  "type":         "module",
   "private":      true,
   "engines":      {
     "node": "18"
   },
   "dependencies": {
-    "@firebase-web-authn/api": "^10.1.4"
+    "@firebase-web-authn/api": "^10.1.5"
   }
 }
