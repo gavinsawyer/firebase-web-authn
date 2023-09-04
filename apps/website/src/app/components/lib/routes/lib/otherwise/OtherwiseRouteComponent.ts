@@ -1,15 +1,12 @@
-import { CommonModule, isPlatformBrowser }                         from "@angular/common";
-import { Component, Inject, Input, OnInit, Optional, PLATFORM_ID } from "@angular/core";
-import { Meta }                                                    from "@angular/platform-browser";
-import { RESPONSE }                                                from "@nguniversal/express-engine/tokens";
-import { Response }                                                from "express";
-import { PathService }                                             from "../../../../../services";
+import { isPlatformBrowser }                      from "@angular/common";
+import { Component, inject, OnInit, PLATFORM_ID } from "@angular/core";
+import { RESPONSE }                               from "@nguniversal/express-engine/tokens";
+import { Response }                               from "express";
+import { PathService }                            from "../../../../../services";
+import { RouteComponent }                         from "../../../../";
 
 
 @Component({
-  imports:     [
-    CommonModule,
-  ],
   selector:    "website-otherwise-route",
   standalone:  true,
   styleUrls:   [
@@ -17,34 +14,20 @@ import { PathService }                                             from "../../.
   ],
   templateUrl: "./OtherwiseRouteComponent.html",
 })
-export class OtherwiseRouteComponent implements OnInit {
+export class OtherwiseRouteComponent extends RouteComponent implements OnInit {
 
-  @Input({
-    required: true,
-  }) private readonly description!: string;
+  private readonly platformId: object   = inject<object>(PLATFORM_ID);
+  private readonly response:   Response = inject<Response>(RESPONSE);
 
-  constructor(
-                @Inject(PLATFORM_ID) private readonly platformId: object,
-    @Optional() @Inject(RESPONSE)    private readonly response:   Response,
+  public readonly pathService: PathService = inject<PathService>(PathService);
 
-    private readonly meta: Meta,
+  override ngOnInit(): void {
+    super
+      .ngOnInit();
 
-    public readonly pathService: PathService,
-  ) {
     isPlatformBrowser(this.platformId) || this
       .response
       .status(404);
-  }
-
-  ngOnInit(): void {
-    this
-      .meta
-      .updateTag(
-        {
-          "name": "description",
-          "content": this.description,
-        },
-      );
   }
 
 }

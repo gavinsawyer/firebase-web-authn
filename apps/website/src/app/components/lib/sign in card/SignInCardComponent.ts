@@ -1,31 +1,29 @@
-import { CommonModule }                                                    from "@angular/common";
-import { Component, Signal }                                               from "@angular/core";
-import { takeUntilDestroyed, toSignal }                                    from "@angular/core/rxjs-interop";
-import { Auth, User }                                                      from "@angular/fire/auth";
-import { doc, DocumentReference, Firestore, setDoc }                       from "@angular/fire/firestore";
-import { Functions }                                                       from "@angular/fire/functions";
-import { FormControl, FormGroup, ReactiveFormsModule, Validators }         from "@angular/forms";
-import { MatButtonModule }                                                 from "@angular/material/button";
-import { MatCardModule }                                                   from "@angular/material/card";
-import { MatFormFieldModule }                                              from "@angular/material/form-field";
-import { MatIconModule }                                                   from "@angular/material/icon";
-import { MatInputModule }                                                  from "@angular/material/input";
-import { MatSnackBar, MatSnackBarModule }                                  from "@angular/material/snack-bar";
-import { createUserWithPasskey, FirebaseWebAuthnError, signInWithPasskey } from "@firebase-web-authn/browser";
-import { Observable, ReplaySubject, startWith, Subject }                   from "rxjs";
-import { ProfileDocument }                                                 from "../../../interfaces";
-import { AuthenticationService }                                           from "../../../services";
+import { NgIf }                                                    from "@angular/common";
+import { Component, inject }                                       from "@angular/core";
+import { Auth, User }                                              from "@angular/fire/auth";
+import { doc, DocumentReference, Firestore, setDoc }               from "@angular/fire/firestore";
+import { Functions }                                               from "@angular/fire/functions";
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
+import { MatButtonModule }                                         from "@angular/material/button";
+import { MatCardModule }                                           from "@angular/material/card";
+import { MatFormFieldModule }                                      from "@angular/material/form-field";
+import { MatIconModule }                                           from "@angular/material/icon";
+import { MatInputModule }                                          from "@angular/material/input";
+import { MatSnackBar, MatSnackBarModule }                          from "@angular/material/snack-bar";
+import { createUserWithPasskey, FirebaseWebAuthnError }            from "@firebase-web-authn/browser";
+import { ProfileDocument }                                         from "../../../interfaces";
+import { AuthenticationService }                                   from "../../../services";
 
 
 @Component({
-  imports:     [
-    CommonModule,
+  imports: [
     MatCardModule,
     MatButtonModule,
     MatFormFieldModule,
     MatIconModule,
     MatInputModule,
     MatSnackBarModule,
+    NgIf,
     ReactiveFormsModule,
   ],
   selector:    "website-sign-in-card",
@@ -37,112 +35,63 @@ import { AuthenticationService }                                           from 
 })
 export class SignInCardComponent {
 
-  private readonly statusObservable: Observable<"unsent" | "pending" | "complete">;
-  private readonly statusSubject:    Subject<"unsent" | "pending" | "complete">;
+  private readonly auth:        Auth        = inject<Auth>(Auth);
+  private readonly firestore:   Firestore   = inject<Firestore>(Firestore);
+  private readonly functions:   Functions   = inject<Functions>(Functions);
+  private readonly matSnackBar: MatSnackBar = inject<MatSnackBar>(MatSnackBar);
 
-  public readonly formGroup: FormGroup<{ "name": FormControl<string> }>;
-  public readonly status$:   Signal<"unsent" | "pending" | "complete">;
-
-  public readonly signInWithPasskey: () => Promise<void>;
-  public readonly submit:            () => void;
-
-  constructor(
-    private readonly auth:                  Auth,
-    private readonly authenticationService: AuthenticationService,
-    private readonly firestore:             Firestore,
-    private readonly functions:             Functions,
-    private readonly matSnackBar:           MatSnackBar,
-  ) {
-    this
-      .statusSubject = new ReplaySubject<"unsent" | "pending" | "complete">(1);
-    this
-      .statusObservable = this
-      .statusSubject
-      .asObservable()
-      .pipe<"unsent" | "pending" | "complete", "unsent" | "pending" | "complete">(
-        startWith<"unsent" | "pending" | "complete", [ "unsent" | "pending" | "complete" ]>("unsent"),
-        takeUntilDestroyed<"unsent" | "pending" | "complete">()
-      );
-    this
-      .formGroup = new FormGroup<{ "name": FormControl<string> }>(
+  public readonly authenticationService: AuthenticationService                      = inject<AuthenticationService>(AuthenticationService);
+  public readonly formGroup:             FormGroup<{ "name": FormControl<string> }> = new FormGroup<{ "name": FormControl<string> }>(
+    {
+      name: new FormControl(
+        "",
         {
-          name: new FormControl(
-            "",
-            {
-              nonNullable: true,
-              validators: Validators.required,
-            },
-          ),
+          nonNullable: true,
+          validators: Validators.required,
         },
-      );
-    this
-      .signInWithPasskey = (): Promise<void> => signInWithPasskey(
+      ),
+    },
+  );
+  public readonly submit:                () => Promise<void>                        = async (): Promise<void> => this
+    .formGroup
+    .value
+    .name ? (async (name: string | undefined, user: User | null): Promise<void> => name && user ? ((): Promise<void> => {
+      this
+        .formGroup
+        .disable();
+
+      return createUserWithPasskey(
         this.auth,
         this.functions,
+        name,
       )
-      .then<void>(
-        (): void => this.matSnackBar.open(
-          "Sign-in successful.",
-          "Okay",
-        ) && void (0),
-      )
-      .catch<never>(
-        (firebaseWebAuthnError: FirebaseWebAuthnError): never => this.matSnackBar.open(
-          firebaseWebAuthnError.message,
-          "Okay",
-        ) && ((): never => {
-          throw firebaseWebAuthnError;
-        })(),
-      );
-    this
-      .status$ = toSignal<"unsent" | "pending" | "complete">(
-        this.statusObservable,
-        {
-          requireSync: true,
-        },
-      );
-    this
-      .submit = async (): Promise<void> => this
-      .formGroup
-      .value
-      .name ? (async (name: string | undefined, user: User | null): Promise<void> => name && user ? (async (): Promise<void> => {
-        this
-          .formGroup
-          .disable();
+        .then<void, never>(
+          (): Promise<void> => this.matSnackBar.open(
+            "Sign-up successful.",
+            "Okay",
+          ) && setDoc(
+            doc(
+              this.firestore,
+              "/profiles/" + user.uid,
+            ) as DocumentReference<ProfileDocument>,
+            {
+              name: this.formGroup.value.name,
+            },
+          ),
+          (firebaseWebAuthnError: FirebaseWebAuthnError): never => this.matSnackBar.open(
+            firebaseWebAuthnError.message,
+            "Okay",
+          ) && ((): never => {
+            this
+              .formGroup
+              .enable();
 
-        this
-          .statusSubject
-          .next("pending");
-
-        return await createUserWithPasskey(
-          this.auth,
-          this.functions,
-          name,
-        )
-          .then<void, never>(
-            (): Promise<void> => this.matSnackBar.open(
-              "Sign-up successful.",
-              "Okay",
-            ) && setDoc(
-              doc(
-                this.firestore,
-                "/profiles/" + user.uid,
-              ) as DocumentReference<ProfileDocument>,
-              {
-                name: this.formGroup.value.name,
-              },
-            ),
-            (firebaseWebAuthnError: FirebaseWebAuthnError): never => this.matSnackBar.open(
-              firebaseWebAuthnError.message,
-              "Okay",
-            ) && ((): never => {
-              throw firebaseWebAuthnError;
-            })(),
-          );
-      })() : void (0))(
-        this.formGroup.value.name,
-        this.authenticationService.user$(),
-      ) : void (0);
-  }
+            throw firebaseWebAuthnError;
+          })(),
+        );
+    })() : void (0))(
+      this.formGroup.value.name,
+      this.authenticationService.user$(),
+    ) : void (0);
 
 }

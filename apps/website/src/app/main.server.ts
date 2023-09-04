@@ -1,12 +1,12 @@
-import { APP_BASE_HREF }   from "@angular/common";
-import { enableProdMode }  from "@angular/core";
-import { ngExpressEngine } from "@nguniversal/express-engine";
-import * as express        from "express";
-import { existsSync }      from "fs";
-import { join }            from "path";
-import { environment }     from "../environment";
-import { AppServerModule } from "./modules";
+import { APP_BASE_HREF }       from "@angular/common";
+import { enableProdMode }      from "@angular/core";
+import { ngExpressEngine }     from "@nguniversal/express-engine";
+import * as express            from "express";
+import { existsSync }          from "fs";
+import { join }                from "path";
 import "zone.js/dist/zone-node";
+import { environment }         from "../environment";
+import { WebsiteServerModule } from "./modules";
 
 
 environment
@@ -16,7 +16,7 @@ export const app: () => express.Express = (): express.Express => ((distFolder: s
   "html",
   ngExpressEngine(
     {
-      bootstrap: AppServerModule,
+      bootstrap: WebsiteServerModule,
     },
   ),
 ).set(
@@ -55,7 +55,7 @@ export const app: () => express.Express = (): express.Express => ((distFolder: s
       distFolder,
       "index.original.html",
     ),
-  ) ? "index.original.html" : "index"
+  ) ? "index.original.html" : "index",
 ))(
   join(
     process.cwd(),
@@ -74,4 +74,4 @@ const moduleFilename: string = mainModule && mainModule
     (): void => console.log(`Node Express server listening on http://localhost:${process.env["PORT"] || 4000}`),
   );
 
-export { AppServerModule };
+export { WebsiteServerModule as AppServerModule };

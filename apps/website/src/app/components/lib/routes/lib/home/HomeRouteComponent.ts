@@ -1,12 +1,8 @@
-import { CommonModule }             from "@angular/common";
-import { Component, Input, OnInit } from "@angular/core";
-import { Meta }                     from "@angular/platform-browser";
+import { Component }      from "@angular/core";
+import { RouteComponent } from "../../../../";
 
 
 @Component({
-  imports:     [
-    CommonModule,
-  ],
   selector:    "website-home-route",
   standalone:  true,
   styleUrls:   [
@@ -14,26 +10,5 @@ import { Meta }                     from "@angular/platform-browser";
   ],
   templateUrl: "./HomeRouteComponent.html",
 })
-export class HomeRouteComponent implements OnInit {
-
-  @Input({
-    required: true,
-  }) private readonly description!: string;
-
-  constructor(
-    private readonly meta: Meta,
-  ) {
-  }
-
-  ngOnInit(): void {
-    this
-      .meta
-      .updateTag(
-        {
-          "name": "description",
-          "content": this.description,
-        },
-      );
-  }
-
+export class HomeRouteComponent extends RouteComponent {
 }

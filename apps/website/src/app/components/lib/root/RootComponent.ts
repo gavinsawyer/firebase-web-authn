@@ -1,4 +1,4 @@
-import { Component, Inject }         from "@angular/core";
+import { Component, inject }         from "@angular/core";
 import { GitInfo }                   from "git-describe";
 import { GIT_INFO, PACKAGE_VERSION } from "../../../injection tokens";
 
@@ -12,10 +12,7 @@ import { GIT_INFO, PACKAGE_VERSION } from "../../../injection tokens";
 })
 export class RootComponent {
 
-  constructor(
-    @Inject(GIT_INFO)        public readonly gitInfo:        Partial<GitInfo>,
-    @Inject(PACKAGE_VERSION) public readonly packageVersion: string,
-  ) {
-  }
+  public readonly gitInfo:        Partial<GitInfo> = inject<Partial<GitInfo>>(GIT_INFO);
+  public readonly packageVersion: string           = inject<string>(PACKAGE_VERSION);
 
 }

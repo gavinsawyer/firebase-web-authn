@@ -1,13 +1,13 @@
-import { CommonModule }                          from "@angular/common";
-import { Component }                             from "@angular/core";
+import { NgIf }                                  from "@angular/common";
+import { Component, inject }                     from "@angular/core";
 import { AuthenticationService, ProfileService } from "../../../services";
 import { ProfileCardComponent }                  from "../profile card/ProfileCardComponent";
 import { SignInCardComponent }                   from "../sign in card/SignInCardComponent";
 
 
 @Component({
-  imports:     [
-    CommonModule,
+  imports: [
+    NgIf,
     ProfileCardComponent,
     SignInCardComponent,
   ],
@@ -20,10 +20,7 @@ import { SignInCardComponent }                   from "../sign in card/SignInCar
 })
 export class AsideComponent {
 
-  constructor(
-    public readonly authenticationService: AuthenticationService,
-    public readonly profileService:        ProfileService,
-  ) {
-  }
+  public readonly authenticationService: AuthenticationService = inject<AuthenticationService>(AuthenticationService);
+  public readonly profileService:        ProfileService        = inject<ProfileService>(ProfileService);
 
 }
