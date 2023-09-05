@@ -8,6 +8,10 @@ A Firebase Extension for authentication with WebAuthn passkeys.
 ## v10.2.1
 
 - Updated docs to reflect breaking changes in 10.2.0.
+- Updated demo to use composition for routes, to eliminate constructor usage, and to fix reactive user value error.
+- Simplified demo SignInCardComponent, RxJS usage in services.
+- Added favicon to demo.
+- Formatting
 
 ## v10.2.0
 

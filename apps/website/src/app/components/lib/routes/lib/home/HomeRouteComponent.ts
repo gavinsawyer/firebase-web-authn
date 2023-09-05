@@ -1,5 +1,5 @@
 import { Component }      from "@angular/core";
-import { RouteComponent } from "../../../../";
+import { RouteComponent } from "../../../../../components";
 
 
 @Component({

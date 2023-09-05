@@ -1,11 +1,11 @@
-import { isPlatformBrowser }                                                    from "@angular/common";
-import { inject, Injectable, PLATFORM_ID, signal, Signal }                      from "@angular/core";
-import { toSignal }                                                             from "@angular/core/rxjs-interop";
-import { Auth, onIdTokenChanged, signInAnonymously, User, UserCredential }      from "@angular/fire/auth";
-import { Functions }                                                            from "@angular/fire/functions";
-import { MatSnackBar }                                                          from "@angular/material/snack-bar";
-import { FirebaseWebAuthnError, signInWithPasskey, verifyUserWithPasskey }      from "@firebase-web-authn/browser";
-import { distinctUntilChanged, Observable, Observer, startWith, TeardownLogic } from "rxjs";
+import { isPlatformBrowser }                                                                      from "@angular/common";
+import { inject, Injectable, PLATFORM_ID, signal, Signal }                                        from "@angular/core";
+import { toSignal }                                                                               from "@angular/core/rxjs-interop";
+import { Auth, onIdTokenChanged, signInAnonymously, User, UserCredential }                        from "@angular/fire/auth";
+import { Functions }                                                                              from "@angular/fire/functions";
+import { MatSnackBar }                                                                            from "@angular/material/snack-bar";
+import { createUserWithPasskey, FirebaseWebAuthnError, signInWithPasskey, verifyUserWithPasskey } from "@firebase-web-authn/browser";
+import { Observable, Observer, startWith, TeardownLogic }                                         from "rxjs";
 
 
 @Injectable({
@@ -17,7 +17,7 @@ export class AuthenticationService {
   private readonly functions:   Functions   = inject<Functions>(Functions);
   private readonly matSnackBar: MatSnackBar = inject<MatSnackBar>(MatSnackBar);
 
-  public readonly user$:                 Signal<User | null> = isPlatformBrowser(inject<object>(PLATFORM_ID)) ? toSignal<User | null>(
+  public readonly user$:                 Signal<User | null>             = isPlatformBrowser(inject<object>(PLATFORM_ID)) ? toSignal<User | null>(
     new Observable<User | null>(
       (userObserver: Observer<User | null>): TeardownLogic => onIdTokenChanged(
         this.auth,
@@ -25,21 +25,41 @@ export class AuthenticationService {
           (userCredential: UserCredential): void => userObserver.next(userCredential.user),
         ) : userObserver.next(user),
       ),
-    ).pipe<User | null, User | null>(
+    ).pipe<User | null>(
       startWith<User | null, [ User | null ]>(this.auth.currentUser),
-      distinctUntilChanged<User | null>(),
     ),
     {
       requireSync: true,
     },
   ) : signal<User | null>(null);
-  public readonly verifyUserWithPasskey: () => Promise<void> = (): Promise<void> => verifyUserWithPasskey(
+  public readonly createUserWithPasskey: (name: string) => Promise<void> = (name:string): Promise<void> => createUserWithPasskey(
+    this.auth,
+    this.functions,
+    name,
+  )
+    .then<void, never>(
+      (): void => this.matSnackBar.open(
+        "Sign-up successful.",
+        "Okay",
+      ) && void (0),
+      (firebaseWebAuthnError: FirebaseWebAuthnError): never => this.matSnackBar.open(
+        firebaseWebAuthnError.message,
+        "Okay",
+      ) && ((): never => {
+        throw firebaseWebAuthnError;
+      })(),
+    );
+  public readonly signInAnonymously:     () => Promise<void>             = (): Promise<void> => signInAnonymously(this.auth)
+    .then<void>(
+      (): void => void (0),
+    );
+  public readonly signInWithPasskey:     () => Promise<void>             = (): Promise<void> => signInWithPasskey(
     this.auth,
     this.functions,
   )
     .then<void, never>(
       (): void => this.matSnackBar.open(
-        "Verification successful.",
+        "Sign-in successful.",
         "Okay",
       ) && void (0),
       (firebaseWebAuthnError: FirebaseWebAuthnError): never => this.matSnackBar.open(
@@ -49,17 +69,13 @@ export class AuthenticationService {
         throw firebaseWebAuthnError;
       })(),
     );
-  public readonly signInAnonymously:     () => Promise<void> = (): Promise<void> => signInAnonymously(this.auth)
-    .then<void>(
-      (): void => void (0),
-    );
-  public readonly signInWithPasskey:     () => Promise<void> = (): Promise<void> => signInWithPasskey(
+  public readonly verifyUserWithPasskey: () => Promise<void>             = (): Promise<void> => verifyUserWithPasskey(
     this.auth,
     this.functions,
   )
     .then<void, never>(
       (): void => this.matSnackBar.open(
-        "Sign-in successful.",
+        "Verification successful.",
         "Okay",
       ) && void (0),
       (firebaseWebAuthnError: FirebaseWebAuthnError): never => this.matSnackBar.open(

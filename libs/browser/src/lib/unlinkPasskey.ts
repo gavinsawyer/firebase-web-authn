@@ -16,13 +16,13 @@ import { FirebaseWebAuthnError }                                from "./Firebase
  */
 export const unlinkPasskey: (auth: Auth, functions: Functions) => Promise<void> = (auth: Auth, functions: Functions): Promise<void> => auth
   .currentUser ? httpsCallableFromURL<FunctionRequest, FunctionResponse>(
-  functions,
-  "/firebase-web-authn-api",
-)(
-  {
-    operation: "clear user doc",
-  },
-)
+    functions,
+    "/firebase-web-authn-api",
+  )(
+    {
+      operation: "clear user doc",
+    },
+  )
   .then<void, never>(
     ({ data: functionResponse }: HttpsCallableResult<FunctionResponse>): void => "code" in functionResponse ? ((): never => {
       throw new FirebaseWebAuthnError(functionResponse);

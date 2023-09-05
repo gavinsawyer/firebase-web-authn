@@ -66,6 +66,7 @@
           "xhr2"
         ],
         "assets":                      [
+          "apps/website/src/favicon.png",
           "apps/website/src/robots.txt",
           "apps/website/src/sitemap.xml"
         ],

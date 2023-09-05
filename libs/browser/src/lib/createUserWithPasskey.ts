@@ -18,10 +18,10 @@ export const createUserWithPasskey: (auth: Auth, functions: Functions, name: str
   .currentUser && auth
   .currentUser
   .isAnonymous ? linkWithPasskey(
-  auth,
-  functions,
-  name,
-) : signInAnonymously(auth)
+    auth,
+    functions,
+    name,
+  ) : signInAnonymously(auth)
   .then<UserCredential, never>(
     (): Promise<UserCredential> => linkWithPasskey(
       auth,

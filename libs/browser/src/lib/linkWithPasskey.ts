@@ -20,14 +20,14 @@ import { handleVerifyFunctionResponse }                         from "./handleVe
  */
 export const linkWithPasskey: (auth: Auth, functions: Functions, name: string) => Promise<UserCredential> = (auth: Auth, functions: Functions, name: string): Promise<UserCredential> => auth
   .currentUser ? httpsCallableFromURL<FunctionRequest, FunctionResponse>(
-  functions,
-  "/firebase-web-authn-api",
-)(
-  {
-    name:      name,
-    operation: "create registration challenge",
-  },
-)
+    functions,
+    "/firebase-web-authn-api",
+  )(
+    {
+      name:      name,
+      operation: "create registration challenge",
+    },
+  )
   .then<UserCredential, never>(
     ({ data: functionResponse }: HttpsCallableResult<FunctionResponse>): Promise<UserCredential> => "code" in functionResponse ? ((): never => {
       throw new FirebaseWebAuthnError(functionResponse);

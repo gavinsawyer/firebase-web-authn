@@ -124,7 +124,7 @@ class FirebaseWebAuthnError extends Error {
 This package contains five tree-shakeable async methods for using FirebaseWebAuthn in a secure context.
 
 [![FirebaseWebAuthn version](https://img.shields.io/npm/v/@firebase-web-authn/server?logo=npm)](https://www.npmjs.com/package/@firebase-web-authn/server)
-[![Firebase Admin SDK version](https://img.shields.io/npm/dependency-version/@firebase-web-authn/server/dev/firebase-admin?label=Firebase%20Admin%20SDK&logo=firebase)](https://www.npmjs.com/package/firebase-admin)
+[![Firebase Admin SDK version](https://img.shields.io/npm/dependency-version/@firebase-web-authn/server/firebase-admin?label=Firebase%20Admin%20SDK&logo=firebase)](https://www.npmjs.com/package/firebase-admin)
 ### Methods
 ```ts
   backupEligible: (uid: string, app?: App) => Promise<boolean | null>;

@@ -1,16 +1,14 @@
 import { NgIf }                                                    from "@angular/common";
 import { Component, inject }                                       from "@angular/core";
-import { Auth, User }                                              from "@angular/fire/auth";
+import { User }                                                    from "@angular/fire/auth";
 import { doc, DocumentReference, Firestore, setDoc }               from "@angular/fire/firestore";
-import { Functions }                                               from "@angular/fire/functions";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { MatButtonModule }                                         from "@angular/material/button";
 import { MatCardModule }                                           from "@angular/material/card";
 import { MatFormFieldModule }                                      from "@angular/material/form-field";
 import { MatIconModule }                                           from "@angular/material/icon";
 import { MatInputModule }                                          from "@angular/material/input";
-import { MatSnackBar, MatSnackBarModule }                          from "@angular/material/snack-bar";
-import { createUserWithPasskey, FirebaseWebAuthnError }            from "@firebase-web-authn/browser";
+import { FirebaseWebAuthnError }                                   from "@firebase-web-authn/browser";
 import { ProfileDocument }                                         from "../../../interfaces";
 import { AuthenticationService }                                   from "../../../services";
 
@@ -22,7 +20,6 @@ import { AuthenticationService }                                   from "../../.
     MatFormFieldModule,
     MatIconModule,
     MatInputModule,
-    MatSnackBarModule,
     NgIf,
     ReactiveFormsModule,
   ],
@@ -35,10 +32,7 @@ import { AuthenticationService }                                   from "../../.
 })
 export class SignInCardComponent {
 
-  private readonly auth:        Auth        = inject<Auth>(Auth);
-  private readonly firestore:   Firestore   = inject<Firestore>(Firestore);
-  private readonly functions:   Functions   = inject<Functions>(Functions);
-  private readonly matSnackBar: MatSnackBar = inject<MatSnackBar>(MatSnackBar);
+  private readonly firestore: Firestore = inject<Firestore>(Firestore);
 
   public readonly authenticationService: AuthenticationService                      = inject<AuthenticationService>(AuthenticationService);
   public readonly formGroup:             FormGroup<{ "name": FormControl<string> }> = new FormGroup<{ "name": FormControl<string> }>(
@@ -60,16 +54,13 @@ export class SignInCardComponent {
         .formGroup
         .disable();
 
-      return createUserWithPasskey(
-        this.auth,
-        this.functions,
-        name,
-      )
+      return this
+        .authenticationService
+        .createUserWithPasskey(
+          name,
+        )
         .then<void, never>(
-          (): Promise<void> => this.matSnackBar.open(
-            "Sign-up successful.",
-            "Okay",
-          ) && setDoc(
+          (): Promise<void> => setDoc(
             doc(
               this.firestore,
               "/profiles/" + user.uid,
@@ -78,16 +69,13 @@ export class SignInCardComponent {
               name: this.formGroup.value.name,
             },
           ),
-          (firebaseWebAuthnError: FirebaseWebAuthnError): never => this.matSnackBar.open(
-            firebaseWebAuthnError.message,
-            "Okay",
-          ) && ((): never => {
+          (firebaseWebAuthnError: FirebaseWebAuthnError): never => {
             this
               .formGroup
               .enable();
 
             throw firebaseWebAuthnError;
-          })(),
+          },
         );
     })() : void (0))(
       this.formGroup.value.name,
