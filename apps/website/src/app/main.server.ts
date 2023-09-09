@@ -74,4 +74,5 @@ const moduleFilename: string = mainModule && mainModule
     (): void => console.log(`Node Express server listening on http://localhost:${process.env["PORT"] || 4000}`),
   );
 
+// noinspection JSUnusedGlobalSymbols
 export { WebsiteServerModule as AppServerModule };

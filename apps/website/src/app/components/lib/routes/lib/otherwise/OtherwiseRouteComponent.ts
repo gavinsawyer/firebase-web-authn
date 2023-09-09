@@ -16,8 +16,13 @@ import { PathService }                            from "../../../../../services"
 })
 export class OtherwiseRouteComponent extends RouteComponent implements OnInit {
 
-  private readonly platformId: object   = inject<object>(PLATFORM_ID);
-  private readonly response:   Response = inject<Response>(RESPONSE);
+  private readonly platformId: object          = inject<object>(PLATFORM_ID);
+  private readonly response:   Response | null = inject<Response | null>(
+    RESPONSE,
+    {
+      optional: true,
+    },
+  );
 
   public readonly pathService: PathService = inject<PathService>(PathService);
 
@@ -27,7 +32,7 @@ export class OtherwiseRouteComponent extends RouteComponent implements OnInit {
 
     isPlatformBrowser(this.platformId) || this
       .response
-      .status(404);
+      ?.status(404);
   }
 
 }

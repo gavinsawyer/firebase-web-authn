@@ -40,7 +40,7 @@ If you would rather deploy the API from your existing Firebase Functions package
      userVerificationRequirement?: UserVerificationRequirement, // Your app's user verification requirement. "preferred" is default.
    }
    ```
-3. Deploy your Firebase Functions:
+4. Deploy your Firebase Functions:
 
    ```
    % firebase deploy --only functions

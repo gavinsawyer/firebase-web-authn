@@ -45,12 +45,12 @@
     "strict":                             true,
     "target":                             "ESNext"
   },
-  "include": [
-    "!**/*.ts"
-  ],
   "exclude":                [
     "node_modules",
     "tmp",
     "**/README.md"
+  ],
+  "include":                [
+    "!**/*.ts"
   ]
 }

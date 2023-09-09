@@ -1,6 +1,6 @@
 {
   "name":         "@firebase-web-authn/api",
-  "version":      "10.2.1",
+  "version":      "10.2.2",
   "homepage":     "https://firebase-web-authn.dev",
   "license":      "Apache-2.0",
   "author":       {
@@ -15,7 +15,7 @@
   },
   "private":      false,
   "dependencies": {
-    "@simplewebauthn/server": "^8.0.1",
+    "@simplewebauthn/server": "^8.1.1",
     "firebase-functions":     "^4.4.1"
   }
 }
