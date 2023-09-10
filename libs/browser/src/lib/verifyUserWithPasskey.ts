@@ -16,8 +16,10 @@ import { handleVerifyFunctionResponse }                         from "./handleVe
  * @param auth - The {@link Auth} instance.
  * @param functions - The {@link Functions} instance.
  *
- * @returns {@link void} when successful.
- * @throws {@link FirebaseWebAuthnError}
+ * @returns
+ *  {@link void} when successful.
+ * @throws
+ *  {@link FirebaseWebAuthnError}
  */
 export const verifyUserWithPasskey: (auth: Auth, functions: Functions) => Promise<void> = (auth: Auth, functions: Functions): Promise<void> => auth
   .currentUser ? httpsCallableFromURL<FunctionRequest, FunctionResponse>(

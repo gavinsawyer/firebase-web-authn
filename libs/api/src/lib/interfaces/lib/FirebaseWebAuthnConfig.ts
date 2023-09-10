@@ -5,7 +5,7 @@
  */
 export interface FirebaseWebAuthnConfig {
   /**
-   * Preferred {@link https://www.w3.org/TR/webauthn-2/#enum-attachment | authenticator attachment} modality. "cross-platform" allows security keys. "platform" allows passkey managers.
+   * Preferred {@link https://www.w3.org/TR/webauthn-2/#enum-attachment authenticator attachment} modality. "cross-platform" allows security keys. "platform" allows passkey managers.
    */
   "authenticatorAttachment": AuthenticatorAttachment,
   /**

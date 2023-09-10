@@ -11,8 +11,10 @@ import { linkWithPasskey }                         from "./linkWithPasskey";
  * @param functions - The {@link Functions} instance.
  * @param name - An existing user identifier if FirebaseWebAuthn is configured as an MFA provider, or any recognizable value if FirebaseWebAuthn is your sole auth provider. With generic values consider passing something like "${firstName} | Personal" for users who share a passkey manager with others.
  *
- * @returns {@link UserCredential} when successful.
- * @throws {@link FirebaseWebAuthnError}
+ * @returns
+ *  A {@link UserCredential} when successful.
+ * @throws
+ *  {@link FirebaseWebAuthnError}
  */
 export const createUserWithPasskey: (auth: Auth, functions: Functions, name: string) => Promise<UserCredential> = (auth: Auth, functions: Functions, name: string): Promise<UserCredential> => auth
   .currentUser && auth

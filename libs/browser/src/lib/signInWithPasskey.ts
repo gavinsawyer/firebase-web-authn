@@ -14,8 +14,10 @@ import { handleVerifyFunctionResponse }                         from "./handleVe
  * @param auth - The {@link Auth} instance.
  * @param functions - The {@link Functions} instance.
  *
- * @returns {@link UserCredential} when successful.
- * @throws {@link FirebaseWebAuthnError}
+ * @returns
+ *  A {@link UserCredential} when successful.
+ * @throws
+ *  {@link FirebaseWebAuthnError}
  */
 export const signInWithPasskey: (auth: Auth, functions: Functions) => Promise<UserCredential> = (auth: Auth, functions: Functions): Promise<UserCredential> => ((handler: () => Promise<UserCredential>): Promise<UserCredential> => auth.currentUser ? handler() : signInAnonymously(auth).then<UserCredential, never>(
   (): Promise<UserCredential> => handler(),

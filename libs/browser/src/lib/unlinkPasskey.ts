@@ -11,8 +11,10 @@ import { FirebaseWebAuthnError }                                from "./Firebase
  * @param auth - The {@link Auth} instance.
  * @param functions - The {@link Functions} instance.
  *
- * @returns {@link void} when successful.
- * @throws {@link FirebaseWebAuthnError}
+ * @returns
+ *  {@link void} when successful.
+ * @throws
+ *  {@link FirebaseWebAuthnError}
  */
 export const unlinkPasskey: (auth: Auth, functions: Functions) => Promise<void> = (auth: Auth, functions: Functions): Promise<void> => auth
   .currentUser ? httpsCallableFromURL<FunctionRequest, FunctionResponse>(
