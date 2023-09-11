@@ -26,8 +26,9 @@ export const linkWithPasskey: (auth: Auth, functions: Functions, name: string) =
     "/firebase-web-authn-api",
   )(
     {
-      name:      name,
-      operation: "create registration challenge",
+      name:                      name,
+      operation:                 "create registration challenge",
+      registeringCredentialType: "primary",
     },
   )
   .then<UserCredential, never>(

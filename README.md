@@ -126,10 +126,14 @@ This package contains five tree-shakeable async methods for using FirebaseWebAut
 [![FirebaseWebAuthn version](https://img.shields.io/npm/v/@firebase-web-authn/server?logo=npm)](https://www.npmjs.com/package/@firebase-web-authn/server)
 [![Firebase Admin SDK version](https://img.shields.io/npm/dependency-version/@firebase-web-authn/server/firebase-admin?label=Firebase%20Admin%20SDK&logo=firebase)](https://www.npmjs.com/package/firebase-admin)
 ### Methods
+
+```ts
+import { WebAuthnUserCredential } from "@firebase-web-authn/types";
+```
 ```ts
   backupEligible: (uid: string, app?: App) => Promise<boolean | null>;
 backupSuccessful: (uid: string, app?: App) => Promise<boolean | null>;
-      credential: (uid: string, app?: App) => Promise<WebAuthnUserCredential>;
+     credentials: (uid: string, app?: App) => Promise<{ [key in "primary" | "backup"]: WebAuthnUserCredential | null }>;
      lastPresent: (uid: string, app?: App) => Promise<Timestamp | null>;
     lastVerified: (uid: string, app?: App) => Promise<Timestamp | null>;
 ```

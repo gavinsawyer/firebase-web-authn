@@ -5,7 +5,7 @@ export interface WebAuthnUserCredential {
   /**
    * Whether the private key is eligible to be backed up.
    */
-  "backupEligible": boolean,
+  "backupEligible": boolean
   /**
    * Whether the private key has been backed up successfully.
    */
@@ -22,4 +22,8 @@ export interface WebAuthnUserCredential {
    * Public key associated with the credential.
    */
   "publicKey": Uint8Array,
+  /**
+   * The type ("primary" or "backup") of credential.
+   */
+  "type": "backup" | "primary",
 }

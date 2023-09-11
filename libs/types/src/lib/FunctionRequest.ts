@@ -1,25 +1,32 @@
 import { AuthenticationResponseJSON, RegistrationResponseJSON } from "@simplewebauthn/typescript-types";
+import { WebAuthnUserCredential }                               from "./WebAuthnUserCredential";
 
 
 interface UnknownFunctionRequest {
   "operation": "clear challenge" | "clear user doc" | "create authentication challenge" | "create reauthentication challenge" | "create registration challenge" | "verify authentication" | "verify reauthentication" | "verify registration",
 }
+
 interface ClearChallengeFunctionRequest extends UnknownFunctionRequest {
   "operation": "clear challenge",
 }
 interface ClearUserDocFunctionRequest extends UnknownFunctionRequest {
   "operation": "clear user doc",
 }
+
 interface CreateAuthenticationChallengeFunctionRequest extends UnknownFunctionRequest {
+  "authenticatingCredentialType": WebAuthnUserCredential["type"],
   "operation": "create authentication challenge",
 }
 interface CreateReauthenticationChallengeFunctionRequest extends UnknownFunctionRequest {
   "operation": "create reauthentication challenge",
+  "reauthenticatingCredentialType": WebAuthnUserCredential["type"],
 }
 interface CreateRegistrationChallengeFunctionRequest extends UnknownFunctionRequest {
   "name": string,
   "operation": "create registration challenge",
+  "registeringCredentialType": WebAuthnUserCredential["type"],
 }
+
 interface VerifyAuthenticationFunctionRequest extends UnknownFunctionRequest {
   "authenticationResponse": AuthenticationResponseJSON,
   "operation": "verify authentication",

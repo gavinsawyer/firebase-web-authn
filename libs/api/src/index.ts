@@ -1,2 +1,2 @@
-export * from "./lib/FirebaseWebAuthnConfig";
 export * from "./lib/getFirebaseWebAuthnApi";
+export * from "./lib/interfaces";

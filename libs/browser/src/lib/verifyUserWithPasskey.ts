@@ -27,7 +27,8 @@ export const verifyUserWithPasskey: (auth: Auth, functions: Functions) => Promis
     "/firebase-web-authn-api",
   )(
     {
-      operation: "create reauthentication challenge",
+      operation:                      "create reauthentication challenge",
+      reauthenticatingCredentialType: "primary",
     },
   )
   .then<void, never>(
@@ -84,11 +85,11 @@ export const verifyUserWithPasskey: (auth: Auth, functions: Functions) => Promis
       );
     },
   ) : ((): never => {
-    throw new FirebaseWebAuthnError(
-      {
-        code:      "missing-auth",
-        message:   "No user is signed in.",
-        operation: "create reauthentication challenge",
-      },
-    );
-  })();
+  throw new FirebaseWebAuthnError(
+    {
+      code:      "missing-auth",
+      message:   "No user is signed in.",
+      operation: "create reauthentication challenge",
+    },
+  );
+})();

@@ -5,6 +5,14 @@ A Firebase Extension for authentication with WebAuthn passkeys.
 [![Latest version in NPM](https://img.shields.io/npm/v/@firebase-web-authn/extension?logo=npm)](https://www.npmjs.com/package/@firebase-web-authn/extension)
 [![Install](https://img.shields.io/static/v1?label=&message=Install%20in%20Firebase%20console&logo=firebase&color=blue)](https://console.firebase.google.com/u/0/project/_/extensions/install?ref=gavinsawyer%2Ffirebase-web-authn)
 
+## v10.3.0
+
+- BREAKING CHANGE: Removed credential() method from server package in favor of credentials() which returns an object of "primary" and "backup" credentials with either being null if not found.
+- Added internal support for backup passkeys (Addresses #3).
+- Added more security surrounding challenge by storing expected `process` ("authentication", "registration", etc.) and `processingCredentialType` ("primary" or "backup") alongside challenge value.
+- Moved to 2nd Gen Cloud Function for API (delete "ext-firebase-web-authn-api" Cloud Function and redeploy to receive performance gains).
+- Updated documentation.
+
 ## v10.2.3
 
 - Improved TSDoc.

@@ -51,7 +51,7 @@ Use the [server library](https://github.com/gavinsawyer/firebase-web-authn#fireb
 ```ts
   backupEligible: (uid: string, app?: App) => Promise<boolean | null>;
 backupSuccessful: (uid: string, app?: App) => Promise<boolean | null>;
-      credential: (uid: string, app?: App) => Promise<WebAuthnUserCredential>;
+     credentials: (uid: string, app?: App) => Promise<{ [key in "primary" | "backup"]: WebAuthnUserCredential | null }>;
      lastPresent: (uid: string, app?: App) => Promise<Timestamp | null>;
     lastVerified: (uid: string, app?: App) => Promise<Timestamp | null>;
 ```

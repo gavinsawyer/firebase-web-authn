@@ -39,7 +39,8 @@ export const signInWithPasskey: (auth: Auth, functions: Functions) => Promise<Us
     "/firebase-web-authn-api",
   )(
     {
-      operation: "create authentication challenge",
+      authenticatingCredentialType: "primary",
+      operation:                    "create authentication challenge",
     },
   ).then<UserCredential, never>(
     ({ data: functionResponse }: HttpsCallableResult<FunctionResponse>): Promise<UserCredential> => "code" in functionResponse ? ((): never => {

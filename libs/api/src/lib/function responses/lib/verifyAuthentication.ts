@@ -5,64 +5,45 @@ import { FirebaseError }                                                        
 import { CollectionReference, DocumentReference, DocumentSnapshot, FieldValue, Timestamp } from "firebase-admin/firestore";
 
 
-export const verifyAuthentication: (options: { authenticationResponse: AuthenticationResponseJSON, createCustomToken: () => Promise<string>, hostname: string, userID: string, webAuthnUserCollectionReference: CollectionReference<WebAuthnUserDocument>, webAuthnUserDocumentReference: DocumentReference<WebAuthnUserDocument> }) => Promise<FunctionResponse> = (options: { authenticationResponse: AuthenticationResponseJSON, createCustomToken: () => Promise<string>, hostname: string, userID: string, webAuthnUserCollectionReference: CollectionReference<WebAuthnUserDocument>, webAuthnUserDocumentReference: DocumentReference<WebAuthnUserDocument> }): Promise<FunctionResponse> => options.authenticationResponse.response.userHandle !== options.userID ? options.webAuthnUserCollectionReference.doc(options.authenticationResponse.response.userHandle || "").get().then<FunctionResponse>(
-  (userDocumentSnapshot: DocumentSnapshot<WebAuthnUserDocument>): Promise<FunctionResponse> => ((userDocument: WebAuthnUserDocument | undefined): Promise<FunctionResponse> => userDocument ? userDocument.credential ? options.webAuthnUserDocumentReference.get().then<FunctionResponse>(
-    (priorUserDocumentSnapshot: DocumentSnapshot<WebAuthnUserDocument>): Promise<FunctionResponse> => ((priorUserDocument: WebAuthnUserDocument | undefined): Promise<FunctionResponse> => priorUserDocument && priorUserDocument.challenge ? verifyAuthenticationResponse(
+export const verifyAuthentication: (options: { authenticationResponse: AuthenticationResponseJSON, createCustomToken: (uid: string) => Promise<string>, hostname: string, userID: string, userVerificationRequirement?: UserVerificationRequirement, webAuthnUserCollectionReference: CollectionReference<WebAuthnUserDocument>, webAuthnUserDocumentReference: DocumentReference<WebAuthnUserDocument> }) => Promise<FunctionResponse> = (options: { authenticationResponse: AuthenticationResponseJSON, createCustomToken: (uid: string) => Promise<string>, hostname: string, userID: string, userVerificationRequirement?: UserVerificationRequirement, webAuthnUserCollectionReference: CollectionReference<WebAuthnUserDocument>, webAuthnUserDocumentReference: DocumentReference<WebAuthnUserDocument> }): Promise<FunctionResponse> => options.authenticationResponse.response.userHandle !== options.userID ? options.webAuthnUserCollectionReference.doc(options.authenticationResponse.response.userHandle || "").get().then<FunctionResponse, FunctionResponse>(
+  (targetUserDocumentSnapshot: DocumentSnapshot<WebAuthnUserDocument>): Promise<FunctionResponse> => (async (targetUserDocument: WebAuthnUserDocument | undefined): Promise<FunctionResponse> => targetUserDocument ? options.webAuthnUserDocumentReference.get().then<FunctionResponse, FunctionResponse>(
+    (userDocumentSnapshot: DocumentSnapshot<WebAuthnUserDocument>): Promise<FunctionResponse> => (async (userDocument: WebAuthnUserDocument | undefined): Promise<FunctionResponse> => userDocument ? userDocument.challenge && userDocument.challenge.process === "authentication" ? targetUserDocument[userDocument.challenge?.processingCredentialType === "backup" ? "backupCredential" : "credential"] ? verifyAuthenticationResponse(
       {
         authenticator:           {
-          counter:             userDocument.credential?.counter || 0,
-          credentialID:        userDocument.credential?.id || new Uint8Array(0),
-          credentialPublicKey: userDocument.credential?.publicKey || new Uint8Array(0),
+          counter:             targetUserDocument[userDocument.challenge?.processingCredentialType === "backup" ? "backupCredential" : "credential"]?.counter || 0,
+          credentialID:        targetUserDocument[userDocument.challenge?.processingCredentialType === "backup" ? "backupCredential" : "credential"]?.id || new Uint8Array(0),
+          credentialPublicKey: targetUserDocument[userDocument.challenge?.processingCredentialType === "backup" ? "backupCredential" : "credential"]?.publicKey || new Uint8Array(0),
         },
-        expectedChallenge:       priorUserDocument.challenge,
+        expectedChallenge:       userDocument.challenge.value,
         expectedOrigin:          "https://" + options.hostname,
         expectedRPID:            options.hostname,
-        requireUserVerification: true,
+        requireUserVerification: options.userVerificationRequirement === "required" || options.userVerificationRequirement === "preferred",
         response:                options.authenticationResponse,
       },
-    ).then<FunctionResponse, FunctionResponse>(
-      (verifiedAuthenticationResponse: VerifiedAuthenticationResponse): Promise<FunctionResponse> => verifiedAuthenticationResponse.verified ? options.webAuthnUserDocumentReference.update(
+    ).then<FunctionResponse>(
+      (primaryVerifiedAuthenticationResponse: VerifiedAuthenticationResponse): Promise<FunctionResponse> => primaryVerifiedAuthenticationResponse.verified ? options.webAuthnUserCollectionReference.doc(options.authenticationResponse.response.userHandle || "").update(
         {
-          challenge:    FieldValue.delete(),
-          credential:   {
-            ...userDocument["credential"],
-            backupEligible:   verifiedAuthenticationResponse.authenticationInfo.credentialDeviceType === "multiDevice",
-            backupSuccessful: verifiedAuthenticationResponse.authenticationInfo.credentialBackedUp,
+          [userDocument.challenge?.processingCredentialType === "backup" ? "backupCredential" : "credential"]: {
+            ...targetUserDocument[userDocument.challenge?.processingCredentialType === "backup" ? "backupCredential" : "credential"],
+            backupEligible:   primaryVerifiedAuthenticationResponse.authenticationInfo.credentialDeviceType === "multiDevice",
+            backupSuccessful: primaryVerifiedAuthenticationResponse.authenticationInfo.credentialBackedUp,
           },
-          lastPresent:  Timestamp.fromDate(new Date()),
-          lastVerified: verifiedAuthenticationResponse.authenticationInfo.userVerified ? Timestamp.fromDate(new Date()) : userDocument["lastVerified"] || FieldValue.delete(),
+          lastCredentialUsed:                                                                                  userDocument.challenge?.processingCredentialType,
+          lastPresent:                                                                                         Timestamp.fromDate(new Date()),
+          lastVerified:                                                                                        primaryVerifiedAuthenticationResponse.authenticationInfo.userVerified ? Timestamp.fromDate(new Date()) : targetUserDocument["lastVerified"] || FieldValue.delete(),
         },
       ).then<FunctionResponse, FunctionResponse>(
-        (): Promise<FunctionResponse> => priorUserDocument.credential ? options.webAuthnUserDocumentReference.update(
+        (): Promise<FunctionResponse> => (userDocument.lastPresent ? options.webAuthnUserDocumentReference.update(
           {
             challenge: FieldValue.delete(),
           },
-        ).then<FunctionResponse, FunctionResponse>(
-          (): Promise<FunctionResponse> => options.createCustomToken().then<FunctionResponse, FunctionResponse>(
+        ) : options.webAuthnUserDocumentReference.delete()).then<FunctionResponse, FunctionResponse>(
+          (): Promise<FunctionResponse> => options.createCustomToken(options.authenticationResponse.response.userHandle || "").then<FunctionResponse, FunctionResponse>(
             (customToken: string): FunctionResponse => ({
-              customToken: customToken,
-              operation:   "verify authentication",
-              success:     true,
-            }),
-            (firebaseError: FirebaseError): FunctionResponse => ({
-              code:      firebaseError.code,
-              message:   firebaseError.message,
-              operation: "verify authentication",
-              success:   false,
-            }),
-          ),
-          (firebaseError: FirebaseError): FunctionResponse => ({
-            code:      firebaseError.code,
-            message:   firebaseError.message,
-            operation: "verify authentication",
-            success:   false,
-          }),
-        ) : options.webAuthnUserDocumentReference.delete().then<FunctionResponse, FunctionResponse>(
-          (): Promise<FunctionResponse> => options.createCustomToken().then<FunctionResponse, FunctionResponse>(
-            (customToken: string): FunctionResponse => ({
-              customToken: customToken,
-              operation:   "verify authentication",
-              success:     true,
+              authenticatedCredentialType: "primary",
+              customToken:                 customToken,
+              operation:                   "verify authentication",
+              success:                     true,
             }),
             (firebaseError: FirebaseError): FunctionResponse => ({
               code:      firebaseError.code,
@@ -84,7 +65,11 @@ export const verifyAuthentication: (options: { authenticationResponse: Authentic
           operation: "verify authentication",
           success:   false,
         }),
-      ) : options.webAuthnUserDocumentReference.delete().then<FunctionResponse, FunctionResponse>(
+      ) : (userDocument.lastPresent ? options.webAuthnUserDocumentReference.update(
+        {
+          challenge: FieldValue.delete(),
+        },
+      ) : options.webAuthnUserDocumentReference.delete()).then<FunctionResponse, FunctionResponse>(
         (): FunctionResponse => ({
           code:      "not-verified",
           message:   "User not verified.",
@@ -98,7 +83,29 @@ export const verifyAuthentication: (options: { authenticationResponse: Authentic
           success:   false,
         }),
       ),
-    ) : options.webAuthnUserDocumentReference.delete().then<FunctionResponse, FunctionResponse>(
+    ) : options.webAuthnUserDocumentReference.update(
+      {
+        challenge: FieldValue.delete(),
+      },
+    ).then<FunctionResponse, FunctionResponse>(
+      (): FunctionResponse => ({
+        code:      "user-doc-missing-passkey-fields",
+        message:   "User doc is missing passkey fields from prior operation.",
+        operation: "verify authentication",
+        success:   false,
+      }),
+      (firebaseError: FirebaseError): FunctionResponse => ({
+        code:      firebaseError.code,
+        message:   firebaseError.message,
+        operation: "verify authentication",
+        success:   false,
+      }),
+    ) : userDocument.lastPresent ? {
+      code:      "user-doc-missing-challenge-field",
+      message:   "User doc is missing challenge field from prior operation.",
+      operation: "verify authentication",
+      success:   false,
+    } : options.webAuthnUserDocumentReference.delete().then<FunctionResponse, FunctionResponse>(
       (): FunctionResponse => ({
         code:      "user-doc-missing-challenge-field",
         message:   "User doc is missing challenge field from prior operation.",
@@ -111,34 +118,30 @@ export const verifyAuthentication: (options: { authenticationResponse: Authentic
         operation: "verify authentication",
         success:   false,
       }),
-    ))(priorUserDocumentSnapshot.data()),
-  ) : options.webAuthnUserDocumentReference.delete().then<FunctionResponse, FunctionResponse>(
-    (): FunctionResponse => ({
-      code:      "user-doc-missing-passkey-fields",
-      message:   "User doc is missing passkey fields from prior operation.",
-      operation: "verify authentication",
-      success:   false,
-    }),
-    (firebaseError: FirebaseError): FunctionResponse => ({
-      code:      firebaseError.code,
-      message:   firebaseError.message,
-      operation: "verify authentication",
-      success:   false,
-    }),
-  ) : options.webAuthnUserDocumentReference.delete().then<FunctionResponse, FunctionResponse>(
-    (): FunctionResponse => ({
+    ) : {
       code:      "missing-user-doc",
       message:   "No user document was found in Firestore.",
       operation: "verify authentication",
       success:   false,
-    }),
+    })(userDocumentSnapshot.data()),
     (firebaseError: FirebaseError): FunctionResponse => ({
       code:      firebaseError.code,
       message:   firebaseError.message,
       operation: "verify authentication",
       success:   false,
     }),
-  ))(userDocumentSnapshot.data()),
+  ) : {
+    code:      "missing-user-doc",
+    message:   "No user document was found in Firestore.",
+    operation: "verify authentication",
+    success:   false,
+  })(targetUserDocumentSnapshot.data()),
+  (firebaseError: FirebaseError): FunctionResponse => ({
+    code:      firebaseError.code,
+    message:   firebaseError.message,
+    operation: "verify authentication",
+    success:   false,
+  }),
 ) : options.webAuthnUserDocumentReference.update(
   {
     challenge: FieldValue.delete(),

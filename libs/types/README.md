@@ -12,11 +12,12 @@ import { WebAuthnUserCredential } from "@firebase-web-authn/types";
 ```
 ```ts
 interface WebAuthnUserCredential {
-  "backupEligible": boolean,   // Whether the private key is eligible to be backed up.
-  "backupSuccessful": boolean, // Whether the private key has been backed up successfully.
-  "counter": number,           // Updated automatically by some browsers to help prevent replay attacks.
-  "id": Uint8Array,            // ID associated with the credential.
-  "publicKey": Uint8Array,     // Public key associated with the credential.
+  "backupEligible": boolean,    // Whether the private key is eligible to be backed up.
+  "backupSuccessful": boolean,  // Whether the private key has been backed up successfully.
+  "counter": number,            // Updated automatically by some browsers to help prevent replay attacks.
+  "id": Uint8Array,             // ID associated with the credential.
+  "publicKey": Uint8Array,      // Public key associated with the credential.
+  "type": "backup" | "primary", // The type of credential.
 }
 ```
 ### WebAuthnUserDocument
@@ -26,10 +27,12 @@ import { WebAuthnUserDocument } from "@firebase-web-authn/types";
 ```
 ```ts
 interface WebAuthnUserDocument {
-  "challenge"?: string,                  // Only present between operations and cleaned up if the user cancels.
-  "credential"?: WebAuthnUserCredential, // Information about the public key credential associated with the user.
-  "lastPresent"?: Timestamp,             // Automatically updated on successful operations.
-  "lastVerified"?: Timestamp,            // Automatically updated on successful operations that verified the user with biometrics.
+  "challenge"?: string,                                  // Only present between operations and cleaned up if the user cancels.
+  "credential"?: WebAuthnUserCredential,                 // Information about the primary public key credential associated with the user.
+  "backupCredential"?: WebAuthnUserCredential,           // Information about the backup public key credential associated with the user.
+  "lastCredentialUsed"?: WebAuthnUserCredential["type"], // The last type of credential successfully used.
+  "lastPresent"?: Timestamp,                             // Automatically updated on successful operations.
+  "lastVerified"?: Timestamp,                            // Automatically updated on successful operations that verified the user with biometrics.
 }
 ```
 ## More packages

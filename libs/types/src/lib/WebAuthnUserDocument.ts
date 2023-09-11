@@ -9,17 +9,29 @@ export interface WebAuthnUserDocument {
   /**
    * Only present between operations and cleaned up if the user cancels.
    */
-  "challenge"?: string,
+  "challenge"?: {
+    "process": "authentication" | "reauthentication" | "registration",
+    "processingCredentialType": WebAuthnUserCredential["type"],
+    "value": string,
+  },
   /**
-   * Information about the public key credential associated with the user.
+   * Information about the primary public key credential associated with the user.
    */
   "credential"?: WebAuthnUserCredential,
   /**
-   * Automatically updated on successful operations.
+   * Information about the backup public key credential associated with the user.
+   */
+  "backupCredential"?: WebAuthnUserCredential,
+  /**
+   * The last type of credential successfully used.
+   */
+  "lastCredentialUsed"?: WebAuthnUserCredential["type"],
+  /**
+   * A {@link Timestamp} automatically updated on successful operations.
    */
   "lastPresent"?: Timestamp,
   /**
-   * Automatically updated on successful operations that verified the user with biometrics.
+   * A {@link Timestamp} automatically updated on successful operations that verified the user with biometrics.
    */
   "lastVerified"?: Timestamp,
 }

@@ -5,35 +5,37 @@ import { FirebaseError }                                              from "fire
 import { DocumentReference, DocumentSnapshot, FieldValue, Timestamp } from "firebase-admin/firestore";
 
 
-export const verifyRegistration: (options: { createCustomToken: () => Promise<string>, hostname: string, registrationResponse: RegistrationResponseJSON, webAuthnUserDocumentReference: DocumentReference<WebAuthnUserDocument> }) => Promise<FunctionResponse> = (options: { createCustomToken: () => Promise<string>, hostname: string, registrationResponse: RegistrationResponseJSON, webAuthnUserDocumentReference: DocumentReference<WebAuthnUserDocument> }): Promise<FunctionResponse> => options.webAuthnUserDocumentReference.get().then<FunctionResponse, FunctionResponse>(
-  (userDocumentSnapshot: DocumentSnapshot<WebAuthnUserDocument>): Promise<FunctionResponse> => (async (userDocument: WebAuthnUserDocument | undefined): Promise<FunctionResponse> => userDocument ? userDocument.challenge ? !userDocument.credential ? verifyRegistrationResponse(
+export const verifyRegistration: (options: { createCustomToken: () => Promise<string>, hostname: string, registrationResponse: RegistrationResponseJSON, userVerificationRequirement?: UserVerificationRequirement, webAuthnUserDocumentReference: DocumentReference<WebAuthnUserDocument> }) => Promise<FunctionResponse> = (options: { createCustomToken: () => Promise<string>, hostname: string, registrationResponse: RegistrationResponseJSON, userVerificationRequirement?: UserVerificationRequirement, webAuthnUserDocumentReference: DocumentReference<WebAuthnUserDocument> }): Promise<FunctionResponse> => options.webAuthnUserDocumentReference.get().then<FunctionResponse, FunctionResponse>(
+  (userDocumentSnapshot: DocumentSnapshot<WebAuthnUserDocument>): Promise<FunctionResponse> => (async (userDocument: WebAuthnUserDocument | undefined): Promise<FunctionResponse> => userDocument ? userDocument.challenge && userDocument.challenge.process === "registration" ? (userDocument.challenge?.processingCredentialType === "backup" ? !userDocument?.credential : !userDocument?.backupCredential) ? verifyRegistrationResponse(
     {
-      expectedChallenge:       userDocument["challenge"],
+      expectedChallenge:       userDocument.challenge.value,
       expectedOrigin:          "https://" + options.hostname,
       expectedRPID:            options.hostname,
-      requireUserVerification: true,
+      requireUserVerification: options.userVerificationRequirement === "required" || options.userVerificationRequirement === "preferred",
       response:                options.registrationResponse,
     },
   ).then<FunctionResponse>(
-    (verifiedRegistrationResponse: VerifiedRegistrationResponse): Promise<FunctionResponse> => verifiedRegistrationResponse.verified && verifiedRegistrationResponse.registrationInfo ? (options.webAuthnUserDocumentReference as DocumentReference<WebAuthnUserDocument | undefined>).update(
+    (verifiedRegistrationResponse: VerifiedRegistrationResponse): Promise<FunctionResponse> => verifiedRegistrationResponse.verified && verifiedRegistrationResponse.registrationInfo ? options.webAuthnUserDocumentReference.update(
       {
-        challenge:    FieldValue.delete(),
-        credential:   {
+        challenge:                                                      FieldValue.delete(),
+        [userDocument.challenge?.processingCredentialType === "backup" ? "backupCredential" : "credential"]: {
           backupEligible:   verifiedRegistrationResponse.registrationInfo.credentialDeviceType === "multiDevice",
           backupSuccessful: verifiedRegistrationResponse.registrationInfo.credentialBackedUp,
           counter:          verifiedRegistrationResponse.registrationInfo.counter,
           id:               verifiedRegistrationResponse.registrationInfo.credentialID,
           publicKey:        verifiedRegistrationResponse.registrationInfo.credentialPublicKey,
+          type:             userDocument.challenge?.processingCredentialType,
         },
-        lastPresent:  Timestamp.fromDate(new Date()),
-        lastVerified: verifiedRegistrationResponse.registrationInfo.userVerified ? Timestamp.fromDate(new Date()) : userDocument["lastVerified"] || FieldValue.delete(),
+        lastPresent:                                                    Timestamp.fromDate(new Date()),
+        lastVerified:                                                   verifiedRegistrationResponse.registrationInfo.userVerified ? Timestamp.fromDate(new Date()) : userDocument["lastVerified"],
       },
     ).then<FunctionResponse, FunctionResponse>(
       (): Promise<FunctionResponse> => options.createCustomToken().then<FunctionResponse, FunctionResponse>(
         (customToken: string): FunctionResponse => ({
-          customToken: customToken,
-          operation:   "verify registration",
-          success:     true,
+          registeredCredentialType: userDocument.lastPresent ? "backup" : "primary",
+          customToken:              customToken,
+          operation:                "verify registration",
+          success:                  true,
         }),
         (firebaseError: FirebaseError): FunctionResponse => ({
           code:      firebaseError.code,
@@ -62,14 +64,10 @@ export const verifyRegistration: (options: { createCustomToken: () => Promise<st
         success:   false,
       }),
     ),
-  ) : options.webAuthnUserDocumentReference.update(
-    {
-      challenge: FieldValue.delete(),
-    },
-  ).then<FunctionResponse, FunctionResponse>(
+  ) : options.webAuthnUserDocumentReference.delete().then<FunctionResponse, FunctionResponse>(
     (): FunctionResponse => ({
-      code:      "no-op",
-      message:   "No operation is needed.",
+      code:      "user-doc-missing-passkey-fields",
+      message:   "User doc is missing passkey fields from prior operation.",
       operation: "verify registration",
       success:   false,
     }),
@@ -79,7 +77,12 @@ export const verifyRegistration: (options: { createCustomToken: () => Promise<st
       operation: "verify registration",
       success:   false,
     }),
-  ) : options.webAuthnUserDocumentReference.delete().then<FunctionResponse, FunctionResponse>(
+  ) : userDocument.lastPresent ? {
+    code:      "user-doc-missing-challenge-field",
+    message:   "User doc is missing challenge field from prior operation.",
+    operation: "verify registration",
+    success:   false,
+  } : options.webAuthnUserDocumentReference.delete().then<FunctionResponse, FunctionResponse>(
     (): FunctionResponse => ({
       code:      "user-doc-missing-challenge-field",
       message:   "User doc is missing challenge field from prior operation.",
