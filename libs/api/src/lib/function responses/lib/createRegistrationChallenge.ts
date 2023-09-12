@@ -1,18 +1,34 @@
-import { FunctionResponse, WebAuthnUserCredential, WebAuthnUserDocument } from "@firebase-web-authn/types";
-import { generateRegistrationOptions }                                    from "@simplewebauthn/server";
-import { PublicKeyCredentialCreationOptionsJSON }                         from "@simplewebauthn/typescript-types";
-import { FirebaseError }                                                  from "firebase-admin";
-import { DocumentReference, DocumentSnapshot }                            from "firebase-admin/firestore";
+import { FunctionResponse, WebAuthnUserCredentialType, WebAuthnUserDocument } from "@firebase-web-authn/types";
+import { generateRegistrationOptions }                                        from "@simplewebauthn/server";
+import { PublicKeyCredentialCreationOptionsJSON }                             from "@simplewebauthn/typescript-types";
+import { FirebaseError }                                                      from "firebase-admin";
+import { DocumentReference, DocumentSnapshot }                                from "firebase-admin/firestore";
 
 
-export const createRegistrationChallenge: (options: { authenticatorAttachment?: AuthenticatorAttachment, hostname: string, registeringCredentialType?: WebAuthnUserCredential["type"], relyingPartyName: string, userID: string, userName: string, userVerificationRequirement?: UserVerificationRequirement, webAuthnUserDocumentReference: DocumentReference<WebAuthnUserDocument> }) => Promise<FunctionResponse> = (options: { authenticatorAttachment?: AuthenticatorAttachment, hostname: string, registeringCredentialType?: WebAuthnUserCredential["type"], relyingPartyName: string, userID: string, userName: string, userVerificationRequirement?: UserVerificationRequirement, webAuthnUserDocumentReference: DocumentReference<WebAuthnUserDocument> }): Promise<FunctionResponse> => options.webAuthnUserDocumentReference.get().then<FunctionResponse, FunctionResponse>(
-  (userDocumentSnapshot: DocumentSnapshot<WebAuthnUserDocument>): Promise<FunctionResponse> => (async (userDocument: WebAuthnUserDocument | undefined): Promise<FunctionResponse> => (options.registeringCredentialType === "backup" ? !userDocument?.backupCredential : !userDocument?.credential) ? (options.registeringCredentialType === "backup" ? userDocument && userDocument.credential : !userDocument?.credential) ? generateRegistrationOptions(
+export const createRegistrationChallenge: (options: { authenticatorAttachment?: AuthenticatorAttachment, backupAuthenticatorAttachment?: AuthenticatorAttachment, hostname: string, registeringCredentialType: WebAuthnUserCredentialType, relyingPartyName: string, userID: string, userName: string, userVerificationRequirement?: UserVerificationRequirement, webAuthnUserDocumentReference: DocumentReference<WebAuthnUserDocument> }) => Promise<FunctionResponse> = (options: { authenticatorAttachment?: AuthenticatorAttachment, backupAuthenticatorAttachment?: AuthenticatorAttachment, hostname: string, registeringCredentialType: WebAuthnUserCredentialType, relyingPartyName: string, userID: string, userName: string, userVerificationRequirement?: UserVerificationRequirement, webAuthnUserDocumentReference: DocumentReference<WebAuthnUserDocument> }): Promise<FunctionResponse> => options.webAuthnUserDocumentReference.get().then<FunctionResponse, FunctionResponse>(
+  (userDocumentSnapshot: DocumentSnapshot<WebAuthnUserDocument>): Promise<FunctionResponse> => (async (userDocument: WebAuthnUserDocument | undefined): Promise<FunctionResponse> => (options.registeringCredentialType === "backup" ? !userDocument?.backupCredential : !userDocument?.credential) ? (options.registeringCredentialType !== "backup" || userDocument && userDocument.credential) ? generateRegistrationOptions(
     {
-      authenticatorSelection: {
+      authenticatorSelection: options.registeringCredentialType === "backup" ? options.backupAuthenticatorAttachment ? {
+        authenticatorAttachment: options.backupAuthenticatorAttachment,
+        residentKey:             "required",
+        userVerification:        options.backupAuthenticatorAttachment === "platform" ? options.userVerificationRequirement : "preferred",
+      } : {
+        residentKey:      "required",
+        userVerification: "preferred",
+      } : options.authenticatorAttachment ? {
         authenticatorAttachment: options.authenticatorAttachment,
         residentKey:             "required",
-        userVerification:        options.userVerificationRequirement,
+        userVerification:        options.authenticatorAttachment === "platform" ? options.userVerificationRequirement : "preferred",
+      } : {
+        residentKey:      "required",
+        userVerification: "preferred",
       },
+      excludeCredentials:     options.registeringCredentialType === "backup" ? [
+        {
+          id:   userDocument?.credential?.id || new Uint8Array(),
+          type: "public-key",
+        },
+      ] : undefined,
       rpID:                   options.hostname,
       rpName:                 options.relyingPartyName,
       userID:                 options.userID,

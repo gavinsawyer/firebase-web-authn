@@ -10,7 +10,7 @@
   "repository":   {
     "type":      "git",
     "url":       "git+https://github.com/gavinsawyer/firebase-web-authn.git",
-    "directory": "libs/extension/functions"
+    "directory": "libs/extension/src"
   },
   "main":         "./main.js",
   "type":         "module",
@@ -19,6 +19,7 @@
     "node": "18"
   },
   "dependencies": {
-    "@firebase-web-authn/api": "^10.2.2"
+    "@simplewebauthn/server": "^8.1.1",
+    "firebase-functions":     "^4.4.1"
   }
 }

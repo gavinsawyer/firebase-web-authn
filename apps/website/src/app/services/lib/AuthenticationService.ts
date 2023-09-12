@@ -1,11 +1,13 @@
-import { isPlatformBrowser }                                                                      from "@angular/common";
-import { inject, Injectable, PLATFORM_ID, signal, Signal }                                        from "@angular/core";
-import { toSignal }                                                                               from "@angular/core/rxjs-interop";
-import { Auth, onIdTokenChanged, signInAnonymously, User, UserCredential }                        from "@angular/fire/auth";
-import { Functions }                                                                              from "@angular/fire/functions";
-import { MatSnackBar }                                                                            from "@angular/material/snack-bar";
-import { createUserWithPasskey, FirebaseWebAuthnError, signInWithPasskey, verifyUserWithPasskey } from "@firebase-web-authn/browser";
-import { Observable, Observer, startWith, TeardownLogic }                                         from "rxjs";
+import { isPlatformBrowser }                                                                                       from "@angular/common";
+import { inject, Injectable, PLATFORM_ID, signal, Signal }                                                         from "@angular/core";
+import { toSignal }                                                                                                from "@angular/core/rxjs-interop";
+import { Auth, onIdTokenChanged, signInAnonymously, User, UserCredential }                                         from "@angular/fire/auth";
+import { Functions }                                                                                               from "@angular/fire/functions";
+import { MatSnackBar }                                                                                             from "@angular/material/snack-bar";
+import { createUserWithPasskey, FirebaseWebAuthnError, linkWithPasskey, signInWithPasskey, verifyUserWithPasskey } from "@firebase-web-authn/browser";
+import { Observable, Observer, startWith, TeardownLogic }                                                          from "rxjs";
+import { ProfileDocument }                                                                                         from "../../interfaces";
+import { ProfileService }                                                                                          from "./ProfileService";
 
 
 @Injectable({
@@ -13,9 +15,10 @@ import { Observable, Observer, startWith, TeardownLogic }                       
 })
 export class AuthenticationService {
 
-  private readonly auth:        Auth        = inject<Auth>(Auth);
-  private readonly functions:   Functions   = inject<Functions>(Functions);
-  private readonly matSnackBar: MatSnackBar = inject<MatSnackBar>(MatSnackBar);
+  private readonly auth:           Auth           = inject<Auth>(Auth);
+  private readonly functions:      Functions      = inject<Functions>(Functions);
+  private readonly matSnackBar:    MatSnackBar    = inject<MatSnackBar>(MatSnackBar);
+  private readonly profileService: ProfileService = inject<ProfileService>(ProfileService);
 
   public readonly user$:                 Signal<User | null>             = isPlatformBrowser(inject<object>(PLATFORM_ID)) ? toSignal<User | null>(
     new Observable<User | null>(
@@ -49,6 +52,23 @@ export class AuthenticationService {
         throw firebaseWebAuthnError;
       })(),
     );
+  public readonly linkBackupPasskey:     () => Promise<void>             = (): Promise<void> => (async (profileDocument: ProfileDocument | null): Promise<void> => profileDocument ? linkWithPasskey(
+    this.auth,
+    this.functions,
+    profileDocument.name + " (Backup)",
+    "backup",
+  ).then<void, never>(
+    (): void => this.matSnackBar.open(
+      "Backup passkey link successful.",
+      "Okay",
+    ) && void (0),
+    (firebaseWebAuthnError: FirebaseWebAuthnError): never => this.matSnackBar.open(
+      firebaseWebAuthnError.message || "Something went wrong.",
+      "Okay",
+    ) && ((): never => {
+      throw firebaseWebAuthnError;
+    })(),
+  ) : void (0))(this.profileService.profileDocument$());
   public readonly signInAnonymously:     () => Promise<void>             = (): Promise<void> => signInAnonymously(this.auth)
     .then<void>(
       (): void => void (0),

@@ -5,29 +5,28 @@ import { FirebaseError }                                              from "fire
 import { DocumentReference, DocumentSnapshot, FieldValue, Timestamp } from "firebase-admin/firestore";
 
 
-export const verifyRegistration: (options: { createCustomToken: () => Promise<string>, hostname: string, registrationResponse: RegistrationResponseJSON, userVerificationRequirement?: UserVerificationRequirement, webAuthnUserDocumentReference: DocumentReference<WebAuthnUserDocument> }) => Promise<FunctionResponse> = (options: { createCustomToken: () => Promise<string>, hostname: string, registrationResponse: RegistrationResponseJSON, userVerificationRequirement?: UserVerificationRequirement, webAuthnUserDocumentReference: DocumentReference<WebAuthnUserDocument> }): Promise<FunctionResponse> => options.webAuthnUserDocumentReference.get().then<FunctionResponse, FunctionResponse>(
-  (userDocumentSnapshot: DocumentSnapshot<WebAuthnUserDocument>): Promise<FunctionResponse> => (async (userDocument: WebAuthnUserDocument | undefined): Promise<FunctionResponse> => userDocument ? userDocument.challenge && userDocument.challenge.process === "registration" ? (userDocument.challenge?.processingCredentialType === "backup" ? !userDocument?.credential : !userDocument?.backupCredential) ? verifyRegistrationResponse(
+export const verifyRegistration: (options: { authenticatorAttachment?: AuthenticatorAttachment, backupAuthenticatorAttachment?: AuthenticatorAttachment, createCustomToken: () => Promise<string>, hostname: string, registrationResponse: RegistrationResponseJSON, userVerificationRequirement?: UserVerificationRequirement, webAuthnUserDocumentReference: DocumentReference<WebAuthnUserDocument> }) => Promise<FunctionResponse> = (options: { authenticatorAttachment?: AuthenticatorAttachment, backupAuthenticatorAttachment?: AuthenticatorAttachment, createCustomToken: () => Promise<string>, hostname: string, registrationResponse: RegistrationResponseJSON, userVerificationRequirement?: UserVerificationRequirement, webAuthnUserDocumentReference: DocumentReference<WebAuthnUserDocument> }): Promise<FunctionResponse> => options.webAuthnUserDocumentReference.get().then<FunctionResponse, FunctionResponse>(
+  (userDocumentSnapshot: DocumentSnapshot<WebAuthnUserDocument>): Promise<FunctionResponse> => (async (userDocument: WebAuthnUserDocument | undefined): Promise<FunctionResponse> => userDocument ? userDocument.challenge && userDocument.challenge.process === "registration" ? (userDocument.challenge.processingCredentialType !== "backup" || userDocument.credential) ? verifyRegistrationResponse(
     {
       expectedChallenge:       userDocument.challenge.value,
       expectedOrigin:          "https://" + options.hostname,
       expectedRPID:            options.hostname,
-      requireUserVerification: options.userVerificationRequirement === "required" || options.userVerificationRequirement === "preferred",
+      requireUserVerification: (userDocument.challenge.processingCredentialType === "backup" ? options.backupAuthenticatorAttachment === "platform" : options.authenticatorAttachment === "platform") && options.userVerificationRequirement === "required",
       response:                options.registrationResponse,
     },
   ).then<FunctionResponse>(
     (verifiedRegistrationResponse: VerifiedRegistrationResponse): Promise<FunctionResponse> => verifiedRegistrationResponse.verified && verifiedRegistrationResponse.registrationInfo ? options.webAuthnUserDocumentReference.update(
       {
-        challenge:                                                      FieldValue.delete(),
+        challenge:                                                                                           FieldValue.delete(),
         [userDocument.challenge?.processingCredentialType === "backup" ? "backupCredential" : "credential"]: {
           backupEligible:   verifiedRegistrationResponse.registrationInfo.credentialDeviceType === "multiDevice",
           backupSuccessful: verifiedRegistrationResponse.registrationInfo.credentialBackedUp,
           counter:          verifiedRegistrationResponse.registrationInfo.counter,
           id:               verifiedRegistrationResponse.registrationInfo.credentialID,
           publicKey:        verifiedRegistrationResponse.registrationInfo.credentialPublicKey,
-          type:             userDocument.challenge?.processingCredentialType,
         },
-        lastPresent:                                                    Timestamp.fromDate(new Date()),
-        lastVerified:                                                   verifiedRegistrationResponse.registrationInfo.userVerified ? Timestamp.fromDate(new Date()) : userDocument["lastVerified"],
+        lastPresent:                                                                                         Timestamp.fromDate(new Date()),
+        lastVerified:                                                                                        verifiedRegistrationResponse.registrationInfo.userVerified ? Timestamp.fromDate(new Date()) : userDocument["lastVerified"],
       },
     ).then<FunctionResponse, FunctionResponse>(
       (): Promise<FunctionResponse> => options.createCustomToken().then<FunctionResponse, FunctionResponse>(
@@ -50,17 +49,21 @@ export const verifyRegistration: (options: { createCustomToken: () => Promise<st
         operation: "verify registration",
         success:   false,
       }),
-    ) : options.webAuthnUserDocumentReference.delete().then<FunctionResponse, FunctionResponse>(
+    ) : (userDocument.lastPresent ? options.webAuthnUserDocumentReference.update(
+      {
+        challenge: FieldValue.delete(),
+      },
+    ) : options.webAuthnUserDocumentReference.delete()).then<FunctionResponse, FunctionResponse>(
       (): FunctionResponse => ({
         code:      "not-verified",
         message:   "User not verified.",
-        operation: "verify registration",
+        operation: "verify authentication",
         success:   false,
       }),
       (firebaseError: FirebaseError): FunctionResponse => ({
         code:      firebaseError.code,
         message:   firebaseError.message,
-        operation: "verify registration",
+        operation: "verify authentication",
         success:   false,
       }),
     ),

@@ -1,30 +1,31 @@
 import { AuthenticationResponseJSON, RegistrationResponseJSON } from "@simplewebauthn/typescript-types";
-import { WebAuthnUserCredential }                               from "./WebAuthnUserCredential";
+import { WebAuthnUserCredentialType }                           from "./WebAuthnUserCredentialType";
 
 
 interface UnknownFunctionRequest {
-  "operation": "clear challenge" | "clear user doc" | "create authentication challenge" | "create reauthentication challenge" | "create registration challenge" | "verify authentication" | "verify reauthentication" | "verify registration",
+  "operation": "clear challenge" | "clear credential" | "create authentication challenge" | "create reauthentication challenge" | "create registration challenge" | "verify authentication" | "verify reauthentication" | "verify registration",
 }
 
 interface ClearChallengeFunctionRequest extends UnknownFunctionRequest {
   "operation": "clear challenge",
 }
 interface ClearUserDocFunctionRequest extends UnknownFunctionRequest {
-  "operation": "clear user doc",
+  "clearingCredentialType"?: WebAuthnUserCredentialType,
+  "operation": "clear credential",
 }
 
 interface CreateAuthenticationChallengeFunctionRequest extends UnknownFunctionRequest {
-  "authenticatingCredentialType": WebAuthnUserCredential["type"],
+  "authenticatingCredentialType"?: WebAuthnUserCredentialType,
   "operation": "create authentication challenge",
 }
 interface CreateReauthenticationChallengeFunctionRequest extends UnknownFunctionRequest {
   "operation": "create reauthentication challenge",
-  "reauthenticatingCredentialType": WebAuthnUserCredential["type"],
+  "reauthenticatingCredentialType"?: WebAuthnUserCredentialType,
 }
 interface CreateRegistrationChallengeFunctionRequest extends UnknownFunctionRequest {
   "name": string,
   "operation": "create registration challenge",
-  "registeringCredentialType": WebAuthnUserCredential["type"],
+  "registeringCredentialType": WebAuthnUserCredentialType,
 }
 
 interface VerifyAuthenticationFunctionRequest extends UnknownFunctionRequest {

@@ -1,16 +1,17 @@
 import { PublicKeyCredentialCreationOptionsJSON, PublicKeyCredentialRequestOptionsJSON } from "@simplewebauthn/typescript-types";
 import { FirebaseError }                                                                 from "firebase-admin";
-import { WebAuthnUserCredential }                                                        from "./WebAuthnUserCredential";
+import { WebAuthnUserCredentialType }                                                    from "./WebAuthnUserCredentialType";
 
 
 interface UnknownFunctionResponse {
-  "operation": "clear challenge" | "clear user doc" | "create authentication challenge" | "create reauthentication challenge" | "create registration challenge" | "verify authentication" | "verify reauthentication" | "verify registration",
+  "operation": "clear challenge" | "clear credential" | "create authentication challenge" | "create reauthentication challenge" | "create registration challenge" | "verify authentication" | "verify reauthentication" | "verify registration",
   "success": boolean,
 }
 
 interface UnknownFunctionResponseSuccessful extends UnknownFunctionResponse {
   "success": true,
 }
+
 interface UnknownFunctionResponseUnsuccessful extends UnknownFunctionResponse {
   "code": FirebaseError["code"] | "missing-auth" | "missing-user-doc" | "no-op" | "not-verified" | "user-doc-missing-challenge-field" | "user-doc-missing-passkey-fields",
   "message": FirebaseError["message"] | "No user is signed in." | "No user document was found in Firestore." | "No operation is needed." | "User not verified." | "User doc is missing challenge field from prior operation." | "User doc is missing passkey fields from prior operation.",
@@ -20,6 +21,7 @@ interface UnknownFunctionResponseUnsuccessful extends UnknownFunctionResponse {
 interface ClearChallengeFunctionResponseSuccessful extends UnknownFunctionResponseSuccessful {
   "operation": "clear challenge",
 }
+
 interface ClearChallengeFunctionResponseUnsuccessful extends UnknownFunctionResponseUnsuccessful {
   "code": FirebaseError["code"] | "missing-auth" | "missing-user-doc" | "no-op",
   "message": FirebaseError["message"] | "No user is signed in." | "No user document was found in Firestore." | "No operation is needed.",
@@ -27,19 +29,22 @@ interface ClearChallengeFunctionResponseUnsuccessful extends UnknownFunctionResp
 }
 
 interface ClearUserDocFunctionResponseSuccessful extends UnknownFunctionResponseSuccessful {
-  "operation": "clear user doc",
+  "clearingCredentialType"?: WebAuthnUserCredentialType,
+  "operation": "clear credential",
 }
+
 interface ClearUserDocFunctionResponseUnsuccessful extends UnknownFunctionResponseUnsuccessful {
   "code": FirebaseError["code"] | "missing-auth" | "no-op",
   "message": FirebaseError["message"] | "No user is signed in." | "No operation is needed.",
-  "operation": "clear user doc",
+  "operation": "clear credential",
 }
 
 interface CreateAuthenticationChallengeFunctionResponseSuccessful extends UnknownFunctionResponseSuccessful {
-  "authenticatingCredentialType"?: WebAuthnUserCredential["type"],
+  "authenticatingCredentialType"?: WebAuthnUserCredentialType,
   "requestOptions": PublicKeyCredentialRequestOptionsJSON,
   "operation": "create authentication challenge",
 }
+
 interface CreateAuthenticationChallengeFunctionResponseUnsuccessful extends UnknownFunctionResponseUnsuccessful {
   "code": FirebaseError["code"] | "missing-auth",
   "message": FirebaseError["message"] | "No user is signed in.",
@@ -48,7 +53,7 @@ interface CreateAuthenticationChallengeFunctionResponseUnsuccessful extends Unkn
 
 interface CreateReauthenticationChallengeFunctionResponseSuccessful extends UnknownFunctionResponseSuccessful {
   "operation": "create reauthentication challenge",
-  "reauthenticatingCredentialType"?: WebAuthnUserCredential["type"],
+  "reauthenticatingCredentialType"?: WebAuthnUserCredentialType,
   "requestOptions": PublicKeyCredentialRequestOptionsJSON,
 }
 
@@ -59,10 +64,11 @@ interface CreateReauthenticationChallengeFunctionResponseUnsuccessful extends Un
 }
 
 interface CreateRegistrationChallengeFunctionResponseSuccessful extends UnknownFunctionResponseSuccessful {
-  "registeringCredentialType"?: WebAuthnUserCredential["type"],
+  "registeringCredentialType": WebAuthnUserCredentialType,
   "creationOptions": PublicKeyCredentialCreationOptionsJSON,
   "operation": "create registration challenge",
 }
+
 interface CreateRegistrationChallengeFunctionResponseUnsuccessful extends UnknownFunctionResponseUnsuccessful {
   "code": FirebaseError["code"] | "missing-auth" | "missing-primary" | "no-op",
   "message": FirebaseError["message"] | "No user is signed in." | "No primary passkey was found in Firestore." | "No operation is needed.",
@@ -70,10 +76,11 @@ interface CreateRegistrationChallengeFunctionResponseUnsuccessful extends Unknow
 }
 
 interface VerifyAuthenticationFunctionResponseSuccessful extends UnknownFunctionResponseSuccessful {
-  "authenticatedCredentialType": WebAuthnUserCredential["type"],
+  "authenticatedCredentialType": WebAuthnUserCredentialType,
   "customToken": string,
   "operation": "verify authentication",
 }
+
 interface VerifyAuthenticationFunctionResponseUnsuccessful extends UnknownFunctionResponseUnsuccessful {
   "code": FirebaseError["code"] | "missing-auth" | "missing-user-doc" | "no-op" | "not-verified" | "user-doc-missing-challenge-field" | "user-doc-missing-passkey-fields",
   "message": FirebaseError["message"] | "No user is signed in." | "No user document was found in Firestore." | "No operation is needed." | "User not verified." | "User doc is missing challenge field from prior operation." | "User doc is missing passkey fields from prior operation.",
@@ -83,8 +90,9 @@ interface VerifyAuthenticationFunctionResponseUnsuccessful extends UnknownFuncti
 interface VerifyReauthenticationFunctionResponseSuccessful extends UnknownFunctionResponseSuccessful {
   "customToken": string,
   "operation": "verify reauthentication",
-  "reauthenticatedCredentialType": WebAuthnUserCredential["type"],
+  "reauthenticatedCredentialType": WebAuthnUserCredentialType,
 }
+
 interface VerifyReauthenticationFunctionResponseUnsuccessful extends UnknownFunctionResponseUnsuccessful {
   "code": FirebaseError["code"] | "missing-auth" | "missing-user-doc" | "not-verified" | "user-doc-missing-challenge-field" | "user-doc-missing-passkey-fields",
   "message": FirebaseError["message"] | "No user is signed in." | "No user document was found in Firestore." | "User not verified." | "User doc is missing challenge field from prior operation." | "User doc is missing passkey fields from prior operation.",
@@ -94,8 +102,9 @@ interface VerifyReauthenticationFunctionResponseUnsuccessful extends UnknownFunc
 interface VerifyRegistrationFunctionResponseSuccessful extends UnknownFunctionResponseSuccessful {
   "customToken": string,
   "operation": "verify registration",
-  "registeredCredentialType": WebAuthnUserCredential["type"],
+  "registeredCredentialType": WebAuthnUserCredentialType,
 }
+
 interface VerifyRegistrationFunctionResponseUnsuccessful extends UnknownFunctionResponseUnsuccessful {
   "code": FirebaseError["code"] | "missing-auth" | "missing-user-doc" | "no-op" | "not-verified" | "user-doc-missing-challenge-field",
   "message": FirebaseError["message"] | "No user is signed in." | "No user document was found in Firestore." | "No operation is needed." | "User not verified." | "User doc is missing challenge field from prior operation.",

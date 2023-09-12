@@ -1,6 +1,6 @@
 {
   "name":            "@firebase-web-authn/source",
-  "version":         "10.2.2",
+  "version":         "10.3.0",
   "homepage":        "https://firebase-web-authn.dev",
   "license":         "Apache-2.0",
   "author":          {
@@ -33,7 +33,7 @@
     "@angular/router":                   "^16.2.4",
     "@nguniversal/express-engine":       "^16.2.0",
     "rxjs":                              "^7.8.1",
-    "zone.js":                           "^0.13.1"
+    "zone.js":                           "^0.13.2"
   },
   "devDependencies": {
     "@angular-devkit/build-angular":          "^16.2.1",

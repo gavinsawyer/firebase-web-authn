@@ -1,11 +1,11 @@
 name: firebase-web-authn
-version: 10.2.2
+version: 10.3.0
 specVersion: v1beta
 icon: icon.png
 
 displayName: Authenticate with WebAuthn
 description: Adds support for biometrics as a primary or multi-factor auth provider using WebAuthn passkeys.
-tags: [utilities]
+tags: [ utilities ]
 
 license: Apache-2.0
 
@@ -24,6 +24,8 @@ apis:
     reason: Needed for a custom auth provider to create user authentication tokens.
 
 roles:
+  - role: firebaseauth.viewer
+    reason: Allows the extension to view project users and auth configuration.
   - role: datastore.user
     reason: Allows the extension to write updates to the database where public keys are stored.
 
@@ -34,18 +36,27 @@ resources:
       Registers and authenticates WebAuthn passkeys, manages public key credentials in Firestore, and cleans up data if
       the user cancels a process or unlinks a passkey.
     properties:
+      httpsTrigger: {}
       location: ${param:LOCATION}
       runtime: nodejs18
-      httpsTrigger: {}
+      sourceDirectory: src
 
 params:
+  - param: RELYING_PARTY_NAME
+    description: >-
+      What relying party name would you like to use with WebAuthn? This appears in the passkey window in some browsers
+      in place of your domain name.
+    label: Relying party name
+    required: true
+    type: string
   - param: LOCATION
-    label: Cloud Functions location
+    default: us-central1
     description: >-
       Where do you want to deploy the functions created for this extension? You usually want a location close to your
       database. For help selecting a location, refer to the
       [location selection guide](https://firebase.google.com/docs/functions/locations).
-    type: select
+    immutable: true
+    label: Cloud Functions location
     options:
       - label: Iowa (us-central1) (Low carbon emissions)
         value: us-central1
@@ -91,35 +102,44 @@ params:
         value: asia-south1
       - label: Sydney (australia-southeast1) (Tier 2 pricing)
         value: australia-southeast1\
-    default: us-central1
     required: true
-    immutable: true
+    type: select
   - param: AUTHENTICATOR_ATTACHMENT
-    label: Authenticator attachment
+    default: any
     description: >-
       What authenticator attachment modality would you like to use with WebAuthn? "cross-platform" allows security keys.
       "platform" allows passkey managers.
-    type: select
+    label: Authenticator attachment
     options:
+      - label: Any
+        value: any
       - label: Platform
         value: platform
       - label: Cross-platform
         value: cross-platform
-    default: platform
     required: true
-  - param: RELYING_PARTY_NAME
-    label: Relying party name
+    type: select
+  - param: BACKUP_AUTHENTICATOR_ATTACHMENT
+    default: any
     description: >-
-      What relying party name would you like to use with WebAuthn? This appears in the passkey window in some browsers
-      in place of your domain name.
-    type: string
+      What authenticator attachment modality would you like to use with WebAuthn for backup passkeys? This can be set
+      differently to support offline-only backup passkeys, for example.
+    label: Backup authenticator attachment
+    options:
+      - label: Any
+        value: any
+      - label: Platform
+        value: platform
+      - label: Cross-platform
+        value: cross-platform
     required: true
+    type: select
   - param: USER_VERIFICATION_REQUIREMENT
-    label: User verification requirement
+    default: preferred
     description: >-
       What user verification requirement would you like to use with WebAuthn? See
       [User Presence vs. User Verification](https://developers.yubico.com/WebAuthn/WebAuthn_Developer_Guide/User_Presence_vs_User_Verification.html).
-    type: select
+    label: User verification requirement
     options:
       - label: Required
         value: required
@@ -127,5 +147,5 @@ params:
         value: preferred
       - label: Discouraged
         value: discouraged
-    default: preferred
     required: true
+    type: select

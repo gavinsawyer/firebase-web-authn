@@ -9,8 +9,8 @@ This package contains a Firebase Function that registers and authenticates WebAu
 See [@firebase-web-authn/extension](https://github.com/gavinsawyer/firebase-web-authn#firebase-web-authnextension) for simplified installation using `firebase ext:install`.
 ### Custom deployment
 If you would rather deploy the API from your existing Firebase Functions package,
-1. Set up these services in your Firebase project:
-   - App Check
+1. Set up these services in your project. This must be done both in the Firebase Console and initialized in the application:
+   - App Check with reCAPTCHA Enterprise or v3
    - Authentication with the anonymous provider
    - Firestore
    - Functions
@@ -22,20 +22,21 @@ If you would rather deploy the API from your existing Firebase Functions package
 
 3. Export the API from your Firebase Functions package's `main` file by calling `getFirebaseWebAuthnApi` with a config object.
    ```ts
-   import { initializeApp }          from "firebase-admin/app";
-   import { HttpsFunction }          from "firebase-functions";
-   import { getFirebaseWebAuthnApi } from "@firebase-web-authn/api";
+   import { initializeApp }                     from "firebase-admin/app";
+   import { HttpsFunction }                     from "firebase-functions";
+   import { getFirebaseWebAuthnApi }            from "@firebase-web-authn/api";
+   import { FunctionRequest, FunctionResponse } from "firebase-web-authn/types";
 
 
    getApps().length === 0 && initializeApp();
 
-   export const firebaseWebAuthnAPI: HttpsFunction = getFirebaseWebAuthnApi({...});
+   export const firebaseWebAuthnAPI: CallableFunction<FunctionRequest, FunctionResponse> = getFirebaseWebAuthnApi({...});
 
    // Other api...
    ```
    ```ts
    interface FirebaseWebAuthnConfig {
-     authenticatorAttachment: AuthenticatorAttachment,          // Preferred authenticator attachment modality. "cross-platform" allows security keys. "platform" allows passkey managers.
+     authenticatorAttachment?: AuthenticatorAttachment,         // Preferred authenticator attachment modality. "cross-platform" allows security keys. "platform" allows passkey managers. Not specifying a value allows either attachment
      relyingPartyName: string,                                  // Your app's display name in the passkey popup on some browsers.
      userVerificationRequirement?: UserVerificationRequirement, // Your app's user verification requirement. "preferred" is default.
    }

@@ -20,8 +20,8 @@ To install from NPM, run the following commands in your project root:
 ```
 Using NPM is recommended to receive updates to the extension alongside other FirebaseWebAuthn dependencies.
 ### Prerequisites
-Before installing this extension, you'll need to set up these services in your Firebase project:
-- App Check
+Before installing this extension, you'll need to set up these services in your project. This must be done both in the Firebase Console and initialized in the application:
+- App Check with reCAPTCHA Enterprise or v3
 - Authentication with the anonymous provider
 - Firestore
 - Functions

@@ -1,18 +1,20 @@
-import { WebAuthnUserCredential, WebAuthnUserDocument }                 from "@firebase-web-authn/types";
-import { App }                                                          from "firebase-admin/app";
-import { DocumentReference, DocumentSnapshot, Firestore, getFirestore } from "firebase-admin/firestore";
+import { WebAuthnUserCredential, WebAuthnUserCredentialType, WebAuthnUserDocument } from "@firebase-web-authn/types";
+import { App }                                                                      from "firebase-admin/app";
+import { DocumentReference, DocumentSnapshot, Firestore, getFirestore }             from "firebase-admin/firestore";
 
 
 // noinspection JSUnusedGlobalSymbols
 /**
+ * @async
+ *
  * @param uid - The user's uid.
  * @param app - An optional {@link App} to use with Firestore.
  *
  * @returns
- *  A {@link WebAuthnUserCredential} or null if no passkey was found.
+ *  An object of "primary" and "backup" {@link WebAuthnUserCredential WebAuthnUserCredentials} with either being null if not found.
  */
-export const credentials: (uid: string, app?: App) => Promise<{ [key in WebAuthnUserCredential["type"]]: WebAuthnUserCredential | null }> = (uid: string, app?: App): Promise<{ [key in WebAuthnUserCredential["type"]]: WebAuthnUserCredential | null }> => ((firestore: Firestore): Promise<{ [key in WebAuthnUserCredential["type"]]: WebAuthnUserCredential | null }> => (firestore.collection("users").doc(uid) as DocumentReference<WebAuthnUserDocument>).get().then(
-  (documentSnapshot: DocumentSnapshot<WebAuthnUserDocument>): { [key in WebAuthnUserCredential["type"]]: WebAuthnUserCredential | null } => ({
+export const credentials: (uid: string, app?: App) => Promise<{ [key in WebAuthnUserCredentialType]: WebAuthnUserCredential | null }> = (uid: string, app?: App): Promise<{ [key in WebAuthnUserCredentialType]: WebAuthnUserCredential | null }> => ((firestore: Firestore): Promise<{ [key in WebAuthnUserCredentialType]: WebAuthnUserCredential | null }> => (firestore.collection("users").doc(uid) as DocumentReference<WebAuthnUserDocument>).get().then<{ [key in WebAuthnUserCredentialType]: WebAuthnUserCredential | null }>(
+  (documentSnapshot: DocumentSnapshot<WebAuthnUserDocument>): { [key in WebAuthnUserCredentialType]: WebAuthnUserCredential | null } => ({
     backup:  documentSnapshot.data()?.backupCredential || null,
     primary: documentSnapshot.data()?.credential || null,
   }),

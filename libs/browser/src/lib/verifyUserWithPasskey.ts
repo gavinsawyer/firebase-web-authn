@@ -1,36 +1,42 @@
-import { FunctionRequest, FunctionResponse }                    from "@firebase-web-authn/types";
-import { startAuthentication }                                  from "@simplewebauthn/browser";
-import { AuthenticationResponseJSON }                           from "@simplewebauthn/typescript-types";
-import { Auth }                                                 from "firebase/auth";
-import { Functions, httpsCallableFromURL, HttpsCallableResult } from "firebase/functions";
-import { clearChallenge }                                       from "./clearChallenge";
-import { FirebaseWebAuthnError }                                from "./FirebaseWebAuthnError";
-import { handleVerifyFunctionResponse }                         from "./handleVerifyFunctionResponse";
+import { FunctionRequest, FunctionResponse, WebAuthnUserCredentialType } from "@firebase-web-authn/types";
+import { startAuthentication }                                           from "@simplewebauthn/browser";
+import { AuthenticationResponseJSON }                                    from "@simplewebauthn/typescript-types";
+import { Auth }                                                          from "firebase/auth";
+import { Functions, httpsCallableFromURL, HttpsCallableResult }          from "firebase/functions";
+import { clearChallenge }                                                from "./clearChallenge";
+import { FirebaseWebAuthnError }                                         from "./FirebaseWebAuthnError";
+import { handleVerifyFunctionResponse }                                  from "./handleVerifyFunctionResponse";
 
 
 /**
- * Asynchronously verifies a user with a passkey. Your backend security logic should depend on the `lastPresent` and `lastVerified` fields in the user's document in the `ext-firebase-web-authn` Firestore Database which are updated automatically on successful operations.
+ * Asynchronously verifies a user with WebAuthn.
  *
- * @see {@link https://developers.yubico.com/WebAuthn/WebAuthn_Developer_Guide/User_Presence_vs_User_Verification.html User Presence vs User Verification}
+ * Your backend security logic should depend on the `lastPresent` and `lastVerified` fields in the user's document in the `ext-firebase-web-authn` Firestore Database which are updated automatically on successful operations.
+ *
+ * @see
+ *  {@link https://developers.yubico.com/WebAuthn/WebAuthn_Developer_Guide/User_Presence_vs_User_Verification.html User Presence vs User Verification}
+ *
+ * @async
  *
  * @param auth - The {@link Auth} instance.
  * @param functions - The {@link Functions} instance.
+ * @param type - An optional type (`"primary"` or `"backup"`) of credential to unlink with user. Not passing a value unlinks both credentials if they exist.
  *
  * @returns
  *  {@link void} when successful.
  * @throws
  *  {@link FirebaseWebAuthnError}
  */
-export const verifyUserWithPasskey: (auth: Auth, functions: Functions) => Promise<void> = (auth: Auth, functions: Functions): Promise<void> => auth
+export const verifyUserWithPasskey: (auth: Auth, functions: Functions, type?: WebAuthnUserCredentialType) => Promise<void> = (auth: Auth, functions: Functions, type?: WebAuthnUserCredentialType): Promise<void> => auth
   .currentUser ? httpsCallableFromURL<FunctionRequest, FunctionResponse>(
-    functions,
-    "/firebase-web-authn-api",
-  )(
-    {
-      operation:                      "create reauthentication challenge",
-      reauthenticatingCredentialType: "primary",
-    },
-  )
+  functions,
+  "/firebase-web-authn-api",
+)(
+  {
+    operation:                      "create reauthentication challenge",
+    reauthenticatingCredentialType: type,
+  },
+)
   .then<void, never>(
     ({ data: functionResponse }: HttpsCallableResult<FunctionResponse>): Promise<void> => "code" in functionResponse ? ((): never => {
       throw new FirebaseWebAuthnError(functionResponse);

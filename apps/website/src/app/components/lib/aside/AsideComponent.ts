@@ -1,5 +1,6 @@
 import { NgIf }                                  from "@angular/common";
 import { Component, inject }                     from "@angular/core";
+import { MatIconModule }                         from "@angular/material/icon";
 import { AuthenticationService, ProfileService } from "../../../services";
 import { ProfileCardComponent }                  from "../profile card/ProfileCardComponent";
 import { SignInCardComponent }                   from "../sign in card/SignInCardComponent";
@@ -7,6 +8,7 @@ import { SignInCardComponent }                   from "../sign in card/SignInCar
 
 @Component({
   imports: [
+    MatIconModule,
     NgIf,
     ProfileCardComponent,
     SignInCardComponent,

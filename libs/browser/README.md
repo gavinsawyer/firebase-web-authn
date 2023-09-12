@@ -15,6 +15,30 @@ createUserWithPasskey: (auth: Auth, functions: Functions, name: string) => Promi
         unlinkPasskey: (auth: Auth, functions: Functions)               => Promise<void>;
 verifyUserWithPasskey: (auth: Auth, functions: Functions)               => Promise<void>;
 ```
+#### 🎉 Backup passkeys are here in ^10.3.0!
+All methods besides createUserWithPasskey accept an optional `type` parameter of `"primary"` or `"backup"`.
+
+Default behaviors were designed to maintain backwards compatibility and are described below:
+```ts
+           signInWithPasskey(auth, functions) // Sign in and accept either credential.
+signInWithPasskey(auth, functions, "primary") // Sign in and only accept a primary credential.
+ signInWithPasskey(auth, functions, "backup") // Sign in and only accept a backup credential.
+```
+```ts
+           linkWithPasskey(auth, functions, username) // Link a primary credential.
+linkWithPasskey(auth, functions, username, "primary") // Link a primary credential.
+ linkWithPasskey(auth, functions, username, "backup") // Link a backup credential.
+```
+```ts
+           unlinkWithPasskey(auth, functions) // Unlink all credentials.
+unlinkWithPasskey(auth, functions, "primary") // Unlink all credentials.
+ unlinkWithPasskey(auth, functions, "backup") // Unlink a backup credential.
+```
+```ts
+           verifyUserWithPasskey(auth, functions) // Verify the user and allow either credential.
+verifyUserWithPasskey(auth, functions, "primary") // Verify the user and allow only primary credential.
+ verifyUserWithPasskey(auth, functions, "backup") // Verify the user and allow only backup credential.
+```
 Designed to be used like the Firebase JavaScript SDK:
 ```ts
 import { createUserWithEmailAndPassword } from "firebase/auth";
@@ -53,7 +77,7 @@ class FirebaseWebAuthnError extends Error {
   code: `firebaseWebAuthn/${FirebaseError["code"] | "missing-auth" | "missing-user-doc" | "no-op" | "not-verified" | "user-doc-missing-challenge-field" | "user-doc-missing-passkey-fields" | "cancelled" | "invalid"}`;
   message: FirebaseError["message"] | "No user is signed in." | "No user document was found in Firestore." | "No operation is needed." | "User not verified." | "User doc is missing challenge field from prior operation." | "User doc is missing passkey fields from prior operation.";
   method?: "httpsCallableFromURL" | "signInAnonymously" | "signInWithCustomToken";
-  operation?: "clear challenge" | "clear user doc" | "create authentication challenge" | "create reauthentication challenge" | "create registration challenge" | "verify authentication" | "verify reauthentication" | "verify registration";
+  operation?: "clear challenge" | "clear credential" | "create authentication challenge" | "create reauthentication challenge" | "create registration challenge" | "verify authentication" | "verify reauthentication" | "verify registration";
 }
 ```
 ### Caveats

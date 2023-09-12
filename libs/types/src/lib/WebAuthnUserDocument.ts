@@ -1,5 +1,6 @@
-import { Timestamp }              from "firebase-admin/firestore";
-import { WebAuthnUserCredential } from "./WebAuthnUserCredential";
+import { Timestamp }                  from "firebase-admin/firestore";
+import { WebAuthnUserCredential }     from "./WebAuthnUserCredential";
+import { WebAuthnUserCredentialType } from "./WebAuthnUserCredentialType";
 
 
 /**
@@ -11,7 +12,7 @@ export interface WebAuthnUserDocument {
    */
   "challenge"?: {
     "process": "authentication" | "reauthentication" | "registration",
-    "processingCredentialType": WebAuthnUserCredential["type"],
+    "processingCredentialType"?: WebAuthnUserCredentialType,
     "value": string,
   },
   /**
@@ -25,7 +26,7 @@ export interface WebAuthnUserDocument {
   /**
    * The last type of credential successfully used.
    */
-  "lastCredentialUsed"?: WebAuthnUserCredential["type"],
+  "lastCredentialUsed"?: WebAuthnUserCredentialType,
   /**
    * A {@link Timestamp} automatically updated on successful operations.
    */

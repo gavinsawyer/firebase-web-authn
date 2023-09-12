@@ -1,16 +1,30 @@
-import { FunctionResponse, WebAuthnUserCredential, WebAuthnUserDocument } from "@firebase-web-authn/types";
-import { generateAuthenticationOptions }                                  from "@simplewebauthn/server";
-import { PublicKeyCredentialRequestOptionsJSON }                          from "@simplewebauthn/typescript-types";
-import { FirebaseError }                                                  from "firebase-admin";
-import { DocumentReference, DocumentSnapshot }                            from "firebase-admin/firestore";
+import { FunctionResponse, WebAuthnUserCredentialType, WebAuthnUserDocument } from "@firebase-web-authn/types";
+import { generateAuthenticationOptions }                                      from "@simplewebauthn/server";
+import { PublicKeyCredentialRequestOptionsJSON }                              from "@simplewebauthn/typescript-types";
+import { FirebaseError }                                                      from "firebase-admin";
+import { DocumentReference, DocumentSnapshot }                                from "firebase-admin/firestore";
 
 
-export const createReauthenticationChallenge: (options: { hostname: string, reauthenticatingCredentialType?: WebAuthnUserCredential["type"], userVerificationRequirement?: UserVerificationRequirement, webAuthnUserDocumentReference: DocumentReference<WebAuthnUserDocument> }) => Promise<FunctionResponse> = (options: { hostname: string, reauthenticatingCredentialType?: WebAuthnUserCredential["type"], userVerificationRequirement?: UserVerificationRequirement, webAuthnUserDocumentReference: DocumentReference<WebAuthnUserDocument> }): Promise<FunctionResponse> => options.webAuthnUserDocumentReference.get().then<FunctionResponse, FunctionResponse>(
+export const createReauthenticationChallenge: (options: { authenticatorAttachment?: AuthenticatorAttachment, backupAuthenticatorAttachment?: AuthenticatorAttachment, hostname: string, reauthenticatingCredentialType?: WebAuthnUserCredentialType, userVerificationRequirement?: UserVerificationRequirement, webAuthnUserDocumentReference: DocumentReference<WebAuthnUserDocument> }) => Promise<FunctionResponse> = (options: { authenticatorAttachment?: AuthenticatorAttachment, backupAuthenticatorAttachment?: AuthenticatorAttachment, hostname: string, reauthenticatingCredentialType?: WebAuthnUserCredentialType, userVerificationRequirement?: UserVerificationRequirement, webAuthnUserDocumentReference: DocumentReference<WebAuthnUserDocument> }): Promise<FunctionResponse> => options.webAuthnUserDocumentReference.get().then<FunctionResponse, FunctionResponse>(
   (userDocumentSnapshot: DocumentSnapshot<WebAuthnUserDocument>): Promise<FunctionResponse> => (async (userDocument: WebAuthnUserDocument | undefined): Promise<FunctionResponse> => userDocument ? (options.reauthenticatingCredentialType === "backup" ? userDocument.backupCredential : userDocument.credential) ? generateAuthenticationOptions(
     {
       allowCredentials: options.reauthenticatingCredentialType === "backup" ? [
         {
           id:   userDocument.backupCredential?.id || new Uint8Array(),
+          type: "public-key",
+        },
+      ] : options.reauthenticatingCredentialType === "primary" ? [
+        {
+          id:   userDocument.credential?.id || new Uint8Array(),
+          type: "public-key",
+        },
+      ] : userDocument.backupCredential ? [
+        {
+          id:   userDocument.credential?.id || new Uint8Array(),
+          type: "public-key",
+        },
+        {
+          id:   userDocument.backupCredential.id,
           type: "public-key",
         },
       ] : [
@@ -20,7 +34,7 @@ export const createReauthenticationChallenge: (options: { hostname: string, reau
         },
       ],
       rpID:             options.hostname,
-      userVerification: options.userVerificationRequirement,
+      userVerification: options.reauthenticatingCredentialType === "backup" ? options.backupAuthenticatorAttachment === "platform" ? options.userVerificationRequirement : "preferred" : options.authenticatorAttachment === "platform" ? options.userVerificationRequirement : "preferred",
     },
   ).then<FunctionResponse>(
     (publicKeyCredentialRequestOptions: PublicKeyCredentialRequestOptionsJSON): Promise<FunctionResponse> => options.webAuthnUserDocumentReference.set(

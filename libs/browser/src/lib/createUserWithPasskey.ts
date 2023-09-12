@@ -7,9 +7,11 @@ import { linkWithPasskey }                         from "./linkWithPasskey";
 /**
  * Asynchronously creates and signs in a user with a passkey. If there is already an anonymous user signed in, that user will be returned.
  *
+ * @async
+ *
  * @param auth - The {@link Auth} instance.
  * @param functions - The {@link Functions} instance.
- * @param name - An existing user identifier if FirebaseWebAuthn is configured as an MFA provider, or any recognizable value if FirebaseWebAuthn is your sole auth provider. With generic values consider passing something like "${firstName} | Personal" for users who share a passkey manager with others.
+ * @param name - An existing user identifier if FirebaseWebAuthn is configured as an MFA provider, or any recognizable value if FirebaseWebAuthn is your sole auth provider. With generic values consider passing something like `"${firstName} | Personal"` for users who share a passkey manager with others.
  *
  * @returns
  *  A {@link UserCredential} when successful.

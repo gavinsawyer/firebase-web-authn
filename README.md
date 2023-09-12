@@ -6,7 +6,14 @@ A Firebase Extension for authentication with WebAuthn passkeys.
 #### Demo: https://firebase-web-authn.dev
 
 ### Thesis
-WebAuthn enables creating an account or signing in with as few as two clicks and doesn't ask the user to remember anything. This extension addresses a [popular feature request](https://github.com/firebase/firebase-js-sdk/issues/2123) for WebAuthn support in Firebase sites. Features include creating and signing in users with passkeys, linking and unlinking existing users to passkeys, and prompting signed-in users with a biometric verification request. Your site will also securely be able to tell when a user was verified last with biometrics.
+WebAuthn enables creating an account or signing in with as few as two clicks and doesn't ask the user to remember anything. This extension addresses a [popular feature request](https://github.com/firebase/firebase-js-sdk/issues/2123) for WebAuthn as a authentication provider in Firebase.
+
+Features include:
+- creating and signing in users with passkeys,
+- linking and unlinking existing users to passkeys,
+- prompting signed-in users with a biometric verification request,
+- securely determining when a user was verified last with biometrics, and
+- assigning backup passkeys **(🎉 New in v10.3.0)**.
 ## [@firebase-web-authn/extension](libs/extension)
 This package conforms to the Firebase Extensions spec and is available from either NPM or the Extensions Hub.
 
@@ -25,8 +32,8 @@ To install from NPM, run the following commands in your project root:
 ```
 Using NPM is recommended to receive updates to the extension alongside other FirebaseWebAuthn dependencies.
 ### Prerequisites
-Before installing this extension, you'll need to set up these services in your Firebase project:
-- App Check
+Before installing this extension, you'll need to set up these services in your project. This must be done both in the Firebase Console and initialized in the application:
+- App Check with reCAPTCHA Enterprise or v3
 - Authentication with the anonymous provider
 - Firestore
 - Functions
@@ -108,7 +115,7 @@ class FirebaseWebAuthnError extends Error {
   code: `firebaseWebAuthn/${FirebaseError["code"] | "missing-auth" | "missing-user-doc" | "no-op" | "not-verified" | "user-doc-missing-challenge-field" | "user-doc-missing-passkey-fields" | "cancelled" | "invalid"}`;
   message: FirebaseError["message"] | "No user is signed in." | "No user document was found in Firestore." | "No operation is needed." | "User not verified." | "User doc is missing challenge field from prior operation." | "User doc is missing passkey fields from prior operation.";
   method?: "httpsCallableFromURL" | "signInAnonymously" | "signInWithCustomToken";
-  operation?: "clear challenge" | "clear user doc" | "create authentication challenge" | "create reauthentication challenge" | "create registration challenge" | "verify authentication" | "verify reauthentication" | "verify registration";
+  operation?: "clear challenge" | "clear credential" | "create authentication challenge" | "create reauthentication challenge" | "create registration challenge" | "verify authentication" | "verify reauthentication" | "verify registration";
 }
 ```
 ### Caveats

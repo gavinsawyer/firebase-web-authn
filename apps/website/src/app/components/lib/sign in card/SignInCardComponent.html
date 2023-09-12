@@ -3,16 +3,20 @@
   (ngSubmit)="submit();">
   <mat-card>
     <mat-card-header>
-      <mat-card-title>Create an account</mat-card-title>
+      <mat-card-title>
+        Create an account
+      </mat-card-title>
     </mat-card-header>
     <mat-card-content>
       <mat-form-field>
-        <mat-label>Name</mat-label>
+        <mat-label>
+          Name
+        </mat-label>
         <input
           autocapitalize="words"
           autocomplete="name"
           formControlName="name"
-          matInput=""
+          matInput="matInput"
           type="text" />
         <mat-error *ngIf="formGroup.controls.name.errors?.['required']">
           This is required.
@@ -23,9 +27,11 @@
       <button
         color="primary"
         [disabled]="formGroup.invalid"
-        mat-icon-button=""
+        mat-icon-button="mat-icon-button"
         type="submit">
-        <mat-icon>arrow_forward</mat-icon>
+        <mat-icon class="material-symbols-rounded">
+          arrow_forward
+        </mat-icon>
       </button>
     </mat-card-actions>
   </mat-card>
@@ -33,6 +39,9 @@
 <button
   (click)="authenticationService.signInWithPasskey();"
   color="primary"
-  mat-raised-button="">
+  mat-raised-button="mat-raised-button">
+  <mat-icon class="material-symbols-rounded">
+    passkey
+  </mat-icon>
   Sign in with passkey
 </button>

@@ -1,36 +1,39 @@
-import { FunctionRequest, FunctionResponse }                    from "@firebase-web-authn/types";
-import { startRegistration }                                    from "@simplewebauthn/browser";
-import { RegistrationResponseJSON }                             from "@simplewebauthn/typescript-types";
-import { Auth, UserCredential }                                 from "firebase/auth";
-import { Functions, httpsCallableFromURL, HttpsCallableResult } from "firebase/functions";
-import { clearChallenge }                                       from "./clearChallenge";
-import { FirebaseWebAuthnError }                                from "./FirebaseWebAuthnError";
-import { handleVerifyFunctionResponse }                         from "./handleVerifyFunctionResponse";
+import { FunctionRequest, FunctionResponse, WebAuthnUserCredentialType } from "@firebase-web-authn/types";
+import { startRegistration }                                             from "@simplewebauthn/browser";
+import { RegistrationResponseJSON }                                      from "@simplewebauthn/typescript-types";
+import { Auth, UserCredential }                                          from "firebase/auth";
+import { Functions, httpsCallableFromURL, HttpsCallableResult }          from "firebase/functions";
+import { clearChallenge }                                                from "./clearChallenge";
+import { FirebaseWebAuthnError }                                         from "./FirebaseWebAuthnError";
+import { handleVerifyFunctionResponse }                                  from "./handleVerifyFunctionResponse";
 
 
 /**
- * Asynchronously creates a passkey for the signed-in user.
+ * Asynchronously creates WebAuthn credentials associated with the signed-in user.
+ *
+ * @async
  *
  * @param auth - The {@link Auth} instance.
  * @param functions - The {@link Functions} instance.
- * @param name - An existing user identifier if FirebaseWebAuthn is configured as an MFA provider, or any recognizable value if FirebaseWebAuthn is your sole auth provider. With generic values consider passing something like "${firstName} | Personal" for users who share a passkey manager with others.
+ * @param name - An existing user identifier if FirebaseWebAuthn is configured as an MFA provider, or any recognizable value if FirebaseWebAuthn is your sole auth provider. With generic values consider passing something like `"${firstName} | Personal"` for users who share a passkey manager with others.
+ * @param type - An optional type (`"primary"` or `"backup"`) of credential to link to the user. Not passing a value attempts to link a primary credential.
  *
  * @returns
  *  A {@link UserCredential} when successful.
  * @throws
  *  {@link FirebaseWebAuthnError}
  */
-export const linkWithPasskey: (auth: Auth, functions: Functions, name: string) => Promise<UserCredential> = (auth: Auth, functions: Functions, name: string): Promise<UserCredential> => auth
+export const linkWithPasskey: (auth: Auth, functions: Functions, name: string, type?: WebAuthnUserCredentialType) => Promise<UserCredential> = (auth: Auth, functions: Functions, name: string, type?: WebAuthnUserCredentialType): Promise<UserCredential> => auth
   .currentUser ? httpsCallableFromURL<FunctionRequest, FunctionResponse>(
-    functions,
-    "/firebase-web-authn-api",
-  )(
-    {
-      name:                      name,
-      operation:                 "create registration challenge",
-      registeringCredentialType: "primary",
-    },
-  )
+  functions,
+  "/firebase-web-authn-api",
+)(
+  {
+    name:                      name,
+    operation:                 "create registration challenge",
+    registeringCredentialType: type || "primary",
+  },
+)
   .then<UserCredential, never>(
     ({ data: functionResponse }: HttpsCallableResult<FunctionResponse>): Promise<UserCredential> => "code" in functionResponse ? ((): never => {
       throw new FirebaseWebAuthnError(functionResponse);

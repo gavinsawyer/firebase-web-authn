@@ -2,6 +2,10 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://firebase-web-authn.dev/</loc>
-    <lastmod>2023-09-09T00:00:00+00:00</lastmod>
+    <lastmod>2023-09-11T00:00:00+00:00</lastmod>
+  </url>
+  <url>
+    <loc>https://firebase-web-authn.dev/privacy</loc>
+    <lastmod>2023-09-11T00:00:00+00:00</lastmod>
   </url>
 </urlset>

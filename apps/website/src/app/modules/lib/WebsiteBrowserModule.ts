@@ -1,4 +1,3 @@
-import { APP_BASE_HREF }                                                           from "@angular/common";
 import { Injector, NgModule }                                                      from "@angular/core";
 import { getAnalytics }                                                            from "@angular/fire/analytics";
 import { Analytics, provideAnalytics, ScreenTrackingService, UserTrackingService } from "@angular/fire/analytics";
@@ -8,6 +7,10 @@ import { Auth, getAuth, provideAuth }                                           
 import { Firestore, getFirestore, provideFirestore }                               from "@angular/fire/firestore";
 import { Functions, getFunctions, provideFunctions }                               from "@angular/fire/functions";
 import { ReactiveFormsModule }                                                     from "@angular/forms";
+import { MatButtonModule }                                                         from "@angular/material/button";
+import { MatDividerModule }                                                        from "@angular/material/divider";
+import { MatIconModule }                                                           from "@angular/material/icon";
+import { MatMenuModule }                                                           from "@angular/material/menu";
 import { MatSnackBarModule }                                                       from "@angular/material/snack-bar";
 import { BrowserModule, provideClientHydration }                                   from "@angular/platform-browser";
 import { BrowserAnimationsModule }                                                 from "@angular/platform-browser/animations";
@@ -28,10 +31,13 @@ import { AppCheckOptionsService }                                               
   declarations: [
     RootComponent,
   ],
-  imports:      [
+  imports: [
     AsideComponent,
     BrowserAnimationsModule,
     BrowserModule,
+    MatButtonModule,
+    MatIconModule,
+    MatMenuModule,
     MatSnackBarModule,
     provideAnalytics(
       (): Analytics => getAnalytics(),
@@ -64,15 +70,12 @@ import { AppCheckOptionsService }                                               
       },
     ),
     TransferHttpCacheModule,
+    MatDividerModule,
   ],
   providers:    [
     provideClientHydration(),
     ScreenTrackingService,
     UserTrackingService,
-    {
-      provide: APP_BASE_HREF,
-      useValue: "/",
-    },
     {
       provide:  ENVIRONMENT,
       useValue: environment,

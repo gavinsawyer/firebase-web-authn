@@ -1,19 +1,47 @@
 <ng-container *ngIf="profileService.profileDocument$() as profileDocument">
   <mat-card>
-    <mat-card-content>You're signed in as {{ profileDocument.name }}.</mat-card-content>
-    <mat-card-actions align="end">
+    <mat-card-header>
+      <mat-card-title>
+        Welcome, {{ profileDocument.name }}.
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-actions>
+      <button
+        (click)="authenticationService.signInWithPasskey();"
+        color="primary"
+        mat-button="mat-button">
+        <mat-icon class="material-symbols-rounded">
+          passkey
+        </mat-icon>
+        Switch accounts
+      </button>
       <button
         (click)="authenticationService.signInAnonymously();"
         color="primary"
-        mat-button="">Sign out</button>
+        mat-button="mat-button">
+        <mat-icon class="material-symbols-rounded">
+          logout
+        </mat-icon>
+        Sign out
+      </button>
     </mat-card-actions>
   </mat-card>
   <button
     (click)="authenticationService.verifyUserWithPasskey();"
     color="primary"
-    mat-raised-button="">Verify with passkey</button>
+    mat-raised-button="">
+    <mat-icon class="material-symbols-rounded">
+      how_to_reg
+    </mat-icon>
+    Verify with passkey
+  </button>
   <button
-    (click)="authenticationService.signInWithPasskey();"
+    (click)="authenticationService.linkBackupPasskey();"
     color="primary"
-    mat-raised-button="">Change accounts with passkey</button>
+    mat-raised-button="">
+    <mat-icon class="material-symbols-rounded">
+      cloud_off
+    </mat-icon>
+    Link backup passkey
+  </button>
 </ng-container>

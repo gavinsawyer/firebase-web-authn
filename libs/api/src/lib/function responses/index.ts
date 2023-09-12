@@ -1,5 +1,5 @@
 export * from "./lib/clearChallenge";
-export * from "./lib/clearUserDoc";
+export * from "./lib/clearCredential";
 export * from "./lib/createAuthenticationChallenge";
 export * from "./lib/createReauthenticationChallenge";
 export * from "./lib/createRegistrationChallenge";

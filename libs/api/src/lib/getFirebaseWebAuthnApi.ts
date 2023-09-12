@@ -1,10 +1,10 @@
-import { FunctionRequest, FunctionResponse, WebAuthnUserDocument }                                                                                                                                     from "@firebase-web-authn/types";
-import { App }                                                                                                                                                                                         from "firebase-admin/app";
-import { Auth, getAuth }                                                                                                                                                                               from "firebase-admin/auth";
-import { CollectionReference, DocumentReference, Firestore, getFirestore }                                                                                                                             from "firebase-admin/firestore";
-import { CallableFunction, CallableRequest, onCall }                                                                                                                                                   from "firebase-functions/v2/https";
-import { clearChallenge, clearUserDoc, createAuthenticationChallenge, createReauthenticationChallenge, createRegistrationChallenge, verifyAuthentication, verifyReauthentication, verifyRegistration } from "./function responses";
-import { FirebaseWebAuthnConfig }                                                                                                                                                                      from "./interfaces";
+import { FunctionRequest, FunctionResponse, WebAuthnUserDocument }                                                                                                                                        from "@firebase-web-authn/types";
+import { App }                                                                                                                                                                                            from "firebase-admin/app";
+import { Auth, getAuth }                                                                                                                                                                                  from "firebase-admin/auth";
+import { CollectionReference, DocumentReference, Firestore, getFirestore }                                                                                                                                from "firebase-admin/firestore";
+import { CallableFunction, CallableRequest, onCall }                                                                                                                                                      from "firebase-functions/v2/https";
+import { clearChallenge, clearCredential, createAuthenticationChallenge, createReauthenticationChallenge, createRegistrationChallenge, verifyAuthentication, verifyReauthentication, verifyRegistration } from "./function responses";
+import { FirebaseWebAuthnConfig }                                                                                                                                                                         from "./interfaces";
 
 
 /**
@@ -23,19 +23,24 @@ export const getFirebaseWebAuthnApi: (firebaseWebAuthnConfig: FirebaseWebAuthnCo
     {
       webAuthnUserDocumentReference: webAuthnUserDocumentReference,
     },
-  ) : callableRequest.data.operation == "clear user doc" ? clearUserDoc(
+  ) : callableRequest.data.operation == "clear credential" ? clearCredential(
     {
+      clearingCredentialType:        callableRequest.data.clearingCredentialType,
       webAuthnUserDocumentReference: webAuthnUserDocumentReference,
     },
   ) : callableRequest.data.operation === "create authentication challenge" ? createAuthenticationChallenge(
     {
+      authenticatorAttachment:       firebaseWebAuthnConfig.authenticatorAttachment,
       authenticatingCredentialType:  callableRequest.data.authenticatingCredentialType,
+      backupAuthenticatorAttachment: firebaseWebAuthnConfig.backupAuthenticatorAttachment,
       hostname:                      callableRequest.rawRequest.hostname,
       userVerificationRequirement:   firebaseWebAuthnConfig.userVerificationRequirement,
       webAuthnUserDocumentReference: webAuthnUserDocumentReference,
     },
   ) : callableRequest.data.operation === "create reauthentication challenge" ? createReauthenticationChallenge(
     {
+      authenticatorAttachment:        firebaseWebAuthnConfig.authenticatorAttachment,
+      backupAuthenticatorAttachment:  firebaseWebAuthnConfig.backupAuthenticatorAttachment,
       hostname:                       callableRequest.rawRequest.hostname,
       reauthenticatingCredentialType: callableRequest.data.reauthenticatingCredentialType,
       userVerificationRequirement:    firebaseWebAuthnConfig.userVerificationRequirement,
@@ -44,6 +49,7 @@ export const getFirebaseWebAuthnApi: (firebaseWebAuthnConfig: FirebaseWebAuthnCo
   ) : callableRequest.data.operation === "create registration challenge" ? createRegistrationChallenge(
     {
       authenticatorAttachment:       firebaseWebAuthnConfig.authenticatorAttachment,
+      backupAuthenticatorAttachment: firebaseWebAuthnConfig.backupAuthenticatorAttachment,
       hostname:                      callableRequest.rawRequest.hostname,
       registeringCredentialType:     callableRequest.data.registeringCredentialType,
       relyingPartyName:              firebaseWebAuthnConfig.relyingPartyName,
@@ -55,6 +61,8 @@ export const getFirebaseWebAuthnApi: (firebaseWebAuthnConfig: FirebaseWebAuthnCo
   ) : callableRequest.data.operation === "verify authentication" ? verifyAuthentication(
     {
       authenticationResponse:          callableRequest.data.authenticationResponse,
+      authenticatorAttachment:       firebaseWebAuthnConfig.authenticatorAttachment,
+      backupAuthenticatorAttachment: firebaseWebAuthnConfig.backupAuthenticatorAttachment,
       createCustomToken:               (uid: string) => auth.createCustomToken(uid),
       hostname:                        callableRequest.rawRequest.hostname,
       userID:                          userID,
@@ -65,6 +73,8 @@ export const getFirebaseWebAuthnApi: (firebaseWebAuthnConfig: FirebaseWebAuthnCo
   ) : callableRequest.data.operation === "verify reauthentication" ? verifyReauthentication(
     {
       authenticationResponse:        callableRequest.data.authenticationResponse,
+      authenticatorAttachment:       firebaseWebAuthnConfig.authenticatorAttachment,
+      backupAuthenticatorAttachment: firebaseWebAuthnConfig.backupAuthenticatorAttachment,
       createCustomToken:             () => auth.createCustomToken(userID),
       hostname:                      callableRequest.rawRequest.hostname,
       userVerificationRequirement:   firebaseWebAuthnConfig.userVerificationRequirement,
@@ -72,6 +82,8 @@ export const getFirebaseWebAuthnApi: (firebaseWebAuthnConfig: FirebaseWebAuthnCo
     },
   ) : callableRequest.data.operation === "verify registration" ? verifyRegistration(
     {
+      authenticatorAttachment:       firebaseWebAuthnConfig.authenticatorAttachment,
+      backupAuthenticatorAttachment: firebaseWebAuthnConfig.backupAuthenticatorAttachment,
       createCustomToken:             () => auth.createCustomToken(userID),
       hostname:                      callableRequest.rawRequest.hostname,
       registrationResponse:          callableRequest.data.registrationResponse,

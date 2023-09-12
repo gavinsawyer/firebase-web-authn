@@ -1,4 +1,3 @@
-import { APP_BASE_HREF }       from "@angular/common";
 import { enableProdMode }      from "@angular/core";
 import { ngExpressEngine }     from "@nguniversal/express-engine";
 import * as express            from "express";
@@ -40,12 +39,6 @@ export const app: () => express.Express = (): express.Express => ((distFolder: s
     {
       req,
       res,
-      providers: [
-        {
-          provide:  APP_BASE_HREF,
-          useValue: req.baseUrl,
-        },
-      ],
     },
     (error: Error, html?: string) => res.send(html).end(),
   ),

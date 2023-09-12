@@ -12,7 +12,6 @@ import { WebsiteBrowserModule } from "../../modules";
   bootstrap: [
     RootComponent,
   ],
-  providers: [],
 })
 export class WebsiteServerModule {
 }

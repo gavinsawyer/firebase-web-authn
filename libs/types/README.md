@@ -17,8 +17,15 @@ interface WebAuthnUserCredential {
   "counter": number,            // Updated automatically by some browsers to help prevent replay attacks.
   "id": Uint8Array,             // ID associated with the credential.
   "publicKey": Uint8Array,      // Public key associated with the credential.
-  "type": "backup" | "primary", // The type of credential.
 }
+```
+### WebAuthnUserCredentialType
+The type of public key credential associated with the user
+```ts
+import { WebAuthnUserCredentialType } from "@firebase-web-authn/types";
+```
+```ts
+type WebAuthnUserCredentialType = "backup" | "primary";
 ```
 ### WebAuthnUserDocument
 Document in the `users` collection of the `ext-firebase-web-authn` Firestore Database. This should not have read or write access from users.

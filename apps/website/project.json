@@ -147,7 +147,8 @@
       "executor":             "@nguniversal/builders:prerender",
       "options":              {
         "routes": [
-          "/"
+          "/",
+          "/privacy"
         ]
       }
     },
@@ -165,7 +166,11 @@
         "prebuild",
         "lint"
       ],
-      "executor":             "@angular-devkit/build-angular:dev-server"
+      "executor":             "@angular-devkit/build-angular:dev-server",
+      "options":              {
+        "port": 4430,
+        "ssl":  true
+      }
     },
     "deploy":   {
       "dependsOn": [

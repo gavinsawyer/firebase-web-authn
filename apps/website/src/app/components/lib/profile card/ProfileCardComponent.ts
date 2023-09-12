@@ -2,13 +2,15 @@ import { NgIf }                                  from "@angular/common";
 import { Component, inject }                     from "@angular/core";
 import { MatButtonModule }                       from "@angular/material/button";
 import { MatCardModule }                         from "@angular/material/card";
+import { MatIconModule }                         from "@angular/material/icon";
 import { AuthenticationService, ProfileService } from "../../../services";
 
 
 @Component({
   imports: [
-    MatCardModule,
     MatButtonModule,
+    MatCardModule,
+    MatIconModule,
     NgIf,
   ],
   selector:    "website-profile-card",

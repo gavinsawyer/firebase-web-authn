@@ -7,15 +7,47 @@
 <footer>
   <div>
     <div>
-      <span>NPM</span>
-    </div>
-    <div>
-      <span>
-        <a href="https://www.npmjs.com/package/@firebase-web-authn/extension">extension</a> | <a href="https://www.npmjs.com/package/@firebase-web-authn/browser">browser</a>
-      </span>
+      <button
+        mat-raised-button="mat-raised-button"
+        [matMenuTriggerFor]="menu">
+        <mat-icon class="material-symbols-rounded">
+          exit_to_app
+        </mat-icon>
+        NPM
+      </button>
+      <mat-menu #menu="matMenu">
+        <a
+          href="https://www.npmjs.com/package/@firebase-web-authn/extension"
+          mat-menu-item="mat-menu-item">
+          extension
+        </a>
+        <a
+          href="https://www.npmjs.com/package/@firebase-web-authn/browser"
+          mat-menu-item="mat-menu-item">
+          browser
+        </a>
+        <a
+          href="https://www.npmjs.com/package/@firebase-web-authn/server"
+          mat-menu-item="mat-menu-item">
+          server
+        </a>
+        <mat-divider />
+        <a
+          href="https://www.npmjs.com/package/@firebase-web-authn/api"
+          mat-menu-item="mat-menu-item">
+          api
+        </a>
+        <a
+          href="https://www.npmjs.com/package/@firebase-web-authn/types"
+          mat-menu-item="mat-menu-item">
+          types
+        </a>
+      </mat-menu>
     </div>
   </div>
   <div>
-    <span>v{{ packageVersion + (gitInfo.dirty ? "-next" : "") }}+<a [href]="'https://github.com/gavinsawyer/firebase-web-authn/commit/' + gitInfo.hash">{{ gitInfo.hash }}</a></span>
+    <span>
+      v{{ packageVersion + (gitInfo.dirty ? "-next" : "") }}+<a [href]="'https://github.com/gavinsawyer/firebase-web-authn/commit/' + gitInfo.hash">{{ gitInfo.hash }}</a>
+    </span>
   </div>
 </footer>

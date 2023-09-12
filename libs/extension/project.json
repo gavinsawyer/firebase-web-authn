@@ -2,13 +2,13 @@
   "$schema":     "../../node_modules/nx/schemas/project-schema.json",
   "name":        "extension",
   "projectType": "library",
-  "sourceRoot":  "libs/extension/functions",
+  "sourceRoot":  "libs/extension/src",
   "targets":     {
     "lint":  {
       "executor": "@nx/linter:eslint",
       "options":  {
         "lintFilePatterns": [
-          "libs/extension/functions/**/*.ts"
+          "libs/extension/src/**/*.ts"
         ]
       }
     },
@@ -36,8 +36,8 @@
           },
           {
             "glob":   "package.json",
-            "input":  "libs/extension/functions",
-            "output": "./functions"
+            "input":  "libs/extension/src",
+            "output": "./src"
           },
           {
             "glob":   "POSTINSTALL.md",
@@ -55,8 +55,8 @@
             "output": "."
           }
         ],
-        "main":       "libs/extension/functions/main.ts",
-        "outputFileName": "functions/main.js",
+        "main":       "libs/extension/src/main.ts",
+        "outputFileName": "src/main.js",
         "outputPath": "dist/libs/extension",
         "tsConfig":   "libs/extension/tsconfig.lib.json"
       },

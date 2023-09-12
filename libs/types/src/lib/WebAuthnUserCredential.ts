@@ -22,8 +22,4 @@ export interface WebAuthnUserCredential {
    * Public key associated with the credential.
    */
   "publicKey": Uint8Array,
-  /**
-   * The type ("primary" or "backup") of credential.
-   */
-  "type": "backup" | "primary",
 }
