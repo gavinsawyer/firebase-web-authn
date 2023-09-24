@@ -1,18 +1,23 @@
-import { FunctionResponse, WebAuthnUserCredentialType, WebAuthnUserDocument } from "@firebase-web-authn/types";
-import { FirebaseError }                                                      from "firebase-admin";
-import { DocumentReference, DocumentSnapshot, FieldValue }                    from "firebase-admin/firestore";
+import { FunctionResponse, WebAuthnUserCredentialFactor, WebAuthnUserDocument } from "@firebase-web-authn/types";
+import { FirebaseError }                                                        from "firebase-admin";
+import { DocumentReference, DocumentSnapshot, FieldValue }                      from "firebase-admin/firestore";
 
 
-export const clearCredential: (options: { clearingCredentialType?: WebAuthnUserCredentialType, webAuthnUserDocumentReference: DocumentReference<WebAuthnUserDocument> }) => Promise<FunctionResponse> = (options: { clearingCredentialType?: WebAuthnUserCredentialType, webAuthnUserDocumentReference: DocumentReference<WebAuthnUserDocument> }) => options.webAuthnUserDocumentReference.get().then<FunctionResponse, FunctionResponse>(
-  (userDocumentSnapshot: DocumentSnapshot<WebAuthnUserDocument>): Promise<FunctionResponse> => (async (userDocument: WebAuthnUserDocument | undefined): Promise<FunctionResponse> => userDocument && userDocument[options.clearingCredentialType === "backup" ? "backupCredential" : "credential"] ? (options.clearingCredentialType === "backup" ? options.webAuthnUserDocumentReference.update(
+interface ClearCredentialOptions {
+  clearingCredential?: WebAuthnUserCredentialFactor,
+  webAuthnUserDocumentReference: DocumentReference<WebAuthnUserDocument>
+}
+
+export const clearCredential: (options: ClearCredentialOptions) => Promise<FunctionResponse> = (options: ClearCredentialOptions) => options.webAuthnUserDocumentReference.get().then<FunctionResponse, FunctionResponse>(
+  (userDocumentSnapshot: DocumentSnapshot<WebAuthnUserDocument>): Promise<FunctionResponse> => (async (userDocument: WebAuthnUserDocument | undefined): Promise<FunctionResponse> => userDocument && userDocument.credentials?.[options.clearingCredential || "first"] ? options.webAuthnUserDocumentReference.update(
     {
-      backupCredential: FieldValue.delete(),
+      ["credentials." + (options.clearingCredential || "first")]: FieldValue.delete(),
     },
-  ) : options.webAuthnUserDocumentReference.delete()).then<FunctionResponse, FunctionResponse>(
+  ).then<FunctionResponse, FunctionResponse>(
     (): FunctionResponse => ({
-      clearingCredentialType: options.clearingCredentialType,
-      operation:              "clear credential",
-      success:                true,
+      clearingCredential: options.clearingCredential,
+      operation:          "clear credential",
+      success:            true,
     }),
     (firebaseError: FirebaseError): FunctionResponse => ({
       code:      firebaseError.code,

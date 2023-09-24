@@ -3,23 +3,23 @@
  */
 export interface WebAuthnUserCredential {
   /**
-   * Whether the private key is eligible to be backed up.
+   * The {@link AuthenticatorAttachment} associated with the credential.
    */
-  "backupEligible": boolean
+  "authenticatorAttachment": AuthenticatorAttachment;
   /**
-   * Whether the private key has been backed up successfully.
+   * Whether the credential has been backed up successfully.
    */
-  "backupSuccessful": boolean,
+  "backedUp": boolean;
   /**
-   * Updated automatically by some browsers to help prevent replay attacks.
+   * Updated automatically by some authenticators to help prevent replay attacks.
    */
-  "counter": number,
+  "counter": number;
   /**
    * ID associated with the credential.
    */
-  "id": Uint8Array,
+  "id": Uint8Array;
   /**
    * Public key associated with the credential.
    */
-  "publicKey": Uint8Array,
+  "publicKey": Uint8Array;
 }

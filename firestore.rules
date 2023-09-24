@@ -3,7 +3,7 @@ service cloud.firestore {
   match /databases/{database}/documents {
     match /profiles/{document} {
       allow create: if request.auth.uid == request.resource.id;
-      allow read: if request.auth.uid == resource.id;
+      allow read, delete: if request.auth.uid == resource.id;
     }
   }
 }

@@ -3,12 +3,9 @@ import { Meta }                             from "@angular/platform-browser";
 
 
 @Component({
-  selector:    "website-route",
-  standalone:  true,
-  styleUrls:   [
-    "./RouteComponent.sass",
-  ],
-  templateUrl: "./RouteComponent.html",
+  selector:   "website-route",
+  standalone: true,
+  template:   "",
 })
 export class RouteComponent implements OnInit {
 

@@ -3,8 +3,12 @@ import { FirebaseError }                                   from "firebase-admin"
 import { DocumentReference, DocumentSnapshot, FieldValue } from "firebase-admin/firestore";
 
 
-export const clearChallenge: (options: { webAuthnUserDocumentReference: DocumentReference<WebAuthnUserDocument> }) => Promise<FunctionResponse> = (options: { webAuthnUserDocumentReference: DocumentReference<WebAuthnUserDocument> }) => options.webAuthnUserDocumentReference.get().then<FunctionResponse, FunctionResponse>(
-  (userDocumentSnapshot: DocumentSnapshot<WebAuthnUserDocument>): Promise<FunctionResponse> => (async (userDocument: WebAuthnUserDocument | undefined): Promise<FunctionResponse> => userDocument ? userDocument.challenge ? (userDocument.lastPresent ? options.webAuthnUserDocumentReference.update(
+interface ClearChallengeOptions {
+  webAuthnUserDocumentReference: DocumentReference<WebAuthnUserDocument>;
+}
+
+export const clearChallenge: (options: ClearChallengeOptions) => Promise<FunctionResponse> = (options: ClearChallengeOptions) => options.webAuthnUserDocumentReference.get().then<FunctionResponse, FunctionResponse>(
+  (userDocumentSnapshot: DocumentSnapshot<WebAuthnUserDocument>): Promise<FunctionResponse> => (async (userDocument: WebAuthnUserDocument | undefined): Promise<FunctionResponse> => userDocument ? userDocument.challenge ? (userDocument.credentials ? options.webAuthnUserDocumentReference.update(
     {
       challenge: FieldValue.delete(),
     },

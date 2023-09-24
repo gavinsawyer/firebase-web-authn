@@ -5,8 +5,10 @@ A Firebase Extension for authentication with WebAuthn passkeys.
 [![View in Extensions Hub](https://img.shields.io/static/v1?label=&message=View%20in%20Extensions%20Hub&logo=firebase)](https://extensions.dev/extensions/gavinsawyer/firebase-web-authn)
 #### Demo: https://firebase-web-authn.dev
 
-### Thesis
-WebAuthn enables creating an account or signing in with as few as two clicks and doesn't ask the user to remember anything. This extension addresses a [popular feature request](https://github.com/firebase/firebase-js-sdk/issues/2123) for WebAuthn as a authentication provider in Firebase.
+### Summary
+WebAuthn enables creating an account or signing in with as few as two clicks and doesn't ask the user to remember anything. This extension addresses a [popular feature request](https://github.com/firebase/firebase-js-sdk/issues/2123) for WebAuthn as an authentication provider in Firebase.
+
+This is a monorepo with five packages including an easy-to-install [Firebase Extension](libs/extension) and small [Browser SDK](libs/browser). The major version is tracking that of the [Firebase JavaScript SDK](https://www.npmjs.com/package/firebase) and mirrors its implementation patterns.
 
 Features include:
 - creating and signing in users with passkeys,
@@ -77,6 +79,30 @@ createUserWithPasskey: (auth: Auth, functions: Functions, name: string) => Promi
         unlinkPasskey: (auth: Auth, functions: Functions)               => Promise<void>;
 verifyUserWithPasskey: (auth: Auth, functions: Functions)               => Promise<void>;
 ```
+#### 🎉 2FA passkeys are here in ^10.3.0!
+All methods besides `createUserWithPasskey` accept an optional `factor` parameter of `"first"` or `"second"`.
+
+Default behaviors were designed to maintain backwards compatibility and are described below:
+```ts
+          signInWithPasskey(auth, functions) // Sign in and accept either credential.
+ signInWithPasskey(auth, functions, "first") // Sign in and only accept a first (1FA) factor credential.
+signInWithPasskey(auth, functions, "second") // Sign in and only accept a second (2FA) factor credential.
+```
+```ts
+          linkWithPasskey(auth, functions, username) // Link a first (1FA) factor credential.
+ linkWithPasskey(auth, functions, username, "first") // Link a first (1FA) factor credential.
+linkWithPasskey(auth, functions, username, "second") // Link a second (2FA) factor credential.
+```
+```ts
+          unlinkWithPasskey(auth, functions) // Unlink all credentials.
+ unlinkWithPasskey(auth, functions, "first") // Unlink all credentials.
+unlinkWithPasskey(auth, functions, "second") // Unlink a second (2FA) factor credential.
+```
+```ts
+          verifyUserWithPasskey(auth, functions) // Verify the user and allow either credential.
+ verifyUserWithPasskey(auth, functions, "first") // Verify the user and allow only a first (1FA) factor credential.
+verifyUserWithPasskey(auth, functions, "second") // Verify the user and allow only a second (2FA) factor credential.
+```
 Designed to be used like the Firebase JavaScript SDK:
 ```ts
 import { createUserWithEmailAndPassword } from "firebase/auth";
@@ -135,14 +161,12 @@ This package contains five tree-shakeable async methods for using FirebaseWebAut
 ### Methods
 
 ```ts
-import { WebAuthnUserCredential } from "@firebase-web-authn/types";
-```
-```ts
-  backupEligible: (uid: string, app?: App) => Promise<boolean | null>;
-backupSuccessful: (uid: string, app?: App) => Promise<boolean | null>;
-     credentials: (uid: string, app?: App) => Promise<{ [key in "primary" | "backup"]: WebAuthnUserCredential | null }>;
-     lastPresent: (uid: string, app?: App) => Promise<Timestamp | null>;
-    lastVerified: (uid: string, app?: App) => Promise<Timestamp | null>;
+         credentials: (uid: string, app?: App) => Promise<{ [key in WebAuthnUserCredentialFactor]: WebAuthnUserCredential | null }>;
+  lastCredentialUsed: (uid: string, app?: App) => Promise<WebAuthnUserCredentialFactor | null>;
+         lastPresent: (uid: string, app?: App) => Promise<Timestamp | null>;
+        lastVerified: (uid: string, app?: App) => Promise<Timestamp | null>;
+ lastWebAuthnProcess: (uid: string, app?: App) => Promise<WebAuthnProcess | null>;
+webAuthnUserDocument: (uid: string, app?: App) => Promise<WebAuthnUserDocument | null>;
 ```
 Designed to be used within Firebase Functions or another secure context with access to Firestore to check users' status with FirebaseWebAuthn:
 ```ts
@@ -154,6 +178,15 @@ getApps().length === 0 && initializeApp();
 
 // If the user was verified within the past 30 seconds, proceed. Otherwise, ask for reverification:
 (await lastVerified(uid))?.seconds > (Date.now() / 1000) - 30 ?
+  proceed() :
+  askForReverification();
+```
+If your check involves multiple pieces of data from `WebAuthnUserDocument`, use the `webAuthnUserDocument` method to reduce Firestore calls:
+```ts
+// If the user was verified with their first-factor credential within the past 30 seconds, proceed. Otherwise, ask for reverification:
+(await webAuthnUserDocument(user.uid).then<boolean>(
+  (webAuthnUserDocument: WebAuthnUserDocument): boolean => webAuthnUserDocument.lastVerified > (Date.now() / 1000) - 30 && webAuthnUserDocument.lastCredentialUsed === "first",
+)) ?
   proceed() :
   askForReverification();
 ```

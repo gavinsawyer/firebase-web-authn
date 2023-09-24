@@ -1,17 +1,17 @@
-import { NgIf }                                  from "@angular/common";
-import { Component, inject }                     from "@angular/core";
-import { MatIconModule }                         from "@angular/material/icon";
-import { AuthenticationService, ProfileService } from "../../../services";
-import { ProfileCardComponent }                  from "../profile card/ProfileCardComponent";
-import { SignInCardComponent }                   from "../sign in card/SignInCardComponent";
+import { NgIf }                  from "@angular/common";
+import { Component, inject }     from "@angular/core";
+import { MatIconModule }         from "@angular/material/icon";
+import { AuthenticationService } from "../../../services";
+import { SignedInComponent }     from "../signed in/SignedInComponent";
+import { SignedOutComponent }    from "../signed out/SignedOutComponent";
 
 
 @Component({
-  imports: [
+  imports:     [
     MatIconModule,
     NgIf,
-    ProfileCardComponent,
-    SignInCardComponent,
+    SignedInComponent,
+    SignedOutComponent,
   ],
   selector:    "website-aside",
   standalone:  true,
@@ -23,6 +23,5 @@ import { SignInCardComponent }                   from "../sign in card/SignInCar
 export class AsideComponent {
 
   public readonly authenticationService: AuthenticationService = inject<AuthenticationService>(AuthenticationService);
-  public readonly profileService:        ProfileService        = inject<ProfileService>(ProfileService);
 
 }

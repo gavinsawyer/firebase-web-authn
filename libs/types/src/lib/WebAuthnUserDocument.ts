@@ -1,6 +1,7 @@
-import { Timestamp }                  from "firebase-admin/firestore";
-import { WebAuthnUserCredential }     from "./WebAuthnUserCredential";
-import { WebAuthnUserCredentialType } from "./WebAuthnUserCredentialType";
+import { Timestamp }                    from "firebase-admin/firestore";
+import { WebAuthnProcess }              from "./WebAuthnProcess";
+import { WebAuthnUserCredential }       from "./WebAuthnUserCredential";
+import { WebAuthnUserCredentialFactor } from "./WebAuthnUserCredentialFactor";
 
 
 /**
@@ -11,28 +12,31 @@ export interface WebAuthnUserDocument {
    * Only present between operations and cleaned up if the user cancels.
    */
   "challenge"?: {
-    "process": "authentication" | "reauthentication" | "registration",
-    "processingCredentialType"?: WebAuthnUserCredentialType,
-    "value": string,
-  },
+    "process": WebAuthnProcess
+    "processingCredential"?: WebAuthnUserCredentialFactor
+    "value": string
+  };
   /**
    * Information about the primary public key credential associated with the user.
    */
-  "credential"?: WebAuthnUserCredential,
-  /**
-   * Information about the backup public key credential associated with the user.
-   */
-  "backupCredential"?: WebAuthnUserCredential,
+  "credentials"?: {
+    "first": WebAuthnUserCredential
+    "second"?: WebAuthnUserCredential
+  };
   /**
    * The last type of credential successfully used.
    */
-  "lastCredentialUsed"?: WebAuthnUserCredentialType,
+  "lastCredentialUsed"?: WebAuthnUserCredentialFactor;
   /**
    * A {@link Timestamp} automatically updated on successful operations.
    */
-  "lastPresent"?: Timestamp,
+  "lastPresent"?: Timestamp;
   /**
    * A {@link Timestamp} automatically updated on successful operations that verified the user with biometrics.
    */
-  "lastVerified"?: Timestamp,
+  "lastVerified"?: Timestamp;
+  /**
+   * The last WebAuthn process successfully completed by the user.
+   */
+  "lastWebAuthnProcess": WebAuthnProcess;
 }

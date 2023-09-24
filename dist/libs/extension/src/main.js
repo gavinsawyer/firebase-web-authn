@@ -9,7 +9,7 @@ import { onCall } from "firebase-functions/v2/https";
 // libs/api/src/lib/function responses/lib/clearChallenge.ts
 import { FieldValue } from "firebase-admin/firestore";
 var clearChallenge = (options) => options.webAuthnUserDocumentReference.get().then(
-  (userDocumentSnapshot) => (async (userDocument) => userDocument ? userDocument.challenge ? (userDocument.lastPresent ? options.webAuthnUserDocumentReference.update(
+  (userDocumentSnapshot) => (async (userDocument) => userDocument ? userDocument.challenge ? (userDocument.credentials ? options.webAuthnUserDocumentReference.update(
     {
       challenge: FieldValue.delete()
     }
@@ -46,13 +46,13 @@ var clearChallenge = (options) => options.webAuthnUserDocumentReference.get().th
 // libs/api/src/lib/function responses/lib/clearCredential.ts
 import { FieldValue as FieldValue2 } from "firebase-admin/firestore";
 var clearCredential = (options) => options.webAuthnUserDocumentReference.get().then(
-  (userDocumentSnapshot) => (async (userDocument) => userDocument && userDocument[options.clearingCredentialType === "backup" ? "backupCredential" : "credential"] ? (options.clearingCredentialType === "backup" ? options.webAuthnUserDocumentReference.update(
+  (userDocumentSnapshot) => (async (userDocument) => userDocument && userDocument.credentials?.[options.clearingCredential || "first"] ? options.webAuthnUserDocumentReference.update(
     {
-      backupCredential: FieldValue2.delete()
+      ["credentials." + (options.clearingCredential || "first")]: FieldValue2.delete()
     }
-  ) : options.webAuthnUserDocumentReference.delete()).then(
+  ).then(
     () => ({
-      clearingCredentialType: options.clearingCredentialType,
+      clearingCredential: options.clearingCredential,
       operation: "clear credential",
       success: true
     }),
@@ -78,17 +78,13 @@ var clearCredential = (options) => options.webAuthnUserDocumentReference.get().t
 
 // libs/api/src/lib/function responses/lib/createAuthenticationChallenge.ts
 import { generateAuthenticationOptions } from "@simplewebauthn/server";
-var createAuthenticationChallenge = (options) => generateAuthenticationOptions(
-  {
-    rpID: options.hostname,
-    userVerification: options.authenticatingCredentialType === "backup" ? options.backupAuthenticatorAttachment === "platform" ? options.userVerificationRequirement : "preferred" : options.authenticatorAttachment === "platform" ? options.userVerificationRequirement : "preferred"
-  }
-).then(
+import { FieldValue as FieldValue3 } from "firebase-admin/firestore";
+var createAuthenticationChallenge = (options) => generateAuthenticationOptions(options.authenticationOptions).then(
   (publicKeyCredentialRequestOptionsJSON) => options.webAuthnUserDocumentReference.set(
     {
       challenge: {
         process: "authentication",
-        processingCredentialType: options.authenticatingCredentialType,
+        processingCredential: options.authenticatingCredential || FieldValue3.delete(),
         value: publicKeyCredentialRequestOptionsJSON.challenge
       }
     },
@@ -97,7 +93,7 @@ var createAuthenticationChallenge = (options) => generateAuthenticationOptions(
     }
   ).then(
     () => ({
-      authenticatingCredentialType: options.authenticatingCredentialType,
+      authenticatingCredential: options.authenticatingCredential,
       operation: "create authentication challenge",
       requestOptions: publicKeyCredentialRequestOptionsJSON,
       success: true
@@ -113,43 +109,38 @@ var createAuthenticationChallenge = (options) => generateAuthenticationOptions(
 
 // libs/api/src/lib/function responses/lib/createReauthenticationChallenge.ts
 import { generateAuthenticationOptions as generateAuthenticationOptions2 } from "@simplewebauthn/server";
+import { FieldValue as FieldValue4 } from "firebase-admin/firestore";
 var createReauthenticationChallenge = (options) => options.webAuthnUserDocumentReference.get().then(
-  (userDocumentSnapshot) => (async (userDocument) => userDocument ? (options.reauthenticatingCredentialType === "backup" ? userDocument.backupCredential : userDocument.credential) ? generateAuthenticationOptions2(
+  (userDocumentSnapshot) => (async (userDocument) => userDocument ? (options.reauthenticatingCredentialFactor === "second" ? userDocument.credentials?.second : userDocument.credentials?.first) ? generateAuthenticationOptions2(
     {
-      allowCredentials: options.reauthenticatingCredentialType === "backup" ? [
+      ...options.authenticationOptions,
+      allowCredentials: options.reauthenticatingCredentialFactor ? [
         {
-          id: userDocument.backupCredential?.id || new Uint8Array(),
+          id: userDocument.credentials?.[options.reauthenticatingCredentialFactor]?.id || new Uint8Array(),
           type: "public-key"
         }
-      ] : options.reauthenticatingCredentialType === "primary" ? [
+      ] : userDocument.credentials?.second ? [
         {
-          id: userDocument.credential?.id || new Uint8Array(),
-          type: "public-key"
-        }
-      ] : userDocument.backupCredential ? [
-        {
-          id: userDocument.credential?.id || new Uint8Array(),
+          id: userDocument.credentials.first.id || new Uint8Array(),
           type: "public-key"
         },
         {
-          id: userDocument.backupCredential.id,
+          id: userDocument.credentials.second.id,
           type: "public-key"
         }
       ] : [
         {
-          id: userDocument.credential?.id || new Uint8Array(),
+          id: userDocument.credentials?.first.id || new Uint8Array(),
           type: "public-key"
         }
-      ],
-      rpID: options.hostname,
-      userVerification: options.reauthenticatingCredentialType === "backup" ? options.backupAuthenticatorAttachment === "platform" ? options.userVerificationRequirement : "preferred" : options.authenticatorAttachment === "platform" ? options.userVerificationRequirement : "preferred"
+      ]
     }
   ).then(
     (publicKeyCredentialRequestOptions) => options.webAuthnUserDocumentReference.set(
       {
         challenge: {
           process: "reauthentication",
-          processingCredentialType: options.reauthenticatingCredentialType,
+          processingCredential: options.reauthenticatingCredentialFactor || FieldValue4.delete(),
           value: publicKeyCredentialRequestOptions.challenge
         }
       },
@@ -159,7 +150,7 @@ var createReauthenticationChallenge = (options) => options.webAuthnUserDocumentR
     ).then(
       () => ({
         operation: "create reauthentication challenge",
-        reauthenticatingCredentialType: options.reauthenticatingCredentialType,
+        reauthenticatingCredential: options.reauthenticatingCredentialFactor,
         requestOptions: publicKeyCredentialRequestOptions,
         success: true
       }),
@@ -192,40 +183,22 @@ var createReauthenticationChallenge = (options) => options.webAuthnUserDocumentR
 // libs/api/src/lib/function responses/lib/createRegistrationChallenge.ts
 import { generateRegistrationOptions } from "@simplewebauthn/server";
 var createRegistrationChallenge = (options) => options.webAuthnUserDocumentReference.get().then(
-  (userDocumentSnapshot) => (async (userDocument) => (options.registeringCredentialType === "backup" ? !userDocument?.backupCredential : !userDocument?.credential) ? options.registeringCredentialType !== "backup" || userDocument && userDocument.credential ? generateRegistrationOptions(
+  (userDocumentSnapshot) => (async (userDocument) => (options.registeringCredentialFactor === "second" ? !userDocument?.credentials?.second : !userDocument?.credentials?.first) ? options.registeringCredentialFactor !== "second" || userDocument && userDocument.credentials?.first ? generateRegistrationOptions(
     {
-      authenticatorSelection: options.registeringCredentialType === "backup" ? options.backupAuthenticatorAttachment ? {
-        authenticatorAttachment: options.backupAuthenticatorAttachment,
-        residentKey: "required",
-        userVerification: options.backupAuthenticatorAttachment === "platform" ? options.userVerificationRequirement : "preferred"
-      } : {
-        residentKey: "required",
-        userVerification: "preferred"
-      } : options.authenticatorAttachment ? {
-        authenticatorAttachment: options.authenticatorAttachment,
-        residentKey: "required",
-        userVerification: options.authenticatorAttachment === "platform" ? options.userVerificationRequirement : "preferred"
-      } : {
-        residentKey: "required",
-        userVerification: "preferred"
-      },
-      excludeCredentials: options.registeringCredentialType === "backup" ? [
+      ...options.registrationOptions,
+      excludeCredentials: options.registeringCredentialFactor === "second" ? [
         {
-          id: userDocument?.credential?.id || new Uint8Array(),
+          id: userDocument?.credentials?.first.id || new Uint8Array(),
           type: "public-key"
         }
-      ] : void 0,
-      rpID: options.hostname,
-      rpName: options.relyingPartyName,
-      userID: options.userID,
-      userName: options.userName
+      ] : void 0
     }
   ).then(
     (publicKeyCredentialCreationOptions) => options.webAuthnUserDocumentReference.set(
       {
         challenge: {
           process: "registration",
-          processingCredentialType: options.registeringCredentialType,
+          processingCredential: options.registeringCredentialFactor,
           value: publicKeyCredentialCreationOptions.challenge
         }
       },
@@ -236,7 +209,7 @@ var createRegistrationChallenge = (options) => options.webAuthnUserDocumentRefer
       () => ({
         creationOptions: publicKeyCredentialCreationOptions,
         operation: "create registration challenge",
-        registeringCredentialType: options.registeringCredentialType,
+        registeringCredential: options.registeringCredentialFactor,
         success: true
       }),
       (firebaseError) => ({
@@ -267,43 +240,43 @@ var createRegistrationChallenge = (options) => options.webAuthnUserDocumentRefer
 
 // libs/api/src/lib/function responses/lib/verifyAuthentication.ts
 import { verifyAuthenticationResponse } from "@simplewebauthn/server";
-import { FieldValue as FieldValue3, Timestamp } from "firebase-admin/firestore";
-var verifyAuthentication = (options) => options.authenticationResponse.response.userHandle !== options.userID ? options.webAuthnUserCollectionReference.doc(options.authenticationResponse.response.userHandle || "").get().then(
+import { FieldValue as FieldValue5, Timestamp } from "firebase-admin/firestore";
+var verifyAuthentication = (options) => options.authenticationOptions.response.response.userHandle !== options.userID ? options.webAuthnUserDocumentReferenceTarget.get().then(
   (targetUserDocumentSnapshot) => (async (targetUserDocument) => targetUserDocument ? options.webAuthnUserDocumentReference.get().then(
-    (userDocumentSnapshot) => (async (userDocument) => userDocument ? userDocument.challenge && userDocument.challenge.process === "authentication" ? targetUserDocument[userDocument.challenge?.processingCredentialType === "backup" ? "backupCredential" : "credential"] ? verifyAuthenticationResponse(
+    (userDocumentSnapshot) => (async (userDocument) => userDocument ? userDocument.challenge && userDocument.challenge.process === "authentication" ? targetUserDocument.credentials?.[userDocument.challenge?.processingCredential || "first"] ? verifyAuthenticationResponse(
       {
+        ...options.authenticationOptions,
         authenticator: {
-          counter: targetUserDocument[userDocument.challenge.processingCredentialType === "backup" ? "backupCredential" : "credential"]?.counter || 0,
-          credentialID: targetUserDocument[userDocument.challenge.processingCredentialType === "backup" ? "backupCredential" : "credential"]?.id || new Uint8Array(0),
-          credentialPublicKey: targetUserDocument[userDocument.challenge.processingCredentialType === "backup" ? "backupCredential" : "credential"]?.publicKey || new Uint8Array(0)
+          counter: targetUserDocument.credentials[userDocument.challenge.processingCredential || "first"]?.counter || 0,
+          credentialID: targetUserDocument.credentials[userDocument.challenge.processingCredential || "first"]?.id || new Uint8Array(0),
+          credentialPublicKey: targetUserDocument.credentials[userDocument.challenge.processingCredential || "first"]?.publicKey || new Uint8Array(0)
         },
         expectedChallenge: userDocument.challenge.value,
-        expectedOrigin: "https://" + options.hostname,
-        expectedRPID: options.hostname,
-        requireUserVerification: (userDocument.challenge.processingCredentialType === "backup" ? options.backupAuthenticatorAttachment === "platform" : options.authenticatorAttachment === "platform") && options.userVerificationRequirement === "required",
-        response: options.authenticationResponse
+        requireUserVerification: (userDocument.challenge.processingCredential === "second" && options.authenticatorAttachment2FA || options.authenticatorAttachment) === "platform" && options.userVerificationRequirement !== "discouraged"
       }
     ).then(
-      (verifiedAuthenticationResponse) => verifiedAuthenticationResponse.verified ? options.webAuthnUserCollectionReference.doc(options.authenticationResponse.response.userHandle || "").update(
+      (verifiedAuthenticationResponse) => (userDocument.lastPresent ? options.webAuthnUserDocumentReference.update(
         {
-          [userDocument.challenge?.processingCredentialType === "backup" ? "backupCredential" : "credential"]: {
-            ...targetUserDocument[userDocument.challenge?.processingCredentialType === "backup" ? "backupCredential" : "credential"],
-            backupEligible: verifiedAuthenticationResponse.authenticationInfo.credentialDeviceType === "multiDevice",
-            backupSuccessful: verifiedAuthenticationResponse.authenticationInfo.credentialBackedUp
-          },
-          lastCredentialUsed: "primary",
-          lastPresent: Timestamp.fromDate(/* @__PURE__ */ new Date()),
-          lastVerified: verifiedAuthenticationResponse.authenticationInfo.userVerified ? Timestamp.fromDate(/* @__PURE__ */ new Date()) : targetUserDocument["lastVerified"] || FieldValue3.delete()
+          challenge: FieldValue5.delete()
         }
-      ).then(
-        () => (userDocument.lastPresent ? options.webAuthnUserDocumentReference.update(
+      ) : options.webAuthnUserDocumentReference.delete()).then(
+        () => verifiedAuthenticationResponse.verified ? options.webAuthnUserDocumentReferenceTarget.update(
           {
-            challenge: FieldValue3.delete()
+            challenge: FieldValue5.delete(),
+            [userDocument.challenge?.processingCredential === "second" ? "credentials.second" : "credentials.first"]: {
+              ...targetUserDocument.credentials?.[userDocument.challenge?.processingCredential || "first"],
+              authenticatorAttachment: verifiedAuthenticationResponse.authenticationInfo.credentialDeviceType === "multiDevice" ? "platform" : "cross-platform",
+              backedUp: verifiedAuthenticationResponse.authenticationInfo.credentialBackedUp
+            },
+            lastCredentialUsed: "first",
+            lastPresent: Timestamp.fromDate(/* @__PURE__ */ new Date()),
+            lastVerified: verifiedAuthenticationResponse.authenticationInfo.userVerified ? Timestamp.fromDate(/* @__PURE__ */ new Date()) : targetUserDocument.lastVerified || FieldValue5.delete(),
+            lastWebAuthnProcess: "authentication"
           }
-        ) : options.webAuthnUserDocumentReference.delete()).then(
-          () => options.createCustomToken(options.authenticationResponse.response.userHandle || "").then(
+        ).then(
+          () => options.createCustomToken(options.authenticationOptions.response.response.userHandle || "").then(
             (customToken) => ({
-              authenticatedCredentialType: "primary",
+              authenticatedCredential: userDocument.challenge?.processingCredential || "first",
               customToken,
               operation: "verify authentication",
               success: true
@@ -321,47 +294,34 @@ var verifyAuthentication = (options) => options.authenticationResponse.response.
             operation: "verify authentication",
             success: false
           })
-        ),
-        (firebaseError) => ({
-          code: firebaseError.code,
-          message: firebaseError.message,
-          operation: "verify authentication",
-          success: false
-        })
-      ) : userDocument.challenge?.processingCredentialType === void 0 && targetUserDocument.backupCredential ? verifyAuthenticationResponse(
-        {
-          authenticator: {
-            counter: targetUserDocument.backupCredential.counter,
-            credentialID: targetUserDocument.backupCredential.id,
-            credentialPublicKey: targetUserDocument.backupCredential.publicKey
-          },
-          expectedChallenge: userDocument.challenge?.value || "",
-          expectedOrigin: "https://" + options.hostname,
-          expectedRPID: options.hostname,
-          requireUserVerification: options.backupAuthenticatorAttachment === "platform" && options.userVerificationRequirement === "required",
-          response: options.authenticationResponse
-        }
-      ).then(
-        (backupVerifiedAuthenticationResponse) => backupVerifiedAuthenticationResponse.verified ? options.webAuthnUserCollectionReference.doc(options.authenticationResponse.response.userHandle || "").update(
+        ) : userDocument.challenge?.processingCredential === void 0 && targetUserDocument.credentials?.second ? verifyAuthenticationResponse(
           {
-            backupCredential: {
-              ...targetUserDocument.backupCredential,
-              backupEligible: backupVerifiedAuthenticationResponse.authenticationInfo.credentialDeviceType === "multiDevice",
-              backupSuccessful: backupVerifiedAuthenticationResponse.authenticationInfo.credentialBackedUp
+            ...options.authenticationOptions,
+            authenticator: {
+              counter: targetUserDocument.credentials.second.counter,
+              credentialID: targetUserDocument.credentials.second.id,
+              credentialPublicKey: targetUserDocument.credentials.second.publicKey
             },
-            lastCredentialUsed: "backup",
-            lastPresent: Timestamp.fromDate(/* @__PURE__ */ new Date()),
-            lastVerified: backupVerifiedAuthenticationResponse.authenticationInfo.userVerified ? Timestamp.fromDate(/* @__PURE__ */ new Date()) : targetUserDocument["lastVerified"] || FieldValue3.delete()
+            expectedChallenge: userDocument.challenge?.value || ""
           }
         ).then(
-          () => (userDocument.lastPresent ? options.webAuthnUserDocumentReference.update(
+          (backupVerifiedAuthenticationResponse) => backupVerifiedAuthenticationResponse.verified ? options.webAuthnUserDocumentReferenceTarget.update(
             {
-              challenge: FieldValue3.delete()
+              challenge: FieldValue5.delete(),
+              "credentials.second": {
+                ...targetUserDocument.credentials?.second,
+                authenticatorAttachment: backupVerifiedAuthenticationResponse.authenticationInfo.credentialDeviceType === "multiDevice" ? "platform" : "cross-platform",
+                backedUp: backupVerifiedAuthenticationResponse.authenticationInfo.credentialBackedUp
+              },
+              lastCredentialUsed: "second",
+              lastPresent: Timestamp.fromDate(/* @__PURE__ */ new Date()),
+              lastVerified: backupVerifiedAuthenticationResponse.authenticationInfo.userVerified ? Timestamp.fromDate(/* @__PURE__ */ new Date()) : targetUserDocument.lastVerified || FieldValue5.delete(),
+              lastWebAuthnProcess: "authentication"
             }
-          ) : options.webAuthnUserDocumentReference.delete()).then(
-            () => options.createCustomToken(options.authenticationResponse.response.userHandle || "").then(
+          ).then(
+            () => options.createCustomToken(options.authenticationOptions.response.response.userHandle || "").then(
               (customToken) => ({
-                authenticatedCredentialType: "backup",
+                authenticatedCredential: "second",
                 customToken,
                 operation: "verify authentication",
                 success: true
@@ -379,16 +339,27 @@ var verifyAuthentication = (options) => options.authenticationResponse.response.
               operation: "verify authentication",
               success: false
             })
-          ),
-          (firebaseError) => ({
-            code: firebaseError.code,
-            message: firebaseError.message,
-            operation: "verify authentication",
-            success: false
-          })
-        ) : (userDocument.lastPresent ? options.webAuthnUserDocumentReference.update(
+          ) : (userDocument.credentials ? options.webAuthnUserDocumentReference.update(
+            {
+              challenge: FieldValue5.delete()
+            }
+          ) : options.webAuthnUserDocumentReference.delete()).then(
+            () => ({
+              code: "not-verified",
+              message: "User not verified. 2",
+              operation: "verify authentication",
+              success: false
+            }),
+            (firebaseError) => ({
+              code: firebaseError.code,
+              message: firebaseError.message,
+              operation: "verify authentication",
+              success: false
+            })
+          )
+        ) : (userDocument.credentials ? options.webAuthnUserDocumentReference.update(
           {
-            challenge: FieldValue3.delete()
+            challenge: FieldValue5.delete()
           }
         ) : options.webAuthnUserDocumentReference.delete()).then(
           () => ({
@@ -403,18 +374,7 @@ var verifyAuthentication = (options) => options.authenticationResponse.response.
             operation: "verify authentication",
             success: false
           })
-        )
-      ) : (userDocument.lastPresent ? options.webAuthnUserDocumentReference.update(
-        {
-          challenge: FieldValue3.delete()
-        }
-      ) : options.webAuthnUserDocumentReference.delete()).then(
-        () => ({
-          code: "not-verified",
-          message: "User not verified.",
-          operation: "verify authentication",
-          success: false
-        }),
+        ),
         (firebaseError) => ({
           code: firebaseError.code,
           message: firebaseError.message,
@@ -424,7 +384,7 @@ var verifyAuthentication = (options) => options.authenticationResponse.response.
       )
     ) : options.webAuthnUserDocumentReference.update(
       {
-        challenge: FieldValue3.delete()
+        challenge: FieldValue5.delete()
       }
     ).then(
       () => ({
@@ -439,7 +399,7 @@ var verifyAuthentication = (options) => options.authenticationResponse.response.
         operation: "verify authentication",
         success: false
       })
-    ) : userDocument.lastPresent ? {
+    ) : userDocument.credentials ? {
       code: "user-doc-missing-challenge-field",
       message: "User doc is missing challenge field from prior operation.",
       operation: "verify authentication",
@@ -483,7 +443,7 @@ var verifyAuthentication = (options) => options.authenticationResponse.response.
   })
 ) : options.webAuthnUserDocumentReference.update(
   {
-    challenge: FieldValue3.delete()
+    challenge: FieldValue5.delete()
   }
 ).then(
   () => ({
@@ -502,38 +462,37 @@ var verifyAuthentication = (options) => options.authenticationResponse.response.
 
 // libs/api/src/lib/function responses/lib/verifyReauthentication.ts
 import { verifyAuthenticationResponse as verifyAuthenticationResponse2 } from "@simplewebauthn/server";
-import { FieldValue as FieldValue4, Timestamp as Timestamp2 } from "firebase-admin/firestore";
+import { FieldValue as FieldValue6, Timestamp as Timestamp2 } from "firebase-admin/firestore";
 var verifyReauthentication = (options) => options.webAuthnUserDocumentReference.get().then(
-  (userDocumentSnapshot) => (async (userDocument) => userDocument ? userDocument.challenge && userDocument.challenge.process === "reauthentication" ? userDocument[userDocument.challenge?.processingCredentialType === "backup" ? "backupCredential" : "credential"] ? verifyAuthenticationResponse2(
+  (userDocumentSnapshot) => (async (userDocument) => userDocument ? userDocument.challenge && userDocument.challenge.process === "reauthentication" ? userDocument.credentials?.[userDocument.challenge?.processingCredential || "first"] ? verifyAuthenticationResponse2(
     {
+      ...options.authenticationOptions,
       authenticator: {
-        counter: userDocument[userDocument.challenge.processingCredentialType === "backup" ? "backupCredential" : "credential"]?.counter || 0,
-        credentialID: userDocument[userDocument.challenge.processingCredentialType === "backup" ? "backupCredential" : "credential"]?.id || new Uint8Array(0),
-        credentialPublicKey: userDocument[userDocument.challenge.processingCredentialType === "backup" ? "backupCredential" : "credential"]?.publicKey || new Uint8Array(0)
+        counter: userDocument?.credentials[userDocument.challenge.processingCredential || "first"]?.counter || 0,
+        credentialID: userDocument?.credentials[userDocument.challenge.processingCredential || "first"]?.id || new Uint8Array(0),
+        credentialPublicKey: userDocument?.credentials[userDocument.challenge.processingCredential || "first"]?.publicKey || new Uint8Array(0)
       },
       expectedChallenge: userDocument.challenge.value,
-      expectedOrigin: "https://" + options.hostname,
-      expectedRPID: options.hostname,
-      requireUserVerification: (userDocument.challenge.processingCredentialType === "backup" ? options.backupAuthenticatorAttachment === "platform" : options.authenticatorAttachment === "platform") && options.userVerificationRequirement === "required",
-      response: options.authenticationResponse
+      requireUserVerification: (userDocument.challenge.processingCredential === "second" && options.authenticatorAttachment2FA || options.authenticatorAttachment) === "platform" && options.userVerificationRequirement === "required"
     }
   ).then(
     (verifiedAuthenticationResponse) => verifiedAuthenticationResponse.verified ? options.webAuthnUserDocumentReference.update(
       {
-        challenge: FieldValue4.delete(),
-        [userDocument.challenge?.processingCredentialType === "backup" ? "backupCredential" : "credential"]: {
-          ...userDocument[userDocument.challenge?.processingCredentialType === "backup" ? "backupCredential" : "credential"],
-          backupEligible: verifiedAuthenticationResponse.authenticationInfo.credentialDeviceType === "multiDevice",
-          backupSuccessful: verifiedAuthenticationResponse.authenticationInfo.credentialBackedUp
+        challenge: FieldValue6.delete(),
+        [userDocument.challenge?.processingCredential === "second" ? "credentials.second" : "credentials.first"]: {
+          ...userDocument.credentials?.[userDocument.challenge?.processingCredential || "first"],
+          authenticatorAttachment: verifiedAuthenticationResponse.authenticationInfo.credentialDeviceType === "multiDevice" ? "platform" : "cross-platform",
+          backedUp: verifiedAuthenticationResponse.authenticationInfo.credentialBackedUp
         },
-        lastCredentialUsed: userDocument.challenge?.processingCredentialType || "primary",
+        lastCredentialUsed: userDocument.challenge?.processingCredential || "first",
         lastPresent: Timestamp2.fromDate(/* @__PURE__ */ new Date()),
-        lastVerified: verifiedAuthenticationResponse.authenticationInfo.userVerified ? Timestamp2.fromDate(/* @__PURE__ */ new Date()) : userDocument["lastVerified"] || FieldValue4.delete()
+        lastVerified: verifiedAuthenticationResponse.authenticationInfo.userVerified ? Timestamp2.fromDate(/* @__PURE__ */ new Date()) : userDocument.lastVerified || FieldValue6.delete(),
+        lastWebAuthnProcess: "reauthentication"
       }
     ).then(
       () => options.createCustomToken().then(
         (customToken) => ({
-          reauthenticatedCredentialType: userDocument.challenge?.processingCredentialType || "primary",
+          reauthenticatedCredential: userDocument.challenge?.processingCredential || "first",
           customToken,
           operation: "verify reauthentication",
           success: true
@@ -551,36 +510,34 @@ var verifyReauthentication = (options) => options.webAuthnUserDocumentReference.
         operation: "verify reauthentication",
         success: false
       })
-    ) : userDocument.challenge?.processingCredentialType === void 0 && userDocument.backupCredential ? verifyAuthenticationResponse2(
+    ) : userDocument.challenge?.processingCredential === void 0 && userDocument.credentials?.second ? verifyAuthenticationResponse2(
       {
+        ...options.authenticationOptions,
         authenticator: {
-          counter: userDocument.backupCredential.counter,
-          credentialID: userDocument.backupCredential.id,
-          credentialPublicKey: userDocument.backupCredential.publicKey
+          counter: userDocument.credentials.second.counter,
+          credentialID: userDocument.credentials.second.id,
+          credentialPublicKey: userDocument.credentials.second.publicKey
         },
-        expectedChallenge: userDocument.challenge?.value || "",
-        expectedOrigin: "https://" + options.hostname,
-        expectedRPID: options.hostname,
-        requireUserVerification: options.backupAuthenticatorAttachment === "platform" && options.userVerificationRequirement === "required",
-        response: options.authenticationResponse
+        expectedChallenge: userDocument.challenge?.value || ""
       }
     ).then(
       (backupVerifiedAuthenticationResponse) => backupVerifiedAuthenticationResponse.verified ? options.webAuthnUserDocumentReference.update(
         {
-          challenge: FieldValue4.delete(),
-          backupCredential: {
-            ...userDocument.backupCredential,
-            backupEligible: backupVerifiedAuthenticationResponse.authenticationInfo.credentialDeviceType === "multiDevice",
-            backupSuccessful: backupVerifiedAuthenticationResponse.authenticationInfo.credentialBackedUp
+          challenge: FieldValue6.delete(),
+          "credentials.second": {
+            ...userDocument.credentials?.second,
+            authenticatorAttachment: backupVerifiedAuthenticationResponse.authenticationInfo.credentialDeviceType === "multiDevice" ? "platform" : "cross-platform",
+            backedUp: backupVerifiedAuthenticationResponse.authenticationInfo.credentialBackedUp
           },
-          lastCredentialUsed: "backup",
+          lastCredentialUsed: "second",
           lastPresent: Timestamp2.fromDate(/* @__PURE__ */ new Date()),
-          lastVerified: backupVerifiedAuthenticationResponse.authenticationInfo.userVerified ? Timestamp2.fromDate(/* @__PURE__ */ new Date()) : userDocument["lastVerified"] || FieldValue4.delete()
+          lastVerified: backupVerifiedAuthenticationResponse.authenticationInfo.userVerified ? Timestamp2.fromDate(/* @__PURE__ */ new Date()) : userDocument.lastVerified || FieldValue6.delete(),
+          lastWebAuthnProcess: "reauthentication"
         }
       ).then(
         () => options.createCustomToken().then(
           (customToken) => ({
-            reauthenticatedCredentialType: "backup",
+            reauthenticatedCredential: "second",
             customToken,
             operation: "verify reauthentication",
             success: true
@@ -600,12 +557,12 @@ var verifyReauthentication = (options) => options.webAuthnUserDocumentReference.
         })
       ) : options.webAuthnUserDocumentReference.update(
         {
-          challenge: FieldValue4.delete()
+          challenge: FieldValue6.delete()
         }
       ).then(
         () => ({
           code: "not-verified",
-          message: "User not verified.",
+          message: "User not verified. 2",
           operation: "verify reauthentication",
           success: false
         }),
@@ -618,7 +575,7 @@ var verifyReauthentication = (options) => options.webAuthnUserDocumentReference.
       )
     ) : options.webAuthnUserDocumentReference.update(
       {
-        challenge: FieldValue4.delete()
+        challenge: FieldValue6.delete()
       }
     ).then(
       () => ({
@@ -636,7 +593,7 @@ var verifyReauthentication = (options) => options.webAuthnUserDocumentReference.
     )
   ) : options.webAuthnUserDocumentReference.update(
     {
-      challenge: FieldValue4.delete()
+      challenge: FieldValue6.delete()
     }
   ).then(
     () => ({
@@ -666,34 +623,34 @@ var verifyReauthentication = (options) => options.webAuthnUserDocumentReference.
 
 // libs/api/src/lib/function responses/lib/verifyRegistration.ts
 import { verifyRegistrationResponse } from "@simplewebauthn/server";
-import { FieldValue as FieldValue5, Timestamp as Timestamp3 } from "firebase-admin/firestore";
+import { FieldValue as FieldValue7, Timestamp as Timestamp3 } from "firebase-admin/firestore";
 var verifyRegistration = (options) => options.webAuthnUserDocumentReference.get().then(
-  (userDocumentSnapshot) => (async (userDocument) => userDocument ? userDocument.challenge && userDocument.challenge.process === "registration" ? userDocument.challenge.processingCredentialType !== "backup" || userDocument.credential ? verifyRegistrationResponse(
+  (userDocumentSnapshot) => (async (userDocument) => userDocument ? userDocument.challenge && userDocument.challenge.process === "registration" ? userDocument.challenge.processingCredential !== "second" || userDocument.credentials?.first ? verifyRegistrationResponse(
     {
+      ...options.registrationOptions,
       expectedChallenge: userDocument.challenge.value,
-      expectedOrigin: "https://" + options.hostname,
-      expectedRPID: options.hostname,
-      requireUserVerification: (userDocument.challenge.processingCredentialType === "backup" ? options.backupAuthenticatorAttachment === "platform" : options.authenticatorAttachment === "platform") && options.userVerificationRequirement === "required",
-      response: options.registrationResponse
+      requireUserVerification: (userDocument.challenge.processingCredential === "second" ? options.authenticatorAttachment2FA === "platform" : options.authenticatorAttachment === "platform") && options.userVerificationRequirement === "required"
     }
   ).then(
     (verifiedRegistrationResponse) => verifiedRegistrationResponse.verified && verifiedRegistrationResponse.registrationInfo ? options.webAuthnUserDocumentReference.update(
       {
-        challenge: FieldValue5.delete(),
-        [userDocument.challenge?.processingCredentialType === "backup" ? "backupCredential" : "credential"]: {
-          backupEligible: verifiedRegistrationResponse.registrationInfo.credentialDeviceType === "multiDevice",
-          backupSuccessful: verifiedRegistrationResponse.registrationInfo.credentialBackedUp,
+        challenge: FieldValue7.delete(),
+        [userDocument.challenge?.processingCredential === "second" ? "credentials.second" : "credentials.first"]: {
+          authenticatorAttachment: verifiedRegistrationResponse.registrationInfo.credentialDeviceType === "multiDevice" ? "platform" : "cross-platform",
+          backedUp: verifiedRegistrationResponse.registrationInfo.credentialBackedUp,
           counter: verifiedRegistrationResponse.registrationInfo.counter,
           id: verifiedRegistrationResponse.registrationInfo.credentialID,
           publicKey: verifiedRegistrationResponse.registrationInfo.credentialPublicKey
         },
+        lastCredentialUsed: userDocument.challenge?.processingCredential || "first",
         lastPresent: Timestamp3.fromDate(/* @__PURE__ */ new Date()),
-        lastVerified: verifiedRegistrationResponse.registrationInfo.userVerified ? Timestamp3.fromDate(/* @__PURE__ */ new Date()) : userDocument["lastVerified"]
+        lastVerified: verifiedRegistrationResponse.registrationInfo.userVerified ? Timestamp3.fromDate(/* @__PURE__ */ new Date()) : userDocument.lastVerified || FieldValue7.delete(),
+        lastWebAuthnProcess: "registration"
       }
     ).then(
       () => options.createCustomToken().then(
         (customToken) => ({
-          registeredCredentialType: userDocument.lastPresent ? "backup" : "primary",
+          registeredCredential: userDocument.challenge?.processingCredential || "first",
           customToken,
           operation: "verify registration",
           success: true
@@ -711,9 +668,9 @@ var verifyRegistration = (options) => options.webAuthnUserDocumentReference.get(
         operation: "verify registration",
         success: false
       })
-    ) : (userDocument.lastPresent ? options.webAuthnUserDocumentReference.update(
+    ) : (userDocument.credentials ? options.webAuthnUserDocumentReference.update(
       {
-        challenge: FieldValue5.delete()
+        challenge: FieldValue7.delete()
       }
     ) : options.webAuthnUserDocumentReference.delete()).then(
       () => ({
@@ -742,7 +699,7 @@ var verifyRegistration = (options) => options.webAuthnUserDocumentReference.get(
       operation: "verify registration",
       success: false
     })
-  ) : userDocument.lastPresent ? {
+  ) : userDocument.credentials?.first ? {
     code: "user-doc-missing-challenge-field",
     message: "User doc is missing challenge field from prior operation.",
     operation: "verify registration",
@@ -780,74 +737,122 @@ var getFirebaseWebAuthnApi = (firebaseWebAuthnConfig, app) => onCall(
     enforceAppCheck: true,
     ingressSettings: "ALLOW_ALL"
   },
-  async (callableRequest) => callableRequest.auth ? ((firestore) => (async (auth, userID, webAuthnUserCollectionReference, webAuthnUserDocumentReference) => callableRequest.data.operation === "clear challenge" ? clearChallenge(
+  async (callableRequest) => callableRequest.auth ? ((firestore) => (async (auth, userID, webAuthnUserDocumentReference, webAuthnUserDocumentReferenceTarget) => callableRequest.data.operation === "clear challenge" ? clearChallenge(
     {
       webAuthnUserDocumentReference
     }
   ) : callableRequest.data.operation == "clear credential" ? clearCredential(
     {
-      clearingCredentialType: callableRequest.data.clearingCredentialType,
+      clearingCredential: callableRequest.data.clearingCredential,
       webAuthnUserDocumentReference
     }
   ) : callableRequest.data.operation === "create authentication challenge" ? createAuthenticationChallenge(
     {
-      authenticatorAttachment: firebaseWebAuthnConfig.authenticatorAttachment,
-      authenticatingCredentialType: callableRequest.data.authenticatingCredentialType,
-      backupAuthenticatorAttachment: firebaseWebAuthnConfig.backupAuthenticatorAttachment,
-      hostname: callableRequest.rawRequest.hostname,
-      userVerificationRequirement: firebaseWebAuthnConfig.userVerificationRequirement,
+      authenticatingCredential: callableRequest.data.authenticatingCredential,
+      authenticationOptions: {
+        attestationType: "indirect",
+        extensions: {
+          appid: "https://" + callableRequest.rawRequest.hostname
+        },
+        rpID: callableRequest.rawRequest.hostname,
+        supportedAlgorithmIDs: [
+          -7,
+          -8,
+          -257
+        ]
+      },
       webAuthnUserDocumentReference
     }
   ) : callableRequest.data.operation === "create reauthentication challenge" ? createReauthenticationChallenge(
     {
-      authenticatorAttachment: firebaseWebAuthnConfig.authenticatorAttachment,
-      backupAuthenticatorAttachment: firebaseWebAuthnConfig.backupAuthenticatorAttachment,
-      hostname: callableRequest.rawRequest.hostname,
-      reauthenticatingCredentialType: callableRequest.data.reauthenticatingCredentialType,
-      userVerificationRequirement: firebaseWebAuthnConfig.userVerificationRequirement,
+      authenticationOptions: {
+        attestationType: "indirect",
+        extensions: {
+          appid: "https://" + callableRequest.rawRequest.hostname
+        },
+        rpID: callableRequest.rawRequest.hostname,
+        supportedAlgorithmIDs: [
+          -7,
+          -8,
+          -257
+        ]
+      },
+      reauthenticatingCredentialFactor: callableRequest.data.reauthenticatingCredential,
       webAuthnUserDocumentReference
     }
   ) : callableRequest.data.operation === "create registration challenge" ? createRegistrationChallenge(
     {
-      authenticatorAttachment: firebaseWebAuthnConfig.authenticatorAttachment,
-      backupAuthenticatorAttachment: firebaseWebAuthnConfig.backupAuthenticatorAttachment,
-      hostname: callableRequest.rawRequest.hostname,
-      registeringCredentialType: callableRequest.data.registeringCredentialType,
-      relyingPartyName: firebaseWebAuthnConfig.relyingPartyName,
-      userID,
-      userName: callableRequest.data.name,
-      userVerificationRequirement: firebaseWebAuthnConfig.userVerificationRequirement,
+      registeringCredentialFactor: callableRequest.data.registeringCredential,
+      registrationOptions: {
+        attestationType: "indirect",
+        authenticatorSelection: callableRequest.data.registeringCredential === "second" && firebaseWebAuthnConfig.authenticatorAttachment2FA ? {
+          authenticatorAttachment: firebaseWebAuthnConfig.authenticatorAttachment2FA,
+          residentKey: "preferred",
+          userVerification: firebaseWebAuthnConfig.authenticatorAttachment2FA === "platform" && firebaseWebAuthnConfig.userVerificationRequirement !== "discouraged" ? firebaseWebAuthnConfig.userVerificationRequirement : "preferred"
+        } : firebaseWebAuthnConfig.authenticatorAttachment ? {
+          authenticatorAttachment: firebaseWebAuthnConfig.authenticatorAttachment,
+          residentKey: "preferred",
+          userVerification: firebaseWebAuthnConfig.authenticatorAttachment === "platform" && firebaseWebAuthnConfig.userVerificationRequirement !== "discouraged" ? firebaseWebAuthnConfig.userVerificationRequirement : "preferred"
+        } : {
+          residentKey: "preferred",
+          userVerification: "preferred"
+        },
+        extensions: {
+          appid: "https://" + callableRequest.rawRequest.hostname
+        },
+        rpID: callableRequest.rawRequest.hostname,
+        rpName: firebaseWebAuthnConfig.relyingPartyName,
+        supportedAlgorithmIDs: [
+          -7,
+          -8,
+          -257
+        ],
+        userID,
+        userName: callableRequest.data.name
+      },
       webAuthnUserDocumentReference
     }
   ) : callableRequest.data.operation === "verify authentication" ? verifyAuthentication(
     {
-      authenticationResponse: callableRequest.data.authenticationResponse,
+      authenticationOptions: {
+        expectedOrigin: "https://" + callableRequest.rawRequest.hostname,
+        expectedRPID: callableRequest.rawRequest.hostname,
+        requireUserVerification: (firebaseWebAuthnConfig.authenticatorAttachment2FA || firebaseWebAuthnConfig.authenticatorAttachment) === "platform" && firebaseWebAuthnConfig.userVerificationRequirement !== "discouraged",
+        response: callableRequest.data.authenticationResponse
+      },
       authenticatorAttachment: firebaseWebAuthnConfig.authenticatorAttachment,
-      backupAuthenticatorAttachment: firebaseWebAuthnConfig.backupAuthenticatorAttachment,
+      authenticatorAttachment2FA: firebaseWebAuthnConfig.authenticatorAttachment2FA,
       createCustomToken: (uid) => auth.createCustomToken(uid),
-      hostname: callableRequest.rawRequest.hostname,
       userID,
       userVerificationRequirement: firebaseWebAuthnConfig.userVerificationRequirement,
-      webAuthnUserCollectionReference,
-      webAuthnUserDocumentReference
+      webAuthnUserDocumentReference,
+      webAuthnUserDocumentReferenceTarget
     }
   ) : callableRequest.data.operation === "verify reauthentication" ? verifyReauthentication(
     {
-      authenticationResponse: callableRequest.data.authenticationResponse,
+      authenticationOptions: {
+        expectedOrigin: "https://" + callableRequest.rawRequest.hostname,
+        expectedRPID: callableRequest.rawRequest.hostname,
+        requireUserVerification: (firebaseWebAuthnConfig.authenticatorAttachment2FA || firebaseWebAuthnConfig.authenticatorAttachment) === "platform" && firebaseWebAuthnConfig.userVerificationRequirement !== "discouraged",
+        response: callableRequest.data.authenticationResponse
+      },
       authenticatorAttachment: firebaseWebAuthnConfig.authenticatorAttachment,
-      backupAuthenticatorAttachment: firebaseWebAuthnConfig.backupAuthenticatorAttachment,
+      authenticatorAttachment2FA: firebaseWebAuthnConfig.authenticatorAttachment2FA,
       createCustomToken: () => auth.createCustomToken(userID),
-      hostname: callableRequest.rawRequest.hostname,
+      userID,
       userVerificationRequirement: firebaseWebAuthnConfig.userVerificationRequirement,
       webAuthnUserDocumentReference
     }
   ) : callableRequest.data.operation === "verify registration" ? verifyRegistration(
     {
       authenticatorAttachment: firebaseWebAuthnConfig.authenticatorAttachment,
-      backupAuthenticatorAttachment: firebaseWebAuthnConfig.backupAuthenticatorAttachment,
+      authenticatorAttachment2FA: firebaseWebAuthnConfig.authenticatorAttachment2FA,
       createCustomToken: () => auth.createCustomToken(userID),
-      hostname: callableRequest.rawRequest.hostname,
-      registrationResponse: callableRequest.data.registrationResponse,
+      registrationOptions: {
+        expectedOrigin: "https://" + callableRequest.rawRequest.hostname,
+        expectedRPID: callableRequest.rawRequest.hostname,
+        response: callableRequest.data.registrationResponse
+      },
       userVerificationRequirement: firebaseWebAuthnConfig.userVerificationRequirement,
       webAuthnUserDocumentReference
     }
@@ -856,8 +861,8 @@ var getFirebaseWebAuthnApi = (firebaseWebAuthnConfig, app) => onCall(
   })())(
     app ? getAuth(app) : getAuth(),
     callableRequest.auth.uid,
-    firestore.collection("users"),
-    firestore.collection("users").doc(callableRequest.auth.uid)
+    firestore.collection("users").doc(callableRequest.auth.uid),
+    firestore.collection("users").doc(callableRequest.data.operation === "verify authentication" && callableRequest.data.authenticationResponse.response.userHandle || callableRequest.auth.uid)
   ))(
     app ? getFirestore(
       app,
@@ -875,7 +880,7 @@ var getFirebaseWebAuthnApi = (firebaseWebAuthnConfig, app) => onCall(
 var api = getFirebaseWebAuthnApi(
   {
     authenticatorAttachment: process.env["AUTHENTICATOR_ATTACHMENT"] === "any" ? void 0 : process.env["AUTHENTICATOR_ATTACHMENT"],
-    backupAuthenticatorAttachment: process.env["BACKUP_AUTHENTICATOR_ATTACHMENT"] === "any" ? void 0 : process.env["BACKUP_AUTHENTICATOR_ATTACHMENT"],
+    authenticatorAttachment2FA: process.env["AUTHENTICATOR_ATTACHMENT_2FA"] === "any" ? void 0 : process.env["AUTHENTICATOR_ATTACHMENT_2FA"],
     relyingPartyName: process.env["RELYING_PARTY_NAME"],
     userVerificationRequirement: process.env["USER_VERIFICATION_REQUIREMENT"]
   }

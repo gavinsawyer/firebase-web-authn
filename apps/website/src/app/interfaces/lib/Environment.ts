@@ -1,5 +1,5 @@
 export interface Environment {
-  "app": string,
+  "projectName": string,
   "firebase": {
     "apiKey": string,
     "appId": string,

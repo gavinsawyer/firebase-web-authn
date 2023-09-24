@@ -2,8 +2,8 @@ import { Environment } from "./app/interfaces";
 
 
 export const environment: Environment = {
-  app: "website",
-  firebase: {
+  projectName: "website",
+  firebase:    {
     apiKey: "AIzaSyBMw2wD275dSe0GgjMwnnZdH3UeEjhzjAg",
     appId: "1:27945769308:web:22bb25b759f71244148999",
     authDomain: "fir-web-authn.firebaseapp.com",
@@ -12,6 +12,6 @@ export const environment: Environment = {
     projectId: "fir-web-authn",
     storageBucket: "fir-web-authn.appspot.com"
   },
-  production: true,
+  production:  true,
   recaptchaSiteKey: "6Lf0hE8lAAAAACbMYIMHgk7EgkDNpUCpgdYQ4iJw"
 };

@@ -1,26 +1,27 @@
-<article>
-  <section>
-    <h2>
-      FirebaseWebAuthn Demo
-    </h2>
-    <p *ngIf="webAuthnUnsupported">
-      Please use a <a href="https://caniuse.com/webauthn">browser that supports WebAuthn</a>.
-    </p>
-    <p *ngIf="authenticationService.user$() === null || authenticationService.user$()?.isAnonymous">
-      Input any name to get started or sign with an existing passkey{{ ellipsesService.ellipses$() }}
-    </p>
-    <p *ngIf="authenticationService.user$() && authenticationService.user$()?.isAnonymous === false">
-      You're in! Create another account to see WebAuthn's built-in account switcher or try verifying or linking a backup next.
+<section>
+  <h1>
+    FirebaseWebAuthn Demo
+  </h1>
+  <p *ngIf="webAuthnUnsupported">
+    Please use a <a href="https://caniuse.com/webauthn">browser that supports WebAuthn</a>.
+  </p>
+  <p *ngIf="!authenticationService.user$()">
+    Initializing Firebase Auth{{ ellipsesService.ellipses$() }}
+  </p>
+  <p *ngIf="authenticationService.user$()?.isAnonymous === true">
+    Input any username to get started or sign with an existing passkey.
+  </p>
+  <ng-container *ngIf="authenticationService.user$()?.isAnonymous === false">
+    <p>
+      You're in!
     </p>
     <p>
-      <a routerLink="/privacy">
-        Privacy
-        <mat-icon
-          class="material-symbols-rounded"
-          inline="inline">
-          info
-        </mat-icon>
-      </a>
+      Next, try creating another account to see WebAuthn's built-in account switcher, linking a backup security key, or re-verifing your identity.
     </p>
-  </section>
-</article>
+  </ng-container>
+  <p>
+    <a routerLink="/privacy">Privacy&nbsp;<mat-icon
+      class="material-symbols-rounded"
+      inline="inline">info</mat-icon></a>
+  </p>
+</section>

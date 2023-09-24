@@ -5,17 +5,17 @@ A Firebase Extension for authentication with WebAuthn passkeys.
 [![Latest version in NPM](https://img.shields.io/npm/v/@firebase-web-authn/extension?logo=npm)](https://www.npmjs.com/package/@firebase-web-authn/extension)
 [![Install](https://img.shields.io/static/v1?label=&message=Install%20in%20Firebase%20console&logo=firebase&color=blue)](https://console.firebase.google.com/u/0/project/_/extensions/install?ref=gavinsawyer%2Ffirebase-web-authn)
 
-## v10.3.0 (Not bumped)
+## v10.3.0
 
-- BREAKING CHANGE: Removed `credential` method from server package in favor of `credentials` which returns an object of `primary` and `backup` WebAuthnUserCredentials with either being null if not found.
-- Added backup passkey functionality with new credential `type` parameters in browser package. (Fixes #3).
+- Implemented second (2FA) factor passkeys with changes to several packages. (Fixes #3).
+- Improved docs and TSDocs/type-safety.
+- Updated dependencies.
+- BREAKING CHANGES: Deprecated some server library methods to better reflect WebAuthn spec, Changed structure of credentials in Firestore. Clear user database or create a migration script if proceeding.
 - Rearranged extension parameters and added "any" authenticator attachment option.
 - Moved to 2nd Gen Cloud Function for API ahead of support.
 - Improved demo website.
-- Improved TSDoc.
-- Updated documentation.
 - Renamed API operation `clear user doc` to `clear credential`, added support for clearing backup credentials.
-- Added more security surrounding challenge by storing expected `process` ("authentication", "registration", etc.) and `processingCredentialType` ("primary" or "backup") alongside challenge value.
+- Added more security surrounding challenge by storing expected `process` ("authentication", "registration", etc.) and `processingCredential` ("first" or "second") alongside challenge value.
 - Separated function responses by operation in API.
 
 ## v10.2.2

@@ -1,0 +1,45 @@
+<mat-card>
+  <mat-card-header>
+    <mat-card-title>
+      Welcome{{ profileService.profileDocument$()?.name ? ', ' + profileService.profileDocument$()?.name + '.' : ellipsesService.ellipses$() }}
+    </mat-card-title>
+  </mat-card-header>
+  <mat-card-actions>
+    <button
+      (click)="authenticationService.signInWithPasskey();"
+      color="primary"
+      mat-button="mat-button">
+      <mat-icon class="material-symbols-rounded">
+        passkey
+      </mat-icon>
+      Switch accounts
+    </button>
+    <button
+      (click)="authenticationService.signInAnonymously();"
+      color="primary"
+      mat-button="mat-button">
+      <mat-icon class="material-symbols-rounded">
+        logout
+      </mat-icon>
+      Sign out
+    </button>
+  </mat-card-actions>
+</mat-card>
+<button
+  (click)="authenticationService.linkBackupPasskey();"
+  color="primary"
+  mat-raised-button="">
+  <mat-icon class="material-symbols-rounded">
+    cloud_off
+  </mat-icon>
+  Link backup passkey
+</button>
+<button
+  (click)="authenticationService.verifyUserWithPasskey();"
+  color="primary"
+  mat-raised-button="">
+  <mat-icon class="material-symbols-rounded">
+    how_to_reg
+  </mat-icon>
+  Verify with passkey
+</button>

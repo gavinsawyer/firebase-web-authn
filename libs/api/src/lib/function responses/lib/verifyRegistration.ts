@@ -5,36 +5,49 @@ import { FirebaseError }                                              from "fire
 import { DocumentReference, DocumentSnapshot, FieldValue, Timestamp } from "firebase-admin/firestore";
 
 
-export const verifyRegistration: (options: { authenticatorAttachment?: AuthenticatorAttachment, backupAuthenticatorAttachment?: AuthenticatorAttachment, createCustomToken: () => Promise<string>, hostname: string, registrationResponse: RegistrationResponseJSON, userVerificationRequirement?: UserVerificationRequirement, webAuthnUserDocumentReference: DocumentReference<WebAuthnUserDocument> }) => Promise<FunctionResponse> = (options: { authenticatorAttachment?: AuthenticatorAttachment, backupAuthenticatorAttachment?: AuthenticatorAttachment, createCustomToken: () => Promise<string>, hostname: string, registrationResponse: RegistrationResponseJSON, userVerificationRequirement?: UserVerificationRequirement, webAuthnUserDocumentReference: DocumentReference<WebAuthnUserDocument> }): Promise<FunctionResponse> => options.webAuthnUserDocumentReference.get().then<FunctionResponse, FunctionResponse>(
-  (userDocumentSnapshot: DocumentSnapshot<WebAuthnUserDocument>): Promise<FunctionResponse> => (async (userDocument: WebAuthnUserDocument | undefined): Promise<FunctionResponse> => userDocument ? userDocument.challenge && userDocument.challenge.process === "registration" ? (userDocument.challenge.processingCredentialType !== "backup" || userDocument.credential) ? verifyRegistrationResponse(
+interface VerifyRegistrationOptions {
+  authenticatorAttachment?: AuthenticatorAttachment,
+  authenticatorAttachment2FA?: AuthenticatorAttachment,
+  createCustomToken: () => Promise<string>,
+  registrationOptions: {
+    expectedOrigin: string,
+    expectedRPID: string,
+    response: RegistrationResponseJSON,
+  },
+  userVerificationRequirement?: UserVerificationRequirement,
+  webAuthnUserDocumentReference: DocumentReference<WebAuthnUserDocument>
+}
+
+export const verifyRegistration: (options: VerifyRegistrationOptions) => Promise<FunctionResponse> = (options: VerifyRegistrationOptions): Promise<FunctionResponse> => options.webAuthnUserDocumentReference.get().then<FunctionResponse, FunctionResponse>(
+  (userDocumentSnapshot: DocumentSnapshot<WebAuthnUserDocument>): Promise<FunctionResponse> => (async (userDocument: WebAuthnUserDocument | undefined): Promise<FunctionResponse> => userDocument ? userDocument.challenge && userDocument.challenge.process === "registration" ? (userDocument.challenge.processingCredential !== "second" || userDocument.credentials?.first) ? verifyRegistrationResponse(
     {
+      ...options.registrationOptions,
       expectedChallenge:       userDocument.challenge.value,
-      expectedOrigin:          "https://" + options.hostname,
-      expectedRPID:            options.hostname,
-      requireUserVerification: (userDocument.challenge.processingCredentialType === "backup" ? options.backupAuthenticatorAttachment === "platform" : options.authenticatorAttachment === "platform") && options.userVerificationRequirement === "required",
-      response:                options.registrationResponse,
+      requireUserVerification: (userDocument.challenge.processingCredential === "second" ? options.authenticatorAttachment2FA === "platform" : options.authenticatorAttachment === "platform") && options.userVerificationRequirement === "required",
     },
   ).then<FunctionResponse>(
     (verifiedRegistrationResponse: VerifiedRegistrationResponse): Promise<FunctionResponse> => verifiedRegistrationResponse.verified && verifiedRegistrationResponse.registrationInfo ? options.webAuthnUserDocumentReference.update(
       {
-        challenge:                                                                                           FieldValue.delete(),
-        [userDocument.challenge?.processingCredentialType === "backup" ? "backupCredential" : "credential"]: {
-          backupEligible:   verifiedRegistrationResponse.registrationInfo.credentialDeviceType === "multiDevice",
-          backupSuccessful: verifiedRegistrationResponse.registrationInfo.credentialBackedUp,
-          counter:          verifiedRegistrationResponse.registrationInfo.counter,
-          id:               verifiedRegistrationResponse.registrationInfo.credentialID,
-          publicKey:        verifiedRegistrationResponse.registrationInfo.credentialPublicKey,
+        challenge:                                                                                                FieldValue.delete(),
+        [userDocument.challenge?.processingCredential === "second" ? "credentials.second" : "credentials.first"]: {
+          authenticatorAttachment: verifiedRegistrationResponse.registrationInfo.credentialDeviceType === "multiDevice" ? "platform" : "cross-platform",
+          backedUp:                verifiedRegistrationResponse.registrationInfo.credentialBackedUp,
+          counter:                 verifiedRegistrationResponse.registrationInfo.counter,
+          id:                      verifiedRegistrationResponse.registrationInfo.credentialID,
+          publicKey:               verifiedRegistrationResponse.registrationInfo.credentialPublicKey,
         },
-        lastPresent:                                                                                         Timestamp.fromDate(new Date()),
-        lastVerified:                                                                                        verifiedRegistrationResponse.registrationInfo.userVerified ? Timestamp.fromDate(new Date()) : userDocument["lastVerified"],
+        lastCredentialUsed:                                                                                       userDocument.challenge?.processingCredential || "first",
+        lastPresent:                                                                                              Timestamp.fromDate(new Date()),
+        lastVerified:                                                                                             verifiedRegistrationResponse.registrationInfo.userVerified ? Timestamp.fromDate(new Date()) : userDocument.lastVerified || FieldValue.delete(),
+        lastWebAuthnProcess:                                                                                      "registration",
       },
     ).then<FunctionResponse, FunctionResponse>(
       (): Promise<FunctionResponse> => options.createCustomToken().then<FunctionResponse, FunctionResponse>(
         (customToken: string): FunctionResponse => ({
-          registeredCredentialType: userDocument.lastPresent ? "backup" : "primary",
-          customToken:              customToken,
-          operation:                "verify registration",
-          success:                  true,
+          registeredCredential: userDocument.challenge?.processingCredential || "first",
+          customToken:          customToken,
+          operation:            "verify registration",
+          success:              true,
         }),
         (firebaseError: FirebaseError): FunctionResponse => ({
           code:      firebaseError.code,
@@ -49,7 +62,7 @@ export const verifyRegistration: (options: { authenticatorAttachment?: Authentic
         operation: "verify registration",
         success:   false,
       }),
-    ) : (userDocument.lastPresent ? options.webAuthnUserDocumentReference.update(
+    ) : (userDocument.credentials ? options.webAuthnUserDocumentReference.update(
       {
         challenge: FieldValue.delete(),
       },
@@ -80,7 +93,7 @@ export const verifyRegistration: (options: { authenticatorAttachment?: Authentic
       operation: "verify registration",
       success:   false,
     }),
-  ) : userDocument.lastPresent ? {
+  ) : userDocument.credentials?.first ? {
     code:      "user-doc-missing-challenge-field",
     message:   "User doc is missing challenge field from prior operation.",
     operation: "verify registration",

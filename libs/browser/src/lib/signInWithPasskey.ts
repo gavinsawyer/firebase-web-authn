@@ -1,11 +1,11 @@
-import { FunctionRequest, FunctionResponse, WebAuthnUserCredentialType } from "@firebase-web-authn/types";
-import { startAuthentication }                                           from "@simplewebauthn/browser";
-import { AuthenticationResponseJSON }                                    from "@simplewebauthn/typescript-types";
-import { Auth, signInAnonymously, UserCredential }                       from "firebase/auth";
-import { Functions, httpsCallableFromURL, HttpsCallableResult }          from "firebase/functions";
-import { clearChallenge }                                                from "./clearChallenge";
-import { FirebaseWebAuthnError }                                         from "./FirebaseWebAuthnError";
-import { handleVerifyFunctionResponse }                                  from "./handleVerifyFunctionResponse";
+import { FunctionRequest, FunctionResponse, WebAuthnUserCredentialFactor } from "@firebase-web-authn/types";
+import { startAuthentication }                                             from "@simplewebauthn/browser";
+import { AuthenticationResponseJSON }                                      from "@simplewebauthn/typescript-types";
+import { Auth, signInAnonymously, UserCredential }                         from "firebase/auth";
+import { Functions, httpsCallableFromURL, HttpsCallableResult }            from "firebase/functions";
+import { clearChallenge }                                                  from "./clearChallenge";
+import { FirebaseWebAuthnError }                                           from "./FirebaseWebAuthnError";
+import { handleVerifyFunctionResponse }                                    from "./handleVerifyFunctionResponse";
 
 
 /**
@@ -15,14 +15,14 @@ import { handleVerifyFunctionResponse }                                  from ".
  *
  * @param auth - The {@link Auth} instance.
  * @param functions - The {@link Functions} instance.
- * @param type - An optional type (`"primary"` or `"backup"`) of credential to expect when signing in the user. Not passing a value attempts both credentials if they exist.
+ * @param factor - An optional {@link WebAuthnUserCredentialFactor} to be required. Not passing a value attempts both credentials if they exist.
  *
  * @returns
  *  A {@link UserCredential} when successful.
  * @throws
  *  {@link FirebaseWebAuthnError}
  */
-export const signInWithPasskey: (auth: Auth, functions: Functions, type?: WebAuthnUserCredentialType) => Promise<UserCredential> = (auth: Auth, functions: Functions, type?: WebAuthnUserCredentialType): Promise<UserCredential> => ((handler: () => Promise<UserCredential>): Promise<UserCredential> => auth.currentUser ? handler() : signInAnonymously(auth).then<UserCredential, never>(
+export const signInWithPasskey: (auth: Auth, functions: Functions, factor?: WebAuthnUserCredentialFactor) => Promise<UserCredential> = (auth: Auth, functions: Functions, factor?: WebAuthnUserCredentialFactor): Promise<UserCredential> => ((handler: () => Promise<UserCredential>): Promise<UserCredential> => auth.currentUser ? handler() : signInAnonymously(auth).then<UserCredential, never>(
   (): Promise<UserCredential> => handler(),
   (firebaseError): never => {
     throw new FirebaseWebAuthnError(
@@ -42,8 +42,8 @@ export const signInWithPasskey: (auth: Auth, functions: Functions, type?: WebAut
     "/firebase-web-authn-api",
   )(
     {
-      authenticatingCredentialType: type,
-      operation:                    "create authentication challenge",
+      authenticatingCredential: factor,
+      operation:                "create authentication challenge",
     },
   ).then<UserCredential, never>(
     ({ data: functionResponse }: HttpsCallableResult<FunctionResponse>): Promise<UserCredential> => "code" in functionResponse ? ((): never => {

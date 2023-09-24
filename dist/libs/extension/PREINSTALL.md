@@ -1,4 +1,7 @@
-#### [Full Docs](https://github.com/gavinsawyer/firebase-web-authn)
+### 🎉 2FA passkeys are here in ^10.3.0!
+#### This update brings support for linking secondary discoverable credentials using an alternate attachment (which defaults to `"cross-platform"`).
+#### By specifying a `factor` parameter to existing [browser library](https://github.com/gavinsawyer/firebase-web-authn#firebase-web-authnbrowser) methods, you can enable users gain access by inserting and activating or waving a security key over the device.
+#### See the [full docs](https://github.com/gavinsawyer/firebase-web-authn) for examples and a feature complete demo.
 
 Use this extension and the [browser library](https://github.com/gavinsawyer/firebase-web-authn#firebase-web-authnbrowser) to create and sign in users with passkeys, link and unlink existing users to passkeys, and prompt signed-in users with a biometric verification request:
 
@@ -6,7 +9,7 @@ Use this extension and the [browser library](https://github.com/gavinsawyer/fire
 
 ```ts
 createUserWithPasskey: (auth: Auth, functions: Functions, name: string) => Promise<UserCredential>;
-    signInWithPasskey: (auth: Auth, functions: Functions)               => Promise<UserCredential>;
+    signInWithPasskey: (auth: Auth, functions: Functions)     => Promise<UserCredential>;
       linkWithPasskey: (auth: Auth, functions: Functions, name: string) => Promise<UserCredential>;
         unlinkPasskey: (auth: Auth, functions: Functions)               => Promise<void>;
 verifyUserWithPasskey: (auth: Auth, functions: Functions)               => Promise<void>;

@@ -36,7 +36,8 @@ If you would rather deploy the API from your existing Firebase Functions package
    ```
    ```ts
    interface FirebaseWebAuthnConfig {
-     authenticatorAttachment?: AuthenticatorAttachment,         // Preferred authenticator attachment modality. "cross-platform" allows security keys. "platform" allows passkey managers. Not specifying a value allows either attachment
+     authenticatorAttachment?: AuthenticatorAttachment,         // Optional authenticator attachment. "cross-platform" allows security keys. "platform" allows passkey managers. Default behavior allows either attachment.
+     authenticatorAttachment2FA?: AuthenticatorAttachment,      // Optional authenticator attachment for second (2FA) factor passkeys. Default behavior follows the main authenticator attachment configuration.
      relyingPartyName: string,                                  // Your app's display name in the passkey popup on some browsers.
      userVerificationRequirement?: UserVerificationRequirement, // Your app's user verification requirement. "preferred" is default.
    }

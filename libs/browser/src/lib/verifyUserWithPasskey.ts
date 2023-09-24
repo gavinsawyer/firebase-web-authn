@@ -1,11 +1,11 @@
-import { FunctionRequest, FunctionResponse, WebAuthnUserCredentialType } from "@firebase-web-authn/types";
-import { startAuthentication }                                           from "@simplewebauthn/browser";
-import { AuthenticationResponseJSON }                                    from "@simplewebauthn/typescript-types";
-import { Auth }                                                          from "firebase/auth";
-import { Functions, httpsCallableFromURL, HttpsCallableResult }          from "firebase/functions";
-import { clearChallenge }                                                from "./clearChallenge";
-import { FirebaseWebAuthnError }                                         from "./FirebaseWebAuthnError";
-import { handleVerifyFunctionResponse }                                  from "./handleVerifyFunctionResponse";
+import { FunctionRequest, FunctionResponse, WebAuthnUserCredentialFactor } from "@firebase-web-authn/types";
+import { startAuthentication }                                             from "@simplewebauthn/browser";
+import { AuthenticationResponseJSON }                                      from "@simplewebauthn/typescript-types";
+import { Auth }                                                            from "firebase/auth";
+import { Functions, httpsCallableFromURL, HttpsCallableResult }            from "firebase/functions";
+import { clearChallenge }                                                  from "./clearChallenge";
+import { FirebaseWebAuthnError }                                           from "./FirebaseWebAuthnError";
+import { handleVerifyFunctionResponse }                                    from "./handleVerifyFunctionResponse";
 
 
 /**
@@ -20,23 +20,23 @@ import { handleVerifyFunctionResponse }                                  from ".
  *
  * @param auth - The {@link Auth} instance.
  * @param functions - The {@link Functions} instance.
- * @param type - An optional type (`"primary"` or `"backup"`) of credential to unlink with user. Not passing a value unlinks both credentials if they exist.
+ * @param factor - An optional {@link WebAuthnUserCredentialFactor} associated with the credential being verified. Not passing a value allows either credential to be used in verification.
  *
  * @returns
  *  {@link void} when successful.
  * @throws
  *  {@link FirebaseWebAuthnError}
  */
-export const verifyUserWithPasskey: (auth: Auth, functions: Functions, type?: WebAuthnUserCredentialType) => Promise<void> = (auth: Auth, functions: Functions, type?: WebAuthnUserCredentialType): Promise<void> => auth
+export const verifyUserWithPasskey: (auth: Auth, functions: Functions, factor?: WebAuthnUserCredentialFactor) => Promise<void> = (auth: Auth, functions: Functions, factor?: WebAuthnUserCredentialFactor): Promise<void> => auth
   .currentUser ? httpsCallableFromURL<FunctionRequest, FunctionResponse>(
-  functions,
-  "/firebase-web-authn-api",
-)(
-  {
-    operation:                      "create reauthentication challenge",
-    reauthenticatingCredentialType: type,
-  },
-)
+    functions,
+    "/firebase-web-authn-api",
+  )(
+    {
+      operation:                  "create reauthentication challenge",
+      reauthenticatingCredential: factor,
+    },
+  )
   .then<void, never>(
     ({ data: functionResponse }: HttpsCallableResult<FunctionResponse>): Promise<void> => "code" in functionResponse ? ((): never => {
       throw new FirebaseWebAuthnError(functionResponse);

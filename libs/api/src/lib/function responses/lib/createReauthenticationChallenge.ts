@@ -1,48 +1,53 @@
-import { FunctionResponse, WebAuthnUserCredentialType, WebAuthnUserDocument } from "@firebase-web-authn/types";
-import { generateAuthenticationOptions }                                      from "@simplewebauthn/server";
-import { PublicKeyCredentialRequestOptionsJSON }                              from "@simplewebauthn/typescript-types";
-import { FirebaseError }                                                      from "firebase-admin";
-import { DocumentReference, DocumentSnapshot }                                from "firebase-admin/firestore";
+import { FunctionResponse, WebAuthnUserCredentialFactor, WebAuthnUserDocument } from "@firebase-web-authn/types";
+import { generateAuthenticationOptions }                                        from "@simplewebauthn/server";
+import { PublicKeyCredentialRequestOptionsJSON }                                from "@simplewebauthn/typescript-types";
+import { FirebaseError }                                                        from "firebase-admin";
+import { DocumentReference, DocumentSnapshot, FieldValue }                      from "firebase-admin/firestore";
 
 
-export const createReauthenticationChallenge: (options: { authenticatorAttachment?: AuthenticatorAttachment, backupAuthenticatorAttachment?: AuthenticatorAttachment, hostname: string, reauthenticatingCredentialType?: WebAuthnUserCredentialType, userVerificationRequirement?: UserVerificationRequirement, webAuthnUserDocumentReference: DocumentReference<WebAuthnUserDocument> }) => Promise<FunctionResponse> = (options: { authenticatorAttachment?: AuthenticatorAttachment, backupAuthenticatorAttachment?: AuthenticatorAttachment, hostname: string, reauthenticatingCredentialType?: WebAuthnUserCredentialType, userVerificationRequirement?: UserVerificationRequirement, webAuthnUserDocumentReference: DocumentReference<WebAuthnUserDocument> }): Promise<FunctionResponse> => options.webAuthnUserDocumentReference.get().then<FunctionResponse, FunctionResponse>(
-  (userDocumentSnapshot: DocumentSnapshot<WebAuthnUserDocument>): Promise<FunctionResponse> => (async (userDocument: WebAuthnUserDocument | undefined): Promise<FunctionResponse> => userDocument ? (options.reauthenticatingCredentialType === "backup" ? userDocument.backupCredential : userDocument.credential) ? generateAuthenticationOptions(
+interface CreateReauthenticationChallengeOptions {
+  authenticationOptions: {
+    attestationType: AttestationConveyancePreference,
+    extensions: AuthenticationExtensionsClientInputs,
+    rpID: string,
+    supportedAlgorithmIDs: COSEAlgorithmIdentifier[],
+  },
+  reauthenticatingCredentialFactor?: WebAuthnUserCredentialFactor,
+  webAuthnUserDocumentReference: DocumentReference<WebAuthnUserDocument>
+}
+
+export const createReauthenticationChallenge: (options: CreateReauthenticationChallengeOptions) => Promise<FunctionResponse> = (options: CreateReauthenticationChallengeOptions): Promise<FunctionResponse> => options.webAuthnUserDocumentReference.get().then<FunctionResponse, FunctionResponse>(
+  (userDocumentSnapshot: DocumentSnapshot<WebAuthnUserDocument>): Promise<FunctionResponse> => (async (userDocument: WebAuthnUserDocument | undefined): Promise<FunctionResponse> => userDocument ? (options.reauthenticatingCredentialFactor === "second" ? userDocument.credentials?.second : userDocument.credentials?.first) ? generateAuthenticationOptions(
     {
-      allowCredentials: options.reauthenticatingCredentialType === "backup" ? [
+      ...options.authenticationOptions,
+      allowCredentials: options.reauthenticatingCredentialFactor ? [
         {
-          id:   userDocument.backupCredential?.id || new Uint8Array(),
+          id:   userDocument.credentials?.[options.reauthenticatingCredentialFactor]?.id || new Uint8Array(),
           type: "public-key",
         },
-      ] : options.reauthenticatingCredentialType === "primary" ? [
+      ] : userDocument.credentials?.second ? [
         {
-          id:   userDocument.credential?.id || new Uint8Array(),
-          type: "public-key",
-        },
-      ] : userDocument.backupCredential ? [
-        {
-          id:   userDocument.credential?.id || new Uint8Array(),
+          id:   userDocument.credentials.first.id || new Uint8Array(),
           type: "public-key",
         },
         {
-          id:   userDocument.backupCredential.id,
+          id:   userDocument.credentials.second.id,
           type: "public-key",
         },
       ] : [
         {
-          id:   userDocument.credential?.id || new Uint8Array(),
+          id:   userDocument.credentials?.first.id || new Uint8Array(),
           type: "public-key",
         },
       ],
-      rpID:             options.hostname,
-      userVerification: options.reauthenticatingCredentialType === "backup" ? options.backupAuthenticatorAttachment === "platform" ? options.userVerificationRequirement : "preferred" : options.authenticatorAttachment === "platform" ? options.userVerificationRequirement : "preferred",
     },
   ).then<FunctionResponse>(
     (publicKeyCredentialRequestOptions: PublicKeyCredentialRequestOptionsJSON): Promise<FunctionResponse> => options.webAuthnUserDocumentReference.set(
       {
         challenge: {
-          process:                  "reauthentication",
-          processingCredentialType: options.reauthenticatingCredentialType,
-          value:                    publicKeyCredentialRequestOptions.challenge,
+          process:              "reauthentication",
+          processingCredential: options.reauthenticatingCredentialFactor || FieldValue.delete(),
+          value:                publicKeyCredentialRequestOptions.challenge,
         },
       },
       {
@@ -50,10 +55,10 @@ export const createReauthenticationChallenge: (options: { authenticatorAttachmen
       },
     ).then<FunctionResponse, FunctionResponse>(
       (): FunctionResponse => ({
-        operation:                      "create reauthentication challenge",
-        reauthenticatingCredentialType: options.reauthenticatingCredentialType,
-        requestOptions:                 publicKeyCredentialRequestOptions,
-        success:                        true,
+        operation:                  "create reauthentication challenge",
+        reauthenticatingCredential: options.reauthenticatingCredentialFactor,
+        requestOptions:             publicKeyCredentialRequestOptions,
+        success:                    true,
       }),
       (firebaseError: FirebaseError): FunctionResponse => ({
         code:      firebaseError.code,

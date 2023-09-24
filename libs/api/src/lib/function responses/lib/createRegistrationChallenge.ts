@@ -1,46 +1,43 @@
-import { FunctionResponse, WebAuthnUserCredentialType, WebAuthnUserDocument } from "@firebase-web-authn/types";
-import { generateRegistrationOptions }                                        from "@simplewebauthn/server";
-import { PublicKeyCredentialCreationOptionsJSON }                             from "@simplewebauthn/typescript-types";
-import { FirebaseError }                                                      from "firebase-admin";
-import { DocumentReference, DocumentSnapshot }                                from "firebase-admin/firestore";
+import { FunctionResponse, WebAuthnUserCredentialFactor, WebAuthnUserDocument } from "@firebase-web-authn/types";
+import { generateRegistrationOptions }                                          from "@simplewebauthn/server";
+import { PublicKeyCredentialCreationOptionsJSON }                               from "@simplewebauthn/typescript-types";
+import { FirebaseError }                                                        from "firebase-admin";
+import { DocumentReference, DocumentSnapshot }                                  from "firebase-admin/firestore";
 
 
-export const createRegistrationChallenge: (options: { authenticatorAttachment?: AuthenticatorAttachment, backupAuthenticatorAttachment?: AuthenticatorAttachment, hostname: string, registeringCredentialType: WebAuthnUserCredentialType, relyingPartyName: string, userID: string, userName: string, userVerificationRequirement?: UserVerificationRequirement, webAuthnUserDocumentReference: DocumentReference<WebAuthnUserDocument> }) => Promise<FunctionResponse> = (options: { authenticatorAttachment?: AuthenticatorAttachment, backupAuthenticatorAttachment?: AuthenticatorAttachment, hostname: string, registeringCredentialType: WebAuthnUserCredentialType, relyingPartyName: string, userID: string, userName: string, userVerificationRequirement?: UserVerificationRequirement, webAuthnUserDocumentReference: DocumentReference<WebAuthnUserDocument> }): Promise<FunctionResponse> => options.webAuthnUserDocumentReference.get().then<FunctionResponse, FunctionResponse>(
-  (userDocumentSnapshot: DocumentSnapshot<WebAuthnUserDocument>): Promise<FunctionResponse> => (async (userDocument: WebAuthnUserDocument | undefined): Promise<FunctionResponse> => (options.registeringCredentialType === "backup" ? !userDocument?.backupCredential : !userDocument?.credential) ? (options.registeringCredentialType !== "backup" || userDocument && userDocument.credential) ? generateRegistrationOptions(
+interface CreateRegistrationChallengeOptions {
+  registeringCredentialFactor: WebAuthnUserCredentialFactor,
+  registrationOptions: {
+    attestationType: AttestationConveyancePreference,
+    authenticatorSelection: AuthenticatorSelectionCriteria,
+    extensions: AuthenticationExtensionsClientInputs,
+    rpID: string,
+    rpName: string,
+    supportedAlgorithmIDs: COSEAlgorithmIdentifier[],
+    userID: string,
+    userName: string,
+  },
+  webAuthnUserDocumentReference: DocumentReference<WebAuthnUserDocument>
+}
+
+export const createRegistrationChallenge: (options: CreateRegistrationChallengeOptions) => Promise<FunctionResponse> = (options: CreateRegistrationChallengeOptions): Promise<FunctionResponse> => options.webAuthnUserDocumentReference.get().then<FunctionResponse, FunctionResponse>(
+  (userDocumentSnapshot: DocumentSnapshot<WebAuthnUserDocument>): Promise<FunctionResponse> => (async (userDocument: WebAuthnUserDocument | undefined): Promise<FunctionResponse> => (options.registeringCredentialFactor === "second" ? !userDocument?.credentials?.second : !userDocument?.credentials?.first) ? (options.registeringCredentialFactor !== "second" || userDocument && userDocument.credentials?.first) ? generateRegistrationOptions(
     {
-      authenticatorSelection: options.registeringCredentialType === "backup" ? options.backupAuthenticatorAttachment ? {
-        authenticatorAttachment: options.backupAuthenticatorAttachment,
-        residentKey:             "required",
-        userVerification:        options.backupAuthenticatorAttachment === "platform" ? options.userVerificationRequirement : "preferred",
-      } : {
-        residentKey:      "required",
-        userVerification: "preferred",
-      } : options.authenticatorAttachment ? {
-        authenticatorAttachment: options.authenticatorAttachment,
-        residentKey:             "required",
-        userVerification:        options.authenticatorAttachment === "platform" ? options.userVerificationRequirement : "preferred",
-      } : {
-        residentKey:      "required",
-        userVerification: "preferred",
-      },
-      excludeCredentials:     options.registeringCredentialType === "backup" ? [
+      ...options.registrationOptions,
+      excludeCredentials: options.registeringCredentialFactor === "second" ? [
         {
-          id:   userDocument?.credential?.id || new Uint8Array(),
+          id:   userDocument?.credentials?.first.id || new Uint8Array(),
           type: "public-key",
         },
       ] : undefined,
-      rpID:                   options.hostname,
-      rpName:                 options.relyingPartyName,
-      userID:                 options.userID,
-      userName:               options.userName,
     },
   ).then<FunctionResponse>(
     (publicKeyCredentialCreationOptions: PublicKeyCredentialCreationOptionsJSON): Promise<FunctionResponse> => options.webAuthnUserDocumentReference.set(
       {
         challenge: {
-          process:                  "registration",
-          processingCredentialType: options.registeringCredentialType,
-          value:                    publicKeyCredentialCreationOptions.challenge,
+          process:              "registration",
+          processingCredential: options.registeringCredentialFactor,
+          value:                publicKeyCredentialCreationOptions.challenge,
         },
       },
       {
@@ -48,10 +45,10 @@ export const createRegistrationChallenge: (options: { authenticatorAttachment?: 
       },
     ).then<FunctionResponse, FunctionResponse>(
       (): FunctionResponse => ({
-        creationOptions:           publicKeyCredentialCreationOptions,
-        operation:                 "create registration challenge",
-        registeringCredentialType: options.registeringCredentialType,
-        success:                   true,
+        creationOptions:       publicKeyCredentialCreationOptions,
+        operation:             "create registration challenge",
+        registeringCredential: options.registeringCredentialFactor,
+        success:               true,
       }),
       (firebaseError: FirebaseError): FunctionResponse => ({
         code:      firebaseError.code,

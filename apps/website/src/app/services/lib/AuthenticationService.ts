@@ -45,33 +45,51 @@ export class AuthenticationService {
         "Sign-up successful.",
         "Okay",
       ) && void (0),
-      (firebaseWebAuthnError: FirebaseWebAuthnError): never => this.matSnackBar.open(
-        firebaseWebAuthnError.message,
-        "Okay",
-      ) && ((): never => {
+      (firebaseWebAuthnError: FirebaseWebAuthnError): never => {
+        this
+          .matSnackBar
+          .open(
+            firebaseWebAuthnError.message,
+            "Okay",
+          );
+
         throw firebaseWebAuthnError;
-      })(),
+      },
     );
   public readonly linkBackupPasskey:     () => Promise<void>             = (): Promise<void> => (async (profileDocument: ProfileDocument | null): Promise<void> => profileDocument ? linkWithPasskey(
     this.auth,
     this.functions,
     profileDocument.name + " (Backup)",
-    "backup",
+    "second",
   ).then<void, never>(
     (): void => this.matSnackBar.open(
       "Backup passkey link successful.",
       "Okay",
     ) && void (0),
-    (firebaseWebAuthnError: FirebaseWebAuthnError): never => this.matSnackBar.open(
-      firebaseWebAuthnError.message || "Something went wrong.",
-      "Okay",
-    ) && ((): never => {
+    (firebaseWebAuthnError: FirebaseWebAuthnError): never => {
+      this
+        .matSnackBar
+        .open(
+          firebaseWebAuthnError.code === "firebaseWebAuthn/no-op" ? "You already have a backup passkey." : firebaseWebAuthnError.message || "Something went wrong.",
+          "Okay",
+        );
+
       throw firebaseWebAuthnError;
-    })(),
+    },
   ) : void (0))(this.profileService.profileDocument$());
   public readonly signInAnonymously:     () => Promise<void>             = (): Promise<void> => signInAnonymously(this.auth)
-    .then<void>(
+    .then<void, never>(
       (): void => void (0),
+      (error: unknown): never => {
+        this
+          .matSnackBar
+          .open(
+            "Something went wrong.",
+            "Okay",
+          );
+
+        throw error;
+      },
     );
   public readonly signInWithPasskey:     () => Promise<void>             = (): Promise<void> => signInWithPasskey(
     this.auth,
@@ -82,12 +100,16 @@ export class AuthenticationService {
         "Sign-in successful.",
         "Okay",
       ) && void (0),
-      (firebaseWebAuthnError: FirebaseWebAuthnError): never => this.matSnackBar.open(
-        firebaseWebAuthnError.message || "Something went wrong.",
-        "Okay",
-      ) && ((): never => {
+      (firebaseWebAuthnError: FirebaseWebAuthnError): never => {
+        this
+          .matSnackBar
+          .open(
+            firebaseWebAuthnError.code === "firebaseWebAuthn/no-op" ? "You're already signed in as this user." : firebaseWebAuthnError.message || "Something went wrong.",
+            "Okay",
+          );
+
         throw firebaseWebAuthnError;
-      })(),
+      },
     );
   public readonly verifyUserWithPasskey: () => Promise<void>             = (): Promise<void> => verifyUserWithPasskey(
     this.auth,
@@ -98,12 +120,16 @@ export class AuthenticationService {
         "Verification successful.",
         "Okay",
       ) && void (0),
-      (firebaseWebAuthnError: FirebaseWebAuthnError): never => this.matSnackBar.open(
-        firebaseWebAuthnError.message || "Something went wrong.",
-        "Okay",
-      ) && ((): never => {
+      (firebaseWebAuthnError: FirebaseWebAuthnError): never => {
+        this
+          .matSnackBar
+          .open(
+            firebaseWebAuthnError.message || "Something went wrong.",
+            "Okay",
+          );
+
         throw firebaseWebAuthnError;
-      })(),
+      },
     );
 
 }

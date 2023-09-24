@@ -1,6 +1,6 @@
 {
   "name":         "@firebase-web-authn/browser",
-  "version":      "10.2.2",
+  "version":      "10.3.0",
   "homepage":     "https://firebase-web-authn.dev",
   "license":      "Apache-2.0",
   "author":       {
@@ -15,7 +15,7 @@
   },
   "private":      false,
   "dependencies": {
-    "@simplewebauthn/browser": "^8.0.2",
-    "firebase":                "^10.3.1"
+    "@simplewebauthn/browser": "^8",
+    "firebase":                "^10"
   }
 }

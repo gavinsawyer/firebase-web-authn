@@ -1,33 +1,22 @@
 \:host
   display: flex
   flex-direction: column
-  flex-grow: 1
-  min-height: calc(100vh)
+  justify-content: space-between
+  min-height: calc(100vh - 2rem)
 
   main
     display: flex
-    flex-direction: column
-    flex-grow: 1
-    padding: 1rem
+    flex-direction: row
+    flex-wrap: wrap
+    gap: 0 1rem
+    justify-content: center
 
-    & > div
-      display: flex
-      flex-direction: row
-      flex-wrap: wrap-reverse
-      gap: 1rem
-      justify-content: center
-
-      router-outlet
-        display: none
+    router-outlet
+      display: none
 
   footer
+    align-items: center
     display: flex
     flex-direction: row
     justify-content: space-between
-    padding: 1rem
-
-    & > div
-      display: flex
-      flex-direction: column
-      justify-content: center
 

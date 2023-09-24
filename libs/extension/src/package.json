@@ -19,7 +19,7 @@
     "node": "18"
   },
   "dependencies": {
-    "@simplewebauthn/server": "^8.1.1",
-    "firebase-functions":     "^4.4.1"
+    "@simplewebauthn/server": "^8",
+    "firebase-functions":     "^4"
   }
 }

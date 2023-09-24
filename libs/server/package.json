@@ -1,6 +1,6 @@
 {
   "name":         "@firebase-web-authn/server",
-  "version":      "10.2.2",
+  "version":      "10.3.0",
   "homepage":     "https://firebase-web-authn.dev",
   "license":      "Apache-2.0",
   "author":       {
@@ -15,6 +15,6 @@
   },
   "private":      false,
   "dependencies": {
-    "firebase-admin": "^11.10.1"
+    "firebase-admin": "^11"
   }
 }

@@ -1,7 +1,7 @@
 import { FunctionRequest, FunctionResponse, WebAuthnUserDocument }                                                                                                                                        from "@firebase-web-authn/types";
 import { App }                                                                                                                                                                                            from "firebase-admin/app";
 import { Auth, getAuth }                                                                                                                                                                                  from "firebase-admin/auth";
-import { CollectionReference, DocumentReference, Firestore, getFirestore }                                                                                                                                from "firebase-admin/firestore";
+import { DocumentReference, Firestore, getFirestore }                                                                                                                                                     from "firebase-admin/firestore";
 import { CallableFunction, CallableRequest, onCall }                                                                                                                                                      from "firebase-functions/v2/https";
 import { clearChallenge, clearCredential, createAuthenticationChallenge, createReauthenticationChallenge, createRegistrationChallenge, verifyAuthentication, verifyReauthentication, verifyRegistration } from "./function responses";
 import { FirebaseWebAuthnConfig }                                                                                                                                                                         from "./interfaces";
@@ -19,74 +19,122 @@ export const getFirebaseWebAuthnApi: (firebaseWebAuthnConfig: FirebaseWebAuthnCo
     enforceAppCheck: true,
     ingressSettings: "ALLOW_ALL",
   },
-  async (callableRequest: CallableRequest<FunctionRequest>): Promise<FunctionResponse> => callableRequest.auth ? ((firestore: Firestore): Promise<FunctionResponse> => (async (auth: Auth, userID: string, webAuthnUserCollectionReference: CollectionReference<WebAuthnUserDocument>, webAuthnUserDocumentReference: DocumentReference<WebAuthnUserDocument>): Promise<FunctionResponse> => callableRequest.data.operation === "clear challenge" ? clearChallenge(
+  async (callableRequest: CallableRequest<FunctionRequest>): Promise<FunctionResponse> => callableRequest.auth ? ((firestore: Firestore): Promise<FunctionResponse> => (async (auth: Auth, userID: string, webAuthnUserDocumentReference: DocumentReference<WebAuthnUserDocument>, webAuthnUserDocumentReferenceTarget: DocumentReference<WebAuthnUserDocument>): Promise<FunctionResponse> => callableRequest.data.operation === "clear challenge" ? clearChallenge(
     {
       webAuthnUserDocumentReference: webAuthnUserDocumentReference,
     },
   ) : callableRequest.data.operation == "clear credential" ? clearCredential(
     {
-      clearingCredentialType:        callableRequest.data.clearingCredentialType,
+      clearingCredential:            callableRequest.data.clearingCredential,
       webAuthnUserDocumentReference: webAuthnUserDocumentReference,
     },
   ) : callableRequest.data.operation === "create authentication challenge" ? createAuthenticationChallenge(
     {
-      authenticatorAttachment:       firebaseWebAuthnConfig.authenticatorAttachment,
-      authenticatingCredentialType:  callableRequest.data.authenticatingCredentialType,
-      backupAuthenticatorAttachment: firebaseWebAuthnConfig.backupAuthenticatorAttachment,
-      hostname:                      callableRequest.rawRequest.hostname,
-      userVerificationRequirement:   firebaseWebAuthnConfig.userVerificationRequirement,
+      authenticatingCredential:      callableRequest.data.authenticatingCredential,
+      authenticationOptions:         {
+        attestationType:       "indirect",
+        extensions:            {
+          appid: "https://" + callableRequest.rawRequest.hostname,
+        },
+        rpID:                  callableRequest.rawRequest.hostname,
+        supportedAlgorithmIDs: [
+          - 7,
+          - 8,
+          - 257,
+        ],
+      },
       webAuthnUserDocumentReference: webAuthnUserDocumentReference,
     },
   ) : callableRequest.data.operation === "create reauthentication challenge" ? createReauthenticationChallenge(
     {
-      authenticatorAttachment:        firebaseWebAuthnConfig.authenticatorAttachment,
-      backupAuthenticatorAttachment:  firebaseWebAuthnConfig.backupAuthenticatorAttachment,
-      hostname:                       callableRequest.rawRequest.hostname,
-      reauthenticatingCredentialType: callableRequest.data.reauthenticatingCredentialType,
-      userVerificationRequirement:    firebaseWebAuthnConfig.userVerificationRequirement,
-      webAuthnUserDocumentReference:  webAuthnUserDocumentReference,
+      authenticationOptions:            {
+        attestationType:       "indirect",
+        extensions:            {
+          appid: "https://" + callableRequest.rawRequest.hostname,
+        },
+        rpID:                  callableRequest.rawRequest.hostname,
+        supportedAlgorithmIDs: [
+          - 7,
+          - 8,
+          - 257,
+        ],
+      },
+      reauthenticatingCredentialFactor: callableRequest.data.reauthenticatingCredential,
+      webAuthnUserDocumentReference:    webAuthnUserDocumentReference,
     },
   ) : callableRequest.data.operation === "create registration challenge" ? createRegistrationChallenge(
     {
-      authenticatorAttachment:       firebaseWebAuthnConfig.authenticatorAttachment,
-      backupAuthenticatorAttachment: firebaseWebAuthnConfig.backupAuthenticatorAttachment,
-      hostname:                      callableRequest.rawRequest.hostname,
-      registeringCredentialType:     callableRequest.data.registeringCredentialType,
-      relyingPartyName:              firebaseWebAuthnConfig.relyingPartyName,
-      userID:                        userID,
-      userName:                      callableRequest.data.name,
-      userVerificationRequirement:   firebaseWebAuthnConfig.userVerificationRequirement,
+      registeringCredentialFactor:   callableRequest.data.registeringCredential,
+      registrationOptions:           {
+        attestationType:        "indirect",
+        authenticatorSelection: callableRequest.data.registeringCredential === "second" && firebaseWebAuthnConfig.authenticatorAttachment2FA ? {
+          authenticatorAttachment: firebaseWebAuthnConfig.authenticatorAttachment2FA,
+          residentKey:             "preferred",
+          userVerification:        firebaseWebAuthnConfig.authenticatorAttachment2FA === "platform" && firebaseWebAuthnConfig.userVerificationRequirement !== "discouraged" ? firebaseWebAuthnConfig.userVerificationRequirement : "preferred",
+        } : firebaseWebAuthnConfig.authenticatorAttachment ? {
+          authenticatorAttachment: firebaseWebAuthnConfig.authenticatorAttachment,
+          residentKey:             "preferred",
+          userVerification:        firebaseWebAuthnConfig.authenticatorAttachment === "platform" && firebaseWebAuthnConfig.userVerificationRequirement !== "discouraged" ? firebaseWebAuthnConfig.userVerificationRequirement : "preferred",
+        } : {
+          residentKey:      "preferred",
+          userVerification: "preferred",
+        },
+        extensions:             {
+          appid: "https://" + callableRequest.rawRequest.hostname,
+        },
+        rpID:                   callableRequest.rawRequest.hostname,
+        rpName:                 firebaseWebAuthnConfig.relyingPartyName,
+        supportedAlgorithmIDs:  [
+          - 7,
+          - 8,
+          - 257,
+        ],
+        userID:                 userID,
+        userName:               callableRequest.data.name,
+      },
       webAuthnUserDocumentReference: webAuthnUserDocumentReference,
     },
   ) : callableRequest.data.operation === "verify authentication" ? verifyAuthentication(
     {
-      authenticationResponse:          callableRequest.data.authenticationResponse,
-      authenticatorAttachment:       firebaseWebAuthnConfig.authenticatorAttachment,
-      backupAuthenticatorAttachment: firebaseWebAuthnConfig.backupAuthenticatorAttachment,
-      createCustomToken:               (uid: string) => auth.createCustomToken(uid),
-      hostname:                        callableRequest.rawRequest.hostname,
-      userID:                          userID,
-      userVerificationRequirement:     firebaseWebAuthnConfig.userVerificationRequirement,
-      webAuthnUserCollectionReference: webAuthnUserCollectionReference,
-      webAuthnUserDocumentReference:   webAuthnUserDocumentReference,
+      authenticationOptions:               {
+        expectedOrigin:          "https://" + callableRequest.rawRequest.hostname,
+        expectedRPID:            callableRequest.rawRequest.hostname,
+        requireUserVerification: (firebaseWebAuthnConfig.authenticatorAttachment2FA || firebaseWebAuthnConfig.authenticatorAttachment) === "platform" && firebaseWebAuthnConfig.userVerificationRequirement !== "discouraged",
+        response:                callableRequest.data.authenticationResponse,
+      },
+      authenticatorAttachment:             firebaseWebAuthnConfig.authenticatorAttachment,
+      authenticatorAttachment2FA:          firebaseWebAuthnConfig.authenticatorAttachment2FA,
+      createCustomToken:                   (uid: string) => auth.createCustomToken(uid),
+      userID:                              userID,
+      userVerificationRequirement:         firebaseWebAuthnConfig.userVerificationRequirement,
+      webAuthnUserDocumentReference:       webAuthnUserDocumentReference,
+      webAuthnUserDocumentReferenceTarget: webAuthnUserDocumentReferenceTarget,
     },
   ) : callableRequest.data.operation === "verify reauthentication" ? verifyReauthentication(
     {
-      authenticationResponse:        callableRequest.data.authenticationResponse,
+      authenticationOptions:         {
+        expectedOrigin:          "https://" + callableRequest.rawRequest.hostname,
+        expectedRPID:            callableRequest.rawRequest.hostname,
+        requireUserVerification: (firebaseWebAuthnConfig.authenticatorAttachment2FA || firebaseWebAuthnConfig.authenticatorAttachment) === "platform" && firebaseWebAuthnConfig.userVerificationRequirement !== "discouraged",
+        response:                callableRequest.data.authenticationResponse,
+      },
       authenticatorAttachment:       firebaseWebAuthnConfig.authenticatorAttachment,
-      backupAuthenticatorAttachment: firebaseWebAuthnConfig.backupAuthenticatorAttachment,
+      authenticatorAttachment2FA:    firebaseWebAuthnConfig.authenticatorAttachment2FA,
       createCustomToken:             () => auth.createCustomToken(userID),
-      hostname:                      callableRequest.rawRequest.hostname,
+      userID:                        userID,
       userVerificationRequirement:   firebaseWebAuthnConfig.userVerificationRequirement,
       webAuthnUserDocumentReference: webAuthnUserDocumentReference,
     },
   ) : callableRequest.data.operation === "verify registration" ? verifyRegistration(
     {
       authenticatorAttachment:       firebaseWebAuthnConfig.authenticatorAttachment,
-      backupAuthenticatorAttachment: firebaseWebAuthnConfig.backupAuthenticatorAttachment,
+      authenticatorAttachment2FA:    firebaseWebAuthnConfig.authenticatorAttachment2FA,
       createCustomToken:             () => auth.createCustomToken(userID),
-      hostname:                      callableRequest.rawRequest.hostname,
-      registrationResponse:          callableRequest.data.registrationResponse,
+      registrationOptions:           {
+        expectedOrigin: "https://" + callableRequest.rawRequest.hostname,
+        expectedRPID:   callableRequest.rawRequest.hostname,
+        response:       callableRequest.data.registrationResponse,
+      },
       userVerificationRequirement:   firebaseWebAuthnConfig.userVerificationRequirement,
       webAuthnUserDocumentReference: webAuthnUserDocumentReference,
     },
@@ -95,8 +143,8 @@ export const getFirebaseWebAuthnApi: (firebaseWebAuthnConfig: FirebaseWebAuthnCo
   })())(
     app ? getAuth(app) : getAuth(),
     callableRequest.auth.uid,
-    firestore.collection("users") as CollectionReference<WebAuthnUserDocument>,
     firestore.collection("users").doc(callableRequest.auth.uid) as DocumentReference<WebAuthnUserDocument>,
+    firestore.collection("users").doc(callableRequest.data.operation === "verify authentication" && callableRequest.data.authenticationResponse.response.userHandle || callableRequest.auth.uid) as DocumentReference<WebAuthnUserDocument>,
   ))(
     app ? getFirestore(
       app,

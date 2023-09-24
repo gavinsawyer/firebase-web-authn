@@ -6,9 +6,9 @@ import { CallableFunction }                                     from "firebase-f
 
 export const api: CallableFunction<FunctionRequest, Promise<FunctionResponse>> = getFirebaseWebAuthnApi(
   {
-    authenticatorAttachment:       process.env["AUTHENTICATOR_ATTACHMENT"] === "any" ? undefined : (process.env["AUTHENTICATOR_ATTACHMENT"] as AuthenticatorAttachment),
-    backupAuthenticatorAttachment: process.env["BACKUP_AUTHENTICATOR_ATTACHMENT"] === "any" ? undefined : (process.env["BACKUP_AUTHENTICATOR_ATTACHMENT"] as AuthenticatorAttachment),
-    relyingPartyName:              process.env["RELYING_PARTY_NAME"] as string,
-    userVerificationRequirement:   process.env["USER_VERIFICATION_REQUIREMENT"] as UserVerificationRequirement,
+    authenticatorAttachment:     process.env["AUTHENTICATOR_ATTACHMENT"] as AuthenticatorAttachment | "any" === "any" ? undefined : (process.env["AUTHENTICATOR_ATTACHMENT"] as AuthenticatorAttachment),
+    authenticatorAttachment2FA:  process.env["AUTHENTICATOR_ATTACHMENT_2FA"] as AuthenticatorAttachment | "any" === "any" ? undefined : (process.env["AUTHENTICATOR_ATTACHMENT_2FA"] as AuthenticatorAttachment),
+    relyingPartyName:            process.env["RELYING_PARTY_NAME"] as string,
+    userVerificationRequirement: process.env["USER_VERIFICATION_REQUIREMENT"] as UserVerificationRequirement,
   },
 );

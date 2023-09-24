@@ -15,9 +15,6 @@ import { PathService }                            from "../../../../../services"
   ],
   selector:    "website-otherwise-route",
   standalone:  true,
-  styleUrls:   [
-    "./OtherwiseRouteComponent.sass",
-  ],
   templateUrl: "./OtherwiseRouteComponent.html",
 })
 export class OtherwiseRouteComponent extends RouteComponent implements OnInit {

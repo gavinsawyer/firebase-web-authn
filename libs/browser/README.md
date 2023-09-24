@@ -15,29 +15,29 @@ createUserWithPasskey: (auth: Auth, functions: Functions, name: string) => Promi
         unlinkPasskey: (auth: Auth, functions: Functions)               => Promise<void>;
 verifyUserWithPasskey: (auth: Auth, functions: Functions)               => Promise<void>;
 ```
-#### 🎉 Backup passkeys are here in ^10.3.0!
-All methods besides createUserWithPasskey accept an optional `type` parameter of `"primary"` or `"backup"`.
+#### 🎉 2FA passkeys are here in ^10.3.0!
+All methods besides `createUserWithPasskey` accept an optional `factor` parameter of `"first"` or `"second"`.
 
 Default behaviors were designed to maintain backwards compatibility and are described below:
 ```ts
-           signInWithPasskey(auth, functions) // Sign in and accept either credential.
-signInWithPasskey(auth, functions, "primary") // Sign in and only accept a primary credential.
- signInWithPasskey(auth, functions, "backup") // Sign in and only accept a backup credential.
+          signInWithPasskey(auth, functions) // Sign in and accept either credential.
+ signInWithPasskey(auth, functions, "first") // Sign in and only accept a first (1FA) factor credential.
+signInWithPasskey(auth, functions, "second") // Sign in and only accept a second (2FA) factor credential.
 ```
 ```ts
-           linkWithPasskey(auth, functions, username) // Link a primary credential.
-linkWithPasskey(auth, functions, username, "primary") // Link a primary credential.
- linkWithPasskey(auth, functions, username, "backup") // Link a backup credential.
+          linkWithPasskey(auth, functions, username) // Link a first (1FA) factor credential.
+ linkWithPasskey(auth, functions, username, "first") // Link a first (1FA) factor credential.
+linkWithPasskey(auth, functions, username, "second") // Link a second (2FA) factor credential.
 ```
 ```ts
-           unlinkWithPasskey(auth, functions) // Unlink all credentials.
-unlinkWithPasskey(auth, functions, "primary") // Unlink all credentials.
- unlinkWithPasskey(auth, functions, "backup") // Unlink a backup credential.
+          unlinkWithPasskey(auth, functions) // Unlink all credentials.
+ unlinkWithPasskey(auth, functions, "first") // Unlink all credentials.
+unlinkWithPasskey(auth, functions, "second") // Unlink a second (2FA) factor credential.
 ```
 ```ts
-           verifyUserWithPasskey(auth, functions) // Verify the user and allow either credential.
-verifyUserWithPasskey(auth, functions, "primary") // Verify the user and allow only primary credential.
- verifyUserWithPasskey(auth, functions, "backup") // Verify the user and allow only backup credential.
+          verifyUserWithPasskey(auth, functions) // Verify the user and allow either credential.
+ verifyUserWithPasskey(auth, functions, "first") // Verify the user and allow only a first (1FA) factor credential.
+verifyUserWithPasskey(auth, functions, "second") // Verify the user and allow only a second (2FA) factor credential.
 ```
 Designed to be used like the Firebase JavaScript SDK:
 ```ts
