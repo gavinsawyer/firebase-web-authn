@@ -17,80 +17,75 @@ $demo-warn: mat.define-palette(mat.$deep-orange-palette, 400)
 @media (prefers-color-scheme: dark)
   @include mat.all-component-colors(mat.define-dark-theme((color: (primary: $demo-primary-dark, accent: $demo-accent-dark, warn: $demo-warn), typography: mat.define-typography-config())))
 
-html
-  height: 100%
+body
+  font-family: Roboto, "Helvetica Neue", sans-serif
+  font-size: 16px
+  margin: 0
 
-  body
-    font-family: Roboto, "Helvetica Neue", sans-serif
-    font-size: 16px
-    height: calc(100% - 2rem)
-    margin: 0
-    padding: 1rem
+  section
+    max-width: min(29rem, 100vw - 2rem)
 
-    section
-      max-width: min(29rem, 100vw - 2rem)
+  a
+    color: inherit
+    opacity: 0.6
+    text-decoration: none
+
+    &:hover
+      text-decoration: underline
+
+  ul
+    padding-inline-start: 0
+
+    li
+      margin: 0.25rem 0
+      list-style: none
+
+  h1
+    font-size: 2.2rem
+  h2
+    font-size: 1.8rem
+  h3
+    font-size: 1.2rem
+  h4
+    font-size: 0.8rem
+
+  h1,
+  h2,
+  h3,
+  h4
+    margin: 1rem 0 0.5em
+
+    & + h2,
+    & + h3,
+    & + h4
+      margin-top: 0
 
     a
-      color: inherit
-      opacity: 0.6
-      text-decoration: none
+      font-weight: bolder
 
-      &:hover
-        text-decoration: underline
+  mat-icon[inline]
+    display: inline !important
+    font-size: 1.125rem !important
+    vertical-align: bottom
 
-    ul
-      padding-inline-start: 0
+  a[mat-menu-item]:hover
+    text-decoration: none
 
-      li
-        margin: 0.25rem 0
-        list-style: none
+  mat-form-field
+    .mat-mdc-form-field-icon-prefix,
+    .mat-mdc-form-field-icon-suffix
+      padding: 0 8px
 
-    h1
-      font-size: 2.2rem
-    h2
-      font-size: 1.8rem
-    h3
-      font-size: 1.2rem
-    h4
-      font-size: 0.8rem
+    .mat-mdc-form-field-subscript-wrapper
+      .mat-mdc-form-field-hint-wrapper,
+      .mat-mdc-form-field-error-wrapper
+        padding: 0
 
-    h1,
-    h2,
-    h3,
-    h4
-      margin: 1rem 0 0.5em
+      &, &::before
+        height: 16px
+        transition: height 300ms cubic-bezier(0.55, 0, 0.55, 0.2)
 
-      & + h2,
-      & + h3,
-      & + h4
-        margin-top: 0
-
-      a
-        font-weight: bolder
-
-    mat-icon[inline]
-      display: inline !important
-      font-size: 1.125rem !important
-      vertical-align: bottom
-
-    a[mat-menu-item]:hover
-      text-decoration: none
-
-    mat-form-field
-      .mat-mdc-form-field-icon-prefix,
-      .mat-mdc-form-field-icon-suffix
-        padding: 0 8px
-
-      .mat-mdc-form-field-subscript-wrapper
-        .mat-mdc-form-field-hint-wrapper,
-        .mat-mdc-form-field-error-wrapper
-          padding: 0
-
-        &, &::before
-          height: 16px
-          transition: height 300ms cubic-bezier(0.55, 0, 0.55, 0.2)
-
-      &:not(.mat-form-field-invalid) .mat-mdc-form-field-subscript-wrapper
-        &, &::before
-          height: 0
-          transition: none
+    &:not(.mat-form-field-invalid) .mat-mdc-form-field-subscript-wrapper
+      &, &::before
+        height: 0
+        transition: none

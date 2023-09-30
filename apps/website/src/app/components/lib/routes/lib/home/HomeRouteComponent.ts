@@ -1,7 +1,7 @@
-import { isPlatformBrowser, NgIf }        from "@angular/common";
-import { Component, inject, PLATFORM_ID } from "@angular/core";
-import { MatIconModule }                  from "@angular/material/icon";
-import { RouterLink }                     from "@angular/router";
+import { isPlatformBrowser, NgIf }                from "@angular/common";
+import { Component, inject, PLATFORM_ID }         from "@angular/core";
+import { MatIconModule }                          from "@angular/material/icon";
+import { RouterLink }                             from "@angular/router";
 import { RouteComponent }                         from "../../../../../components";
 import { AuthenticationService, EllipsesService } from "../../../../../services";
 

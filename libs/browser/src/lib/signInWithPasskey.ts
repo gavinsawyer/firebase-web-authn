@@ -46,9 +46,7 @@ export const signInWithPasskey: (auth: Auth, functions: Functions, factor?: WebA
       operation:                "create authentication challenge",
     },
   ).then<UserCredential, never>(
-    ({ data: functionResponse }: HttpsCallableResult<FunctionResponse>): Promise<UserCredential> => "code" in functionResponse ? ((): never => {
-      throw new FirebaseWebAuthnError(functionResponse);
-    })() : "requestOptions" in functionResponse ? startAuthentication(functionResponse.requestOptions).then<UserCredential, never>(
+    ({ data: functionResponse }: HttpsCallableResult<FunctionResponse>): Promise<UserCredential> => "requestOptions" in functionResponse ? startAuthentication(functionResponse.requestOptions).then<UserCredential, never>(
       (authenticationResponse: AuthenticationResponseJSON): Promise<UserCredential> => httpsCallableFromURL<FunctionRequest, FunctionResponse>(
         functions,
         "/firebase-web-authn-api",
@@ -73,7 +71,9 @@ export const signInWithPasskey: (auth: Auth, functions: Functions, factor?: WebA
           );
         },
       ),
-    ) : ((): never => {
+    ) : "code" in functionResponse ? ((): never => {
+      throw new FirebaseWebAuthnError(functionResponse);
+    })() : ((): never => {
       throw new FirebaseWebAuthnError(
         {
           code:    "invalid",

@@ -1,4 +1,3 @@
-export * from "./lib/aside/AsideComponent";
 export * from "./lib/root/RootComponent";
 export * from "./lib/route component/RouteComponent";
 export * from "./lib/routes/routes";

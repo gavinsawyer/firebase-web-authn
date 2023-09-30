@@ -22,14 +22,14 @@ interface VerifyAuthenticationOptions {
 }
 
 export const verifyAuthentication: (options: VerifyAuthenticationOptions) => Promise<FunctionResponse> = (options: VerifyAuthenticationOptions): Promise<FunctionResponse> => options.authenticationOptions.response.response.userHandle !== options.userID ? options.webAuthnUserDocumentReferenceTarget.get().then<FunctionResponse, FunctionResponse>(
-  (targetUserDocumentSnapshot: DocumentSnapshot<WebAuthnUserDocument>): Promise<FunctionResponse> => (async (targetUserDocument: WebAuthnUserDocument | undefined): Promise<FunctionResponse> => targetUserDocument ? options.webAuthnUserDocumentReference.get().then<FunctionResponse, FunctionResponse>(
-    (userDocumentSnapshot: DocumentSnapshot<WebAuthnUserDocument>): Promise<FunctionResponse> => (async (userDocument: WebAuthnUserDocument | undefined): Promise<FunctionResponse> => userDocument ? userDocument.challenge && userDocument.challenge.process === "authentication" ? targetUserDocument.credentials?.[userDocument.challenge?.processingCredential || "first"] ? verifyAuthenticationResponse(
+  (userDocumentSnapshotTarget: DocumentSnapshot<WebAuthnUserDocument>): Promise<FunctionResponse> => (async (userDocumentTarget: WebAuthnUserDocument | undefined): Promise<FunctionResponse> => userDocumentTarget ? options.webAuthnUserDocumentReference.get().then<FunctionResponse, FunctionResponse>(
+    (userDocumentSnapshot: DocumentSnapshot<WebAuthnUserDocument>): Promise<FunctionResponse> => (async (userDocument: WebAuthnUserDocument | undefined): Promise<FunctionResponse> => userDocument ? userDocument.challenge && userDocument.challenge.process === "authentication" ? userDocumentTarget.credentials?.[userDocument.challenge?.processingCredential || "first"] ? verifyAuthenticationResponse(
       {
         ...options.authenticationOptions,
         authenticator:           {
-          counter:             targetUserDocument.credentials[userDocument.challenge.processingCredential || "first"]?.counter || 0,
-          credentialID:        targetUserDocument.credentials[userDocument.challenge.processingCredential || "first"]?.id || new Uint8Array(0),
-          credentialPublicKey: targetUserDocument.credentials[userDocument.challenge.processingCredential || "first"]?.publicKey || new Uint8Array(0),
+          counter:             userDocumentTarget.credentials[userDocument.challenge.processingCredential || "first"]?.counter || 0,
+          credentialID:        userDocumentTarget.credentials[userDocument.challenge.processingCredential || "first"]?.id || new Uint8Array(0),
+          credentialPublicKey: userDocumentTarget.credentials[userDocument.challenge.processingCredential || "first"]?.publicKey || new Uint8Array(0),
         },
         expectedChallenge:       userDocument.challenge.value,
         requireUserVerification: (userDocument.challenge.processingCredential === "second" && options.authenticatorAttachment2FA || options.authenticatorAttachment) === "platform" && options.userVerificationRequirement !== "discouraged",
@@ -40,22 +40,22 @@ export const verifyAuthentication: (options: VerifyAuthenticationOptions) => Pro
           challenge: FieldValue.delete(),
         },
       ) : options.webAuthnUserDocumentReference.delete()).then<FunctionResponse, FunctionResponse>(
-        (): Promise<FunctionResponse> => verifiedAuthenticationResponse.verified ? options.webAuthnUserDocumentReferenceTarget.update(
-          {
-            challenge:                                                                                                      FieldValue.delete(),
-            [userDocument.challenge?.processingCredential === "second" ? "credentials.second" : "credentials.first"]: {
-              ...targetUserDocument.credentials?.[userDocument.challenge?.processingCredential || "first"],
-              authenticatorAttachment: verifiedAuthenticationResponse.authenticationInfo.credentialDeviceType === "multiDevice" ? "platform" : "cross-platform",
-              backedUp:                verifiedAuthenticationResponse.authenticationInfo.credentialBackedUp,
+        (): Promise<FunctionResponse> => verifiedAuthenticationResponse.verified ? options.createCustomToken(options.authenticationOptions.response.response.userHandle || "").then<FunctionResponse, FunctionResponse>(
+          (customToken: string): Promise<FunctionResponse> => options.webAuthnUserDocumentReferenceTarget.update(
+            {
+              challenge:                                                                                                      FieldValue.delete(),
+              [userDocument.challenge?.processingCredential === "second" ? "credentials.second" : "credentials.first"]: {
+                ...userDocumentTarget.credentials?.[userDocument.challenge?.processingCredential || "first"],
+                authenticatorAttachment: verifiedAuthenticationResponse.authenticationInfo.credentialDeviceType === "multiDevice" ? "platform" : "cross-platform",
+                backedUp:                verifiedAuthenticationResponse.authenticationInfo.credentialBackedUp,
+              },
+              lastCredentialUsed:                                                                                             "first",
+              lastPresent:                                                                                                    Timestamp.fromDate(new Date()),
+              lastVerified:                                                                                                   verifiedAuthenticationResponse.authenticationInfo.userVerified ? Timestamp.fromDate(new Date()) : userDocumentTarget.lastVerified || FieldValue.delete(),
+              lastWebAuthnProcess:                                                                                            "authentication",
             },
-            lastCredentialUsed:                                                                                             "first",
-            lastPresent:                                                                                                    Timestamp.fromDate(new Date()),
-            lastVerified:                                                                                                   verifiedAuthenticationResponse.authenticationInfo.userVerified ? Timestamp.fromDate(new Date()) : targetUserDocument.lastVerified || FieldValue.delete(),
-            lastWebAuthnProcess:                                                                                            "authentication",
-          },
-        ).then<FunctionResponse, FunctionResponse>(
-          (): Promise<FunctionResponse> => options.createCustomToken(options.authenticationOptions.response.response.userHandle || "").then<FunctionResponse, FunctionResponse>(
-            (customToken: string): FunctionResponse => ({
+          ).then<FunctionResponse, FunctionResponse>(
+            (): FunctionResponse => ({
               authenticatedCredential: userDocument.challenge?.processingCredential || "first",
               customToken:             customToken,
               operation:               "verify authentication",
@@ -74,33 +74,33 @@ export const verifyAuthentication: (options: VerifyAuthenticationOptions) => Pro
             operation: "verify authentication",
             success:   false,
           }),
-        ) : userDocument.challenge?.processingCredential === undefined && targetUserDocument.credentials?.second ? verifyAuthenticationResponse(
+        ) : userDocument.challenge?.processingCredential === undefined && userDocumentTarget.credentials?.second ? verifyAuthenticationResponse(
           {
             ...options.authenticationOptions,
             authenticator:     {
-              counter:             targetUserDocument.credentials.second.counter,
-              credentialID:        targetUserDocument.credentials.second.id,
-              credentialPublicKey: targetUserDocument.credentials.second.publicKey,
+              counter:             userDocumentTarget.credentials.second.counter,
+              credentialID:        userDocumentTarget.credentials.second.id,
+              credentialPublicKey: userDocumentTarget.credentials.second.publicKey,
             },
             expectedChallenge: userDocument.challenge?.value || "",
           },
         ).then<FunctionResponse>(
-          (backupVerifiedAuthenticationResponse: VerifiedAuthenticationResponse): Promise<FunctionResponse> => backupVerifiedAuthenticationResponse.verified ? options.webAuthnUserDocumentReferenceTarget.update(
-            {
-              challenge:            FieldValue.delete(),
-              "credentials.second": {
-                ...targetUserDocument.credentials?.second,
-                authenticatorAttachment: backupVerifiedAuthenticationResponse.authenticationInfo.credentialDeviceType === "multiDevice" ? "platform" : "cross-platform",
-                backedUp:                backupVerifiedAuthenticationResponse.authenticationInfo.credentialBackedUp,
+          (backupVerifiedAuthenticationResponse: VerifiedAuthenticationResponse): Promise<FunctionResponse> => backupVerifiedAuthenticationResponse.verified ? options.createCustomToken(options.authenticationOptions.response.response.userHandle || "").then<FunctionResponse, FunctionResponse>(
+            (customToken: string): Promise<FunctionResponse> => options.webAuthnUserDocumentReferenceTarget.update(
+              {
+                challenge:            FieldValue.delete(),
+                "credentials.second": {
+                  ...userDocumentTarget.credentials?.second,
+                  authenticatorAttachment: backupVerifiedAuthenticationResponse.authenticationInfo.credentialDeviceType === "multiDevice" ? "platform" : "cross-platform",
+                  backedUp:                backupVerifiedAuthenticationResponse.authenticationInfo.credentialBackedUp,
+                },
+                lastCredentialUsed:   "second",
+                lastPresent:          Timestamp.fromDate(new Date()),
+                lastVerified:         backupVerifiedAuthenticationResponse.authenticationInfo.userVerified ? Timestamp.fromDate(new Date()) : userDocumentTarget.lastVerified || FieldValue.delete(),
+                lastWebAuthnProcess:  "authentication",
               },
-              lastCredentialUsed:   "second",
-              lastPresent:          Timestamp.fromDate(new Date()),
-              lastVerified:         backupVerifiedAuthenticationResponse.authenticationInfo.userVerified ? Timestamp.fromDate(new Date()) : targetUserDocument.lastVerified || FieldValue.delete(),
-              lastWebAuthnProcess:  "authentication",
-            },
-          ).then<FunctionResponse, FunctionResponse>(
-            (): Promise<FunctionResponse> => options.createCustomToken(options.authenticationOptions.response.response.userHandle || "").then<FunctionResponse, FunctionResponse>(
-              (customToken: string): FunctionResponse => ({
+            ).then<FunctionResponse, FunctionResponse>(
+              (): FunctionResponse => ({
                 authenticatedCredential: "second",
                 customToken:             customToken,
                 operation:               "verify authentication",
@@ -126,7 +126,7 @@ export const verifyAuthentication: (options: VerifyAuthenticationOptions) => Pro
           ) : options.webAuthnUserDocumentReference.delete()).then<FunctionResponse, FunctionResponse>(
             (): FunctionResponse => ({
               code:      "not-verified",
-              message:   "User not verified. 2",
+              message:   "User not verified.",
               operation: "verify authentication",
               success:   false,
             }),
@@ -214,7 +214,7 @@ export const verifyAuthentication: (options: VerifyAuthenticationOptions) => Pro
     message:   "No user document was found in Firestore.",
     operation: "verify authentication",
     success:   false,
-  })(targetUserDocumentSnapshot.data()),
+  })(userDocumentSnapshotTarget.data()),
   (firebaseError: FirebaseError): FunctionResponse => ({
     code:      firebaseError.code,
     message:   firebaseError.message,

@@ -19,9 +19,8 @@ import { linkWithPasskey }                         from "./linkWithPasskey";
  *  {@link FirebaseWebAuthnError}
  */
 export const createUserWithPasskey: (auth: Auth, functions: Functions, name: string) => Promise<UserCredential> = (auth: Auth, functions: Functions, name: string): Promise<UserCredential> => auth
-  .currentUser && auth
   .currentUser
-  .isAnonymous ? linkWithPasskey(
+  ?.isAnonymous ? linkWithPasskey(
     auth,
     functions,
     name,

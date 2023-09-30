@@ -35,9 +35,7 @@ export const linkWithPasskey: (auth: Auth, functions: Functions, name: string, f
     },
   )
   .then<UserCredential, never>(
-    ({ data: functionResponse }: HttpsCallableResult<FunctionResponse>): Promise<UserCredential> => "code" in functionResponse ? ((): never => {
-      throw new FirebaseWebAuthnError(functionResponse);
-    })() : "creationOptions" in functionResponse ? startRegistration(functionResponse.creationOptions).then<UserCredential, never>(
+    ({ data: functionResponse }: HttpsCallableResult<FunctionResponse>): Promise<UserCredential> => "creationOptions" in functionResponse ? startRegistration(functionResponse.creationOptions).then<UserCredential, never>(
       (registrationResponse: RegistrationResponseJSON): Promise<UserCredential> => httpsCallableFromURL<FunctionRequest, FunctionResponse>(
         functions,
         "/firebase-web-authn-api",
@@ -75,7 +73,9 @@ export const linkWithPasskey: (auth: Auth, functions: Functions, name: string, f
           );
         },
       ),
-    ) : ((): never => {
+    ) : "code" in functionResponse ? ((): never => {
+      throw new FirebaseWebAuthnError(functionResponse);
+    })() : ((): never => {
       throw new FirebaseWebAuthnError(
         {
           code:      "invalid",

@@ -1,6 +1,6 @@
 {
   "name":            "@firebase-web-authn/source",
-  "version":         "10.3.0",
+  "version":         "10.3.1",
   "homepage":        "https://firebase-web-authn.dev",
   "license":         "Apache-2.0",
   "author":          {
@@ -19,20 +19,20 @@
     "deploy": "npx nx run-many --target deploy --all"
   },
   "dependencies":    {
-    "@angular/animations":               "^16",
-    "@angular/cdk":                      "^16",
-    "@angular/common":                   "^16",
-    "@angular/compiler":                 "^16",
-    "@angular/core":                     "^16",
+    "@angular/animations":               "^16.2.7",
+    "@angular/cdk":                      "^16.2.6",
+    "@angular/common":                   "^16.2.7",
+    "@angular/compiler":                 "^16.2.7",
+    "@angular/core":                     "^16.2.7",
     "@angular/fire":                     "^16.0.0-canary.5793d6f",
     "@angular/forms":                    "^16.2.7",
     "@angular/material":                 "^16.2.6",
-    "@angular/platform-browser":         "^16",
+    "@angular/platform-browser":         "^16.2.7",
     "@angular/platform-browser-dynamic": "^16.2.7",
     "@angular/platform-server":          "^16.2.7",
     "@angular/router":                   "^16.2.7",
     "@nguniversal/express-engine":       "^16.2.0",
-    "rxjs":                              "^7",
+    "rxjs":                              "^7.8.1",
     "zone.js":                           "^0.13.3"
   },
   "devDependencies": {
@@ -45,9 +45,9 @@
     "@angular/fire--legacy":                  "npm:@angular/fire@^7.6.1",
     "@angular/language-service":              "^16.2.7",
     "@nguniversal/builders":                  "^16.2.0",
-    "@nx/angular":                            "^16",
-    "@nx/esbuild":                            "^16",
-    "@nx/eslint-plugin":                      "^16",
+    "@nx/angular":                            "^16.9.1",
+    "@nx/esbuild":                            "^16.9.1",
+    "@nx/eslint-plugin":                      "^16.9.1",
     "@simplewebauthn/browser":                "^8.2.1",
     "@simplewebauthn/server":                 "^8.2.0",
     "@typescript-eslint/eslint-plugin":       "^5.62.0",
@@ -56,8 +56,8 @@
     "firebase-functions":                     "^4.4.1",
     "firebase-tools":                         "^12.6.1",
     "git-describe":                           "^4.1.1",
-    "nx":                                     "^16",
-    "nx-cloud":                               "^16",
+    "nx":                                     "^16.9.1",
+    "nx-cloud":                               "^16.4.0",
     "url":                                    "^0.11.3"
   }
 }

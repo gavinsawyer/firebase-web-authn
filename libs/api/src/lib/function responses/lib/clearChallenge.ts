@@ -34,12 +34,10 @@ export const clearChallenge: (options: ClearChallengeOptions) => Promise<Functio
     operation: "clear challenge",
     success:   false,
   })(userDocumentSnapshot.data()),
-  (firebaseError: FirebaseError): FunctionResponse => (
-    {
-      code:      firebaseError.code,
-      message:   firebaseError.message,
-      operation: "clear challenge",
-      success:   false,
-    }
-  ),
+  (firebaseError: FirebaseError): FunctionResponse => ({
+    code:      firebaseError.code,
+    message:   firebaseError.message,
+    operation: "clear challenge",
+    success:   false,
+  }),
 );

@@ -19,7 +19,7 @@ import { TransferHttpCacheModule }                                              
 import { gitInfo }                                                                 from "../../../.git-info";
 import { packageVersion }                                                          from "../../../.package-version";
 import { environment }                                                             from "../../../environment";
-import { AsideComponent, RootComponent, routes }                                   from "../../components";
+import { RootComponent, routes, SignedInComponent, SignedOutComponent }            from "../../components";
 import { ENVIRONMENT, GIT_INFO, PACKAGE_VERSION }                                  from "../../injection tokens";
 import { AppCheckOptionsService }                                                  from "../../services";
 
@@ -31,8 +31,7 @@ import { AppCheckOptionsService }                                               
   declarations: [
     RootComponent,
   ],
-  imports: [
-    AsideComponent,
+  imports:      [
     BrowserAnimationsModule,
     BrowserModule,
     MatButtonModule,
@@ -69,6 +68,8 @@ import { AppCheckOptionsService }                                               
         scrollPositionRestoration: "enabled",
       },
     ),
+    SignedInComponent,
+    SignedOutComponent,
     TransferHttpCacheModule,
     MatDividerModule,
   ],

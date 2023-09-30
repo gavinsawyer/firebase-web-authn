@@ -1,6 +1,6 @@
 {
   "name":         "@firebase-web-authn/types",
-  "version":      "10.3.0",
+  "version":      "10.3.1",
   "homepage":     "https://firebase-web-authn.dev",
   "license":      "Apache-2.0",
   "author":       {
@@ -15,7 +15,7 @@
   },
   "private":      false,
   "dependencies": {
-    "@simplewebauthn/typescript-types": "^8",
-    "firebase-admin":                   "^11"
+    "@simplewebauthn/typescript-types": "^8.0.0",
+    "firebase-admin":                   "^11.11.0"
   }
 }

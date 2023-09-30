@@ -1,6 +1,9 @@
 <main>
   <router-outlet />
-  <website-aside />
+  <aside>
+    <website-signed-in *ngIf="authenticationService.user$()?.isAnonymous === false" />
+    <website-signed-out *ngIf="authenticationService.user$()?.isAnonymous === true" />
+  </aside>
 </main>
 <footer>
   <button

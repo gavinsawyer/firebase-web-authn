@@ -3,9 +3,7 @@ import { Auth, signInWithCustomToken, UserCredential } from "firebase/auth";
 import { FirebaseWebAuthnError }                       from "./FirebaseWebAuthnError";
 
 
-export const handleVerifyFunctionResponse: (auth: Auth, functionResponse: FunctionResponse) => Promise<UserCredential> = (auth: Auth, functionResponse: FunctionResponse): Promise<UserCredential> => "code" in functionResponse ? ((): never => {
-  throw new FirebaseWebAuthnError(functionResponse);
-})() : "customToken" in functionResponse ? signInWithCustomToken(
+export const handleVerifyFunctionResponse: (auth: Auth, functionResponse: FunctionResponse) => Promise<UserCredential> = (auth: Auth, functionResponse: FunctionResponse): Promise<UserCredential> => "customToken" in functionResponse ? signInWithCustomToken(
   auth,
   functionResponse.customToken,
 )
@@ -22,7 +20,9 @@ export const handleVerifyFunctionResponse: (auth: Auth, functionResponse: Functi
         },
       );
     },
-  ) : ((): never => {
+  ) : "code" in functionResponse ? ((): never => {
+    throw new FirebaseWebAuthnError(functionResponse);
+  })() : ((): never => {
     throw new FirebaseWebAuthnError(
       {
         code:      "invalid",

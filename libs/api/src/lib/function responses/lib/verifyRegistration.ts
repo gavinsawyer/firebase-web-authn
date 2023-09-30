@@ -6,16 +6,16 @@ import { DocumentReference, DocumentSnapshot, FieldValue, Timestamp } from "fire
 
 
 interface VerifyRegistrationOptions {
-  authenticatorAttachment?: AuthenticatorAttachment,
-  authenticatorAttachment2FA?: AuthenticatorAttachment,
-  createCustomToken: () => Promise<string>,
+  authenticatorAttachment?: AuthenticatorAttachment;
+  authenticatorAttachment2FA?: AuthenticatorAttachment;
+  createCustomToken: () => Promise<string>;
   registrationOptions: {
-    expectedOrigin: string,
-    expectedRPID: string,
-    response: RegistrationResponseJSON,
+    expectedOrigin: string;
+    expectedRPID: string;
+    response: RegistrationResponseJSON;
   },
-  userVerificationRequirement?: UserVerificationRequirement,
-  webAuthnUserDocumentReference: DocumentReference<WebAuthnUserDocument>
+  userVerificationRequirement?: UserVerificationRequirement;
+  webAuthnUserDocumentReference: DocumentReference<WebAuthnUserDocument>;
 }
 
 export const verifyRegistration: (options: VerifyRegistrationOptions) => Promise<FunctionResponse> = (options: VerifyRegistrationOptions): Promise<FunctionResponse> => options.webAuthnUserDocumentReference.get().then<FunctionResponse, FunctionResponse>(
@@ -26,24 +26,24 @@ export const verifyRegistration: (options: VerifyRegistrationOptions) => Promise
       requireUserVerification: (userDocument.challenge.processingCredential === "second" ? options.authenticatorAttachment2FA === "platform" : options.authenticatorAttachment === "platform") && options.userVerificationRequirement === "required",
     },
   ).then<FunctionResponse>(
-    (verifiedRegistrationResponse: VerifiedRegistrationResponse): Promise<FunctionResponse> => verifiedRegistrationResponse.verified && verifiedRegistrationResponse.registrationInfo ? options.webAuthnUserDocumentReference.update(
-      {
-        challenge:                                                                                                FieldValue.delete(),
-        [userDocument.challenge?.processingCredential === "second" ? "credentials.second" : "credentials.first"]: {
-          authenticatorAttachment: verifiedRegistrationResponse.registrationInfo.credentialDeviceType === "multiDevice" ? "platform" : "cross-platform",
-          backedUp:                verifiedRegistrationResponse.registrationInfo.credentialBackedUp,
-          counter:                 verifiedRegistrationResponse.registrationInfo.counter,
-          id:                      verifiedRegistrationResponse.registrationInfo.credentialID,
-          publicKey:               verifiedRegistrationResponse.registrationInfo.credentialPublicKey,
+    (verifiedRegistrationResponse: VerifiedRegistrationResponse): Promise<FunctionResponse> => verifiedRegistrationResponse.verified ? options.createCustomToken().then<FunctionResponse, FunctionResponse>(
+      (customToken: string): Promise<FunctionResponse> => options.webAuthnUserDocumentReference.update(
+        {
+          challenge:                                                                                                FieldValue.delete(),
+          [userDocument.challenge?.processingCredential === "second" ? "credentials.second" : "credentials.first"]: {
+            authenticatorAttachment: verifiedRegistrationResponse.registrationInfo?.credentialDeviceType === "multiDevice" ? "platform" : "cross-platform",
+            backedUp:                verifiedRegistrationResponse.registrationInfo?.credentialBackedUp,
+            counter:                 verifiedRegistrationResponse.registrationInfo?.counter,
+            id:                      verifiedRegistrationResponse.registrationInfo?.credentialID,
+            publicKey:               verifiedRegistrationResponse.registrationInfo?.credentialPublicKey,
+          },
+          lastCredentialUsed:                                                                                       userDocument.challenge?.processingCredential || "first",
+          lastPresent:                                                                                              Timestamp.fromDate(new Date()),
+          lastVerified:                                                                                             verifiedRegistrationResponse.registrationInfo?.userVerified ? Timestamp.fromDate(new Date()) : userDocument.lastVerified || FieldValue.delete(),
+          lastWebAuthnProcess:                                                                                      "registration",
         },
-        lastCredentialUsed:                                                                                       userDocument.challenge?.processingCredential || "first",
-        lastPresent:                                                                                              Timestamp.fromDate(new Date()),
-        lastVerified:                                                                                             verifiedRegistrationResponse.registrationInfo.userVerified ? Timestamp.fromDate(new Date()) : userDocument.lastVerified || FieldValue.delete(),
-        lastWebAuthnProcess:                                                                                      "registration",
-      },
-    ).then<FunctionResponse, FunctionResponse>(
-      (): Promise<FunctionResponse> => options.createCustomToken().then<FunctionResponse, FunctionResponse>(
-        (customToken: string): FunctionResponse => ({
+      ).then<FunctionResponse, FunctionResponse>(
+        (): FunctionResponse => ({
           registeredCredential: userDocument.challenge?.processingCredential || "first",
           customToken:          customToken,
           operation:            "verify registration",
@@ -59,7 +59,7 @@ export const verifyRegistration: (options: VerifyRegistrationOptions) => Promise
       (firebaseError: FirebaseError): FunctionResponse => ({
         code:      firebaseError.code,
         message:   firebaseError.message,
-        operation: "verify registration",
+        operation: "verify reauthentication",
         success:   false,
       }),
     ) : (userDocument.credentials ? options.webAuthnUserDocumentReference.update(

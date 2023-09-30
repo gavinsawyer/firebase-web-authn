@@ -14,7 +14,7 @@
   "etags": {
     "fir-web-authn": {
       "extensionInstances": {
-        "firebase-web-authn": "92d4e723b88ce84b0252b13e8adad24970c6e9048f11d2e2725e7ed42df3fafc"
+        "firebase-web-authn": "4dfb9782cc58dae830961b232bd9063e3b55e3addfd087f7af5916321ab5b3b6"
       }
     }
   }

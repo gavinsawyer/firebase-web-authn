@@ -6,18 +6,18 @@ import { DocumentReference, DocumentSnapshot }                                  
 
 
 interface CreateRegistrationChallengeOptions {
-  registeringCredentialFactor: WebAuthnUserCredentialFactor,
+  registeringCredentialFactor: WebAuthnUserCredentialFactor;
   registrationOptions: {
-    attestationType: AttestationConveyancePreference,
-    authenticatorSelection: AuthenticatorSelectionCriteria,
-    extensions: AuthenticationExtensionsClientInputs,
-    rpID: string,
-    rpName: string,
-    supportedAlgorithmIDs: COSEAlgorithmIdentifier[],
-    userID: string,
-    userName: string,
-  },
-  webAuthnUserDocumentReference: DocumentReference<WebAuthnUserDocument>
+    attestationType: AttestationConveyancePreference;
+    authenticatorSelection: AuthenticatorSelectionCriteria;
+    extensions: AuthenticationExtensionsClientInputs;
+    rpID: string;
+    rpName: string;
+    supportedAlgorithmIDs: COSEAlgorithmIdentifier[];
+    userID: string;
+    userName: string;
+  };
+  webAuthnUserDocumentReference: DocumentReference<WebAuthnUserDocument>;
 }
 
 export const createRegistrationChallenge: (options: CreateRegistrationChallengeOptions) => Promise<FunctionResponse> = (options: CreateRegistrationChallengeOptions): Promise<FunctionResponse> => options.webAuthnUserDocumentReference.get().then<FunctionResponse, FunctionResponse>(

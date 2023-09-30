@@ -242,14 +242,14 @@ var createRegistrationChallenge = (options) => options.webAuthnUserDocumentRefer
 import { verifyAuthenticationResponse } from "@simplewebauthn/server";
 import { FieldValue as FieldValue5, Timestamp } from "firebase-admin/firestore";
 var verifyAuthentication = (options) => options.authenticationOptions.response.response.userHandle !== options.userID ? options.webAuthnUserDocumentReferenceTarget.get().then(
-  (targetUserDocumentSnapshot) => (async (targetUserDocument) => targetUserDocument ? options.webAuthnUserDocumentReference.get().then(
-    (userDocumentSnapshot) => (async (userDocument) => userDocument ? userDocument.challenge && userDocument.challenge.process === "authentication" ? targetUserDocument.credentials?.[userDocument.challenge?.processingCredential || "first"] ? verifyAuthenticationResponse(
+  (userDocumentSnapshotTarget) => (async (userDocumentTarget) => userDocumentTarget ? options.webAuthnUserDocumentReference.get().then(
+    (userDocumentSnapshot) => (async (userDocument) => userDocument ? userDocument.challenge && userDocument.challenge.process === "authentication" ? userDocumentTarget.credentials?.[userDocument.challenge?.processingCredential || "first"] ? verifyAuthenticationResponse(
       {
         ...options.authenticationOptions,
         authenticator: {
-          counter: targetUserDocument.credentials[userDocument.challenge.processingCredential || "first"]?.counter || 0,
-          credentialID: targetUserDocument.credentials[userDocument.challenge.processingCredential || "first"]?.id || new Uint8Array(0),
-          credentialPublicKey: targetUserDocument.credentials[userDocument.challenge.processingCredential || "first"]?.publicKey || new Uint8Array(0)
+          counter: userDocumentTarget.credentials[userDocument.challenge.processingCredential || "first"]?.counter || 0,
+          credentialID: userDocumentTarget.credentials[userDocument.challenge.processingCredential || "first"]?.id || new Uint8Array(0),
+          credentialPublicKey: userDocumentTarget.credentials[userDocument.challenge.processingCredential || "first"]?.publicKey || new Uint8Array(0)
         },
         expectedChallenge: userDocument.challenge.value,
         requireUserVerification: (userDocument.challenge.processingCredential === "second" && options.authenticatorAttachment2FA || options.authenticatorAttachment) === "platform" && options.userVerificationRequirement !== "discouraged"
@@ -260,22 +260,22 @@ var verifyAuthentication = (options) => options.authenticationOptions.response.r
           challenge: FieldValue5.delete()
         }
       ) : options.webAuthnUserDocumentReference.delete()).then(
-        () => verifiedAuthenticationResponse.verified ? options.webAuthnUserDocumentReferenceTarget.update(
-          {
-            challenge: FieldValue5.delete(),
-            [userDocument.challenge?.processingCredential === "second" ? "credentials.second" : "credentials.first"]: {
-              ...targetUserDocument.credentials?.[userDocument.challenge?.processingCredential || "first"],
-              authenticatorAttachment: verifiedAuthenticationResponse.authenticationInfo.credentialDeviceType === "multiDevice" ? "platform" : "cross-platform",
-              backedUp: verifiedAuthenticationResponse.authenticationInfo.credentialBackedUp
-            },
-            lastCredentialUsed: "first",
-            lastPresent: Timestamp.fromDate(/* @__PURE__ */ new Date()),
-            lastVerified: verifiedAuthenticationResponse.authenticationInfo.userVerified ? Timestamp.fromDate(/* @__PURE__ */ new Date()) : targetUserDocument.lastVerified || FieldValue5.delete(),
-            lastWebAuthnProcess: "authentication"
-          }
-        ).then(
-          () => options.createCustomToken(options.authenticationOptions.response.response.userHandle || "").then(
-            (customToken) => ({
+        () => verifiedAuthenticationResponse.verified ? options.createCustomToken(options.authenticationOptions.response.response.userHandle || "").then(
+          (customToken) => options.webAuthnUserDocumentReferenceTarget.update(
+            {
+              challenge: FieldValue5.delete(),
+              [userDocument.challenge?.processingCredential === "second" ? "credentials.second" : "credentials.first"]: {
+                ...userDocumentTarget.credentials?.[userDocument.challenge?.processingCredential || "first"],
+                authenticatorAttachment: verifiedAuthenticationResponse.authenticationInfo.credentialDeviceType === "multiDevice" ? "platform" : "cross-platform",
+                backedUp: verifiedAuthenticationResponse.authenticationInfo.credentialBackedUp
+              },
+              lastCredentialUsed: "first",
+              lastPresent: Timestamp.fromDate(/* @__PURE__ */ new Date()),
+              lastVerified: verifiedAuthenticationResponse.authenticationInfo.userVerified ? Timestamp.fromDate(/* @__PURE__ */ new Date()) : userDocumentTarget.lastVerified || FieldValue5.delete(),
+              lastWebAuthnProcess: "authentication"
+            }
+          ).then(
+            () => ({
               authenticatedCredential: userDocument.challenge?.processingCredential || "first",
               customToken,
               operation: "verify authentication",
@@ -294,33 +294,33 @@ var verifyAuthentication = (options) => options.authenticationOptions.response.r
             operation: "verify authentication",
             success: false
           })
-        ) : userDocument.challenge?.processingCredential === void 0 && targetUserDocument.credentials?.second ? verifyAuthenticationResponse(
+        ) : userDocument.challenge?.processingCredential === void 0 && userDocumentTarget.credentials?.second ? verifyAuthenticationResponse(
           {
             ...options.authenticationOptions,
             authenticator: {
-              counter: targetUserDocument.credentials.second.counter,
-              credentialID: targetUserDocument.credentials.second.id,
-              credentialPublicKey: targetUserDocument.credentials.second.publicKey
+              counter: userDocumentTarget.credentials.second.counter,
+              credentialID: userDocumentTarget.credentials.second.id,
+              credentialPublicKey: userDocumentTarget.credentials.second.publicKey
             },
             expectedChallenge: userDocument.challenge?.value || ""
           }
         ).then(
-          (backupVerifiedAuthenticationResponse) => backupVerifiedAuthenticationResponse.verified ? options.webAuthnUserDocumentReferenceTarget.update(
-            {
-              challenge: FieldValue5.delete(),
-              "credentials.second": {
-                ...targetUserDocument.credentials?.second,
-                authenticatorAttachment: backupVerifiedAuthenticationResponse.authenticationInfo.credentialDeviceType === "multiDevice" ? "platform" : "cross-platform",
-                backedUp: backupVerifiedAuthenticationResponse.authenticationInfo.credentialBackedUp
-              },
-              lastCredentialUsed: "second",
-              lastPresent: Timestamp.fromDate(/* @__PURE__ */ new Date()),
-              lastVerified: backupVerifiedAuthenticationResponse.authenticationInfo.userVerified ? Timestamp.fromDate(/* @__PURE__ */ new Date()) : targetUserDocument.lastVerified || FieldValue5.delete(),
-              lastWebAuthnProcess: "authentication"
-            }
-          ).then(
-            () => options.createCustomToken(options.authenticationOptions.response.response.userHandle || "").then(
-              (customToken) => ({
+          (backupVerifiedAuthenticationResponse) => backupVerifiedAuthenticationResponse.verified ? options.createCustomToken(options.authenticationOptions.response.response.userHandle || "").then(
+            (customToken) => options.webAuthnUserDocumentReferenceTarget.update(
+              {
+                challenge: FieldValue5.delete(),
+                "credentials.second": {
+                  ...userDocumentTarget.credentials?.second,
+                  authenticatorAttachment: backupVerifiedAuthenticationResponse.authenticationInfo.credentialDeviceType === "multiDevice" ? "platform" : "cross-platform",
+                  backedUp: backupVerifiedAuthenticationResponse.authenticationInfo.credentialBackedUp
+                },
+                lastCredentialUsed: "second",
+                lastPresent: Timestamp.fromDate(/* @__PURE__ */ new Date()),
+                lastVerified: backupVerifiedAuthenticationResponse.authenticationInfo.userVerified ? Timestamp.fromDate(/* @__PURE__ */ new Date()) : userDocumentTarget.lastVerified || FieldValue5.delete(),
+                lastWebAuthnProcess: "authentication"
+              }
+            ).then(
+              () => ({
                 authenticatedCredential: "second",
                 customToken,
                 operation: "verify authentication",
@@ -346,7 +346,7 @@ var verifyAuthentication = (options) => options.authenticationOptions.response.r
           ) : options.webAuthnUserDocumentReference.delete()).then(
             () => ({
               code: "not-verified",
-              message: "User not verified. 2",
+              message: "User not verified.",
               operation: "verify authentication",
               success: false
             }),
@@ -434,7 +434,7 @@ var verifyAuthentication = (options) => options.authenticationOptions.response.r
     message: "No user document was found in Firestore.",
     operation: "verify authentication",
     success: false
-  })(targetUserDocumentSnapshot.data()),
+  })(userDocumentSnapshotTarget.data()),
   (firebaseError) => ({
     code: firebaseError.code,
     message: firebaseError.message,
@@ -476,22 +476,22 @@ var verifyReauthentication = (options) => options.webAuthnUserDocumentReference.
       requireUserVerification: (userDocument.challenge.processingCredential === "second" && options.authenticatorAttachment2FA || options.authenticatorAttachment) === "platform" && options.userVerificationRequirement === "required"
     }
   ).then(
-    (verifiedAuthenticationResponse) => verifiedAuthenticationResponse.verified ? options.webAuthnUserDocumentReference.update(
-      {
-        challenge: FieldValue6.delete(),
-        [userDocument.challenge?.processingCredential === "second" ? "credentials.second" : "credentials.first"]: {
-          ...userDocument.credentials?.[userDocument.challenge?.processingCredential || "first"],
-          authenticatorAttachment: verifiedAuthenticationResponse.authenticationInfo.credentialDeviceType === "multiDevice" ? "platform" : "cross-platform",
-          backedUp: verifiedAuthenticationResponse.authenticationInfo.credentialBackedUp
-        },
-        lastCredentialUsed: userDocument.challenge?.processingCredential || "first",
-        lastPresent: Timestamp2.fromDate(/* @__PURE__ */ new Date()),
-        lastVerified: verifiedAuthenticationResponse.authenticationInfo.userVerified ? Timestamp2.fromDate(/* @__PURE__ */ new Date()) : userDocument.lastVerified || FieldValue6.delete(),
-        lastWebAuthnProcess: "reauthentication"
-      }
-    ).then(
-      () => options.createCustomToken().then(
-        (customToken) => ({
+    (verifiedAuthenticationResponse) => verifiedAuthenticationResponse.verified ? options.createCustomToken().then(
+      (customToken) => options.webAuthnUserDocumentReference.update(
+        {
+          challenge: FieldValue6.delete(),
+          [userDocument.challenge?.processingCredential === "second" ? "credentials.second" : "credentials.first"]: {
+            ...userDocument.credentials?.[userDocument.challenge?.processingCredential || "first"],
+            authenticatorAttachment: verifiedAuthenticationResponse.authenticationInfo.credentialDeviceType === "multiDevice" ? "platform" : "cross-platform",
+            backedUp: verifiedAuthenticationResponse.authenticationInfo.credentialBackedUp
+          },
+          lastCredentialUsed: userDocument.challenge?.processingCredential || "first",
+          lastPresent: Timestamp2.fromDate(/* @__PURE__ */ new Date()),
+          lastVerified: verifiedAuthenticationResponse.authenticationInfo.userVerified ? Timestamp2.fromDate(/* @__PURE__ */ new Date()) : userDocument.lastVerified || FieldValue6.delete(),
+          lastWebAuthnProcess: "reauthentication"
+        }
+      ).then(
+        () => ({
           reauthenticatedCredential: userDocument.challenge?.processingCredential || "first",
           customToken,
           operation: "verify reauthentication",
@@ -521,22 +521,22 @@ var verifyReauthentication = (options) => options.webAuthnUserDocumentReference.
         expectedChallenge: userDocument.challenge?.value || ""
       }
     ).then(
-      (backupVerifiedAuthenticationResponse) => backupVerifiedAuthenticationResponse.verified ? options.webAuthnUserDocumentReference.update(
-        {
-          challenge: FieldValue6.delete(),
-          "credentials.second": {
-            ...userDocument.credentials?.second,
-            authenticatorAttachment: backupVerifiedAuthenticationResponse.authenticationInfo.credentialDeviceType === "multiDevice" ? "platform" : "cross-platform",
-            backedUp: backupVerifiedAuthenticationResponse.authenticationInfo.credentialBackedUp
-          },
-          lastCredentialUsed: "second",
-          lastPresent: Timestamp2.fromDate(/* @__PURE__ */ new Date()),
-          lastVerified: backupVerifiedAuthenticationResponse.authenticationInfo.userVerified ? Timestamp2.fromDate(/* @__PURE__ */ new Date()) : userDocument.lastVerified || FieldValue6.delete(),
-          lastWebAuthnProcess: "reauthentication"
-        }
-      ).then(
-        () => options.createCustomToken().then(
-          (customToken) => ({
+      (backupVerifiedAuthenticationResponse) => backupVerifiedAuthenticationResponse.verified ? options.createCustomToken().then(
+        (customToken) => options.webAuthnUserDocumentReference.update(
+          {
+            challenge: FieldValue6.delete(),
+            "credentials.second": {
+              ...userDocument.credentials?.second,
+              authenticatorAttachment: backupVerifiedAuthenticationResponse.authenticationInfo.credentialDeviceType === "multiDevice" ? "platform" : "cross-platform",
+              backedUp: backupVerifiedAuthenticationResponse.authenticationInfo.credentialBackedUp
+            },
+            lastCredentialUsed: "second",
+            lastPresent: Timestamp2.fromDate(/* @__PURE__ */ new Date()),
+            lastVerified: backupVerifiedAuthenticationResponse.authenticationInfo.userVerified ? Timestamp2.fromDate(/* @__PURE__ */ new Date()) : userDocument.lastVerified || FieldValue6.delete(),
+            lastWebAuthnProcess: "reauthentication"
+          }
+        ).then(
+          () => ({
             reauthenticatedCredential: "second",
             customToken,
             operation: "verify reauthentication",
@@ -632,24 +632,24 @@ var verifyRegistration = (options) => options.webAuthnUserDocumentReference.get(
       requireUserVerification: (userDocument.challenge.processingCredential === "second" ? options.authenticatorAttachment2FA === "platform" : options.authenticatorAttachment === "platform") && options.userVerificationRequirement === "required"
     }
   ).then(
-    (verifiedRegistrationResponse) => verifiedRegistrationResponse.verified && verifiedRegistrationResponse.registrationInfo ? options.webAuthnUserDocumentReference.update(
-      {
-        challenge: FieldValue7.delete(),
-        [userDocument.challenge?.processingCredential === "second" ? "credentials.second" : "credentials.first"]: {
-          authenticatorAttachment: verifiedRegistrationResponse.registrationInfo.credentialDeviceType === "multiDevice" ? "platform" : "cross-platform",
-          backedUp: verifiedRegistrationResponse.registrationInfo.credentialBackedUp,
-          counter: verifiedRegistrationResponse.registrationInfo.counter,
-          id: verifiedRegistrationResponse.registrationInfo.credentialID,
-          publicKey: verifiedRegistrationResponse.registrationInfo.credentialPublicKey
-        },
-        lastCredentialUsed: userDocument.challenge?.processingCredential || "first",
-        lastPresent: Timestamp3.fromDate(/* @__PURE__ */ new Date()),
-        lastVerified: verifiedRegistrationResponse.registrationInfo.userVerified ? Timestamp3.fromDate(/* @__PURE__ */ new Date()) : userDocument.lastVerified || FieldValue7.delete(),
-        lastWebAuthnProcess: "registration"
-      }
-    ).then(
-      () => options.createCustomToken().then(
-        (customToken) => ({
+    (verifiedRegistrationResponse) => verifiedRegistrationResponse.verified ? options.createCustomToken().then(
+      (customToken) => options.webAuthnUserDocumentReference.update(
+        {
+          challenge: FieldValue7.delete(),
+          [userDocument.challenge?.processingCredential === "second" ? "credentials.second" : "credentials.first"]: {
+            authenticatorAttachment: verifiedRegistrationResponse.registrationInfo?.credentialDeviceType === "multiDevice" ? "platform" : "cross-platform",
+            backedUp: verifiedRegistrationResponse.registrationInfo?.credentialBackedUp,
+            counter: verifiedRegistrationResponse.registrationInfo?.counter,
+            id: verifiedRegistrationResponse.registrationInfo?.credentialID,
+            publicKey: verifiedRegistrationResponse.registrationInfo?.credentialPublicKey
+          },
+          lastCredentialUsed: userDocument.challenge?.processingCredential || "first",
+          lastPresent: Timestamp3.fromDate(/* @__PURE__ */ new Date()),
+          lastVerified: verifiedRegistrationResponse.registrationInfo?.userVerified ? Timestamp3.fromDate(/* @__PURE__ */ new Date()) : userDocument.lastVerified || FieldValue7.delete(),
+          lastWebAuthnProcess: "registration"
+        }
+      ).then(
+        () => ({
           registeredCredential: userDocument.challenge?.processingCredential || "first",
           customToken,
           operation: "verify registration",
@@ -665,7 +665,7 @@ var verifyRegistration = (options) => options.webAuthnUserDocumentReference.get(
       (firebaseError) => ({
         code: firebaseError.code,
         message: firebaseError.message,
-        operation: "verify registration",
+        operation: "verify reauthentication",
         success: false
       })
     ) : (userDocument.credentials ? options.webAuthnUserDocumentReference.update(

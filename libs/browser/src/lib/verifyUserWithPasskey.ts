@@ -38,9 +38,7 @@ export const verifyUserWithPasskey: (auth: Auth, functions: Functions, factor?: 
     },
   )
   .then<void, never>(
-    ({ data: functionResponse }: HttpsCallableResult<FunctionResponse>): Promise<void> => "code" in functionResponse ? ((): never => {
-      throw new FirebaseWebAuthnError(functionResponse);
-    })() : "requestOptions" in functionResponse ? startAuthentication(functionResponse.requestOptions).then<void, never>(
+    ({ data: functionResponse }: HttpsCallableResult<FunctionResponse>): Promise<void> => "requestOptions" in functionResponse ? startAuthentication(functionResponse.requestOptions).then<void, never>(
       (authenticationResponse: AuthenticationResponseJSON): Promise<void> => httpsCallableFromURL<FunctionRequest, FunctionResponse>(
         functions,
         "/firebase-web-authn-api",
@@ -68,7 +66,9 @@ export const verifyUserWithPasskey: (auth: Auth, functions: Functions, factor?: 
           );
         },
       ),
-    ) : ((): never => {
+    ) : "code" in functionResponse ? ((): never => {
+      throw new FirebaseWebAuthnError(functionResponse);
+    })() : ((): never => {
       throw new FirebaseWebAuthnError(
         {
           code:      "invalid",
