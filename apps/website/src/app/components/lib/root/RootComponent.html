@@ -6,14 +6,22 @@
   </aside>
 </main>
 <footer>
-  <button
-    mat-raised-button="mat-raised-button"
-    [matMenuTriggerFor]="menu">
-    <mat-icon class="material-symbols-rounded">
-      exit_to_app
-    </mat-icon>
-    NPM
-  </button>
+  <div>
+    <button
+      mat-raised-button="mat-raised-button"
+      [matMenuTriggerFor]="menu">
+      <mat-icon class="material-symbols-rounded">
+        exit_to_app
+      </mat-icon>
+      NPM
+    </button>
+    <span>
+      &copy; 2023 <a href="https://gavinsawyer.dev">Gavin Sawyer</a>
+    </span>
+    <span>
+      Available under <a href="https://github.com/gavinsawyer/firebase-web-authn/blob/main/LICENSE.md">Apache License 2.0</a>
+    </span>
+  </div>
   <span>
     v{{ packageVersion + (gitInfo.dirty ? "-next" : "") }}+<a [href]="'https://github.com/gavinsawyer/firebase-web-authn/commit/' + gitInfo.hash">{{ gitInfo.hash }}</a>
   </span>

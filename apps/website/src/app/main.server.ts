@@ -1,9 +1,10 @@
+import { APP_BASE_HREF }       from "@angular/common";
 import { enableProdMode }      from "@angular/core";
-import { ngExpressEngine }     from "@nguniversal/express-engine";
+import { CommonEngine }        from "@angular/ssr";
 import * as express            from "express";
 import { existsSync }          from "fs";
 import { join }                from "path";
-import "zone.js/dist/zone-node";
+import "zone.js/node";
 import { environment }         from "../environment";
 import { WebsiteServerModule } from "./modules";
 
@@ -11,14 +12,7 @@ import { WebsiteServerModule } from "./modules";
 environment
   .production && enableProdMode();
 
-export const app: () => express.Express = (): express.Express => ((distFolder: string): express.Express => ((indexHtml: "index.original.html" | "index"): express.Express => express().engine(
-  "html",
-  ngExpressEngine(
-    {
-      bootstrap: WebsiteServerModule,
-    },
-  ),
-).set(
+export const app: () => express.Express = (): express.Express => ((distFolder: string): express.Express => ((indexHtml: "index.original.html" | "index.html"): express.Express => express().set(
   "view engine",
   "html",
 ).set(
@@ -34,13 +28,26 @@ export const app: () => express.Express = (): express.Express => ((distFolder: s
   ),
 ).get(
   "*",
-  (req, res): void => res.render(
-    indexHtml,
+  (req: express.Request, res: express.Response, next: express.NextFunction): Promise<void> => new CommonEngine().render(
     {
-      req,
-      res,
+      bootstrap:        WebsiteServerModule,
+      documentFilePath: join(
+        distFolder,
+        indexHtml,
+      ),
+      url:              `${req.protocol}://${req.headers.host}${req.originalUrl}`,
+      publicPath:       distFolder,
+      providers:        [
+        {
+          provide:  APP_BASE_HREF,
+          useValue: req.baseUrl,
+        },
+      ],
     },
-    (error: Error, html?: string) => res.send(html).end(),
+  ).then<void>(
+    (html: string): void => res.send(html) && void (0),
+  ).catch<void>(
+    (err): void => next(err),
   ),
 ))(
   existsSync(
@@ -48,7 +55,7 @@ export const app: () => express.Express = (): express.Express => ((distFolder: s
       distFolder,
       "index.original.html",
     ),
-  ) ? "index.original.html" : "index",
+  ) ? "index.original.html" : "index.html",
 ))(
   join(
     process.cwd(),

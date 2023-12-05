@@ -7,13 +7,12 @@ import { DocumentReference, DocumentSnapshot, FieldValue }                      
 
 interface CreateReauthenticationChallengeOptions {
   authenticationOptions: {
-    attestationType: AttestationConveyancePreference;
-    extensions: AuthenticationExtensionsClientInputs;
-    rpID: string;
-    supportedAlgorithmIDs: COSEAlgorithmIdentifier[];
-  };
-  reauthenticatingCredentialFactor?: WebAuthnUserCredentialFactor;
-  webAuthnUserDocumentReference: DocumentReference<WebAuthnUserDocument>;
+    attestationType: AttestationConveyancePreference
+    rpID: string
+    supportedAlgorithmIDs: COSEAlgorithmIdentifier[]
+  }
+  reauthenticatingCredentialFactor?: WebAuthnUserCredentialFactor
+  webAuthnUserDocumentReference: DocumentReference<WebAuthnUserDocument>
 }
 
 export const createReauthenticationChallenge: (options: CreateReauthenticationChallengeOptions) => Promise<FunctionResponse> = (options: CreateReauthenticationChallengeOptions): Promise<FunctionResponse> => options.webAuthnUserDocumentReference.get().then<FunctionResponse, FunctionResponse>(

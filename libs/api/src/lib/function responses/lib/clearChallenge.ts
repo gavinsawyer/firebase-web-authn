@@ -4,7 +4,7 @@ import { DocumentReference, DocumentSnapshot, FieldValue } from "firebase-admin/
 
 
 interface ClearChallengeOptions {
-  webAuthnUserDocumentReference: DocumentReference<WebAuthnUserDocument>;
+  webAuthnUserDocumentReference: DocumentReference<WebAuthnUserDocument>
 }
 
 export const clearChallenge: (options: ClearChallengeOptions) => Promise<FunctionResponse> = (options: ClearChallengeOptions) => options.webAuthnUserDocumentReference.get().then<FunctionResponse, FunctionResponse>(

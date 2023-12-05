@@ -2,14 +2,14 @@ import { isPlatformBrowser }                      from "@angular/common";
 import { Component, inject, OnInit, PLATFORM_ID } from "@angular/core";
 import { MatIconModule }                          from "@angular/material/icon";
 import { RouterLink }                             from "@angular/router";
-import { RESPONSE }                               from "@nguniversal/express-engine/tokens";
 import { Response }                               from "express";
 import { RouteComponent }                         from "../../../../../components";
+import { RESPONSE }                               from "../../../../../injection tokens";
 import { PathService }                            from "../../../../../services";
 
 
 @Component({
-  imports: [
+  imports:     [
     MatIconModule,
     RouterLink,
   ],

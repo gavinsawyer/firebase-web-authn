@@ -33,9 +33,6 @@ export const getFirebaseWebAuthnApi: (firebaseWebAuthnConfig: FirebaseWebAuthnCo
       authenticatingCredential:      callableRequest.data.authenticatingCredential,
       authenticationOptions:         {
         attestationType:       "indirect",
-        extensions:            {
-          appid: "https://" + callableRequest.rawRequest.hostname,
-        },
         rpID:                  callableRequest.rawRequest.hostname,
         supportedAlgorithmIDs: [
           - 7,
@@ -49,9 +46,6 @@ export const getFirebaseWebAuthnApi: (firebaseWebAuthnConfig: FirebaseWebAuthnCo
     {
       authenticationOptions:            {
         attestationType:       "indirect",
-        extensions:            {
-          appid: "https://" + callableRequest.rawRequest.hostname,
-        },
         rpID:                  callableRequest.rawRequest.hostname,
         supportedAlgorithmIDs: [
           - 7,
@@ -78,9 +72,6 @@ export const getFirebaseWebAuthnApi: (firebaseWebAuthnConfig: FirebaseWebAuthnCo
         } : {
           residentKey:      "preferred",
           userVerification: "preferred",
-        },
-        extensions:             {
-          appid: "https://" + callableRequest.rawRequest.hostname,
         },
         rpID:                   callableRequest.rawRequest.hostname,
         rpName:                 firebaseWebAuthnConfig.relyingPartyName,

@@ -751,9 +751,6 @@ var getFirebaseWebAuthnApi = (firebaseWebAuthnConfig, app) => onCall(
       authenticatingCredential: callableRequest.data.authenticatingCredential,
       authenticationOptions: {
         attestationType: "indirect",
-        extensions: {
-          appid: "https://" + callableRequest.rawRequest.hostname
-        },
         rpID: callableRequest.rawRequest.hostname,
         supportedAlgorithmIDs: [
           -7,
@@ -767,9 +764,6 @@ var getFirebaseWebAuthnApi = (firebaseWebAuthnConfig, app) => onCall(
     {
       authenticationOptions: {
         attestationType: "indirect",
-        extensions: {
-          appid: "https://" + callableRequest.rawRequest.hostname
-        },
         rpID: callableRequest.rawRequest.hostname,
         supportedAlgorithmIDs: [
           -7,
@@ -796,9 +790,6 @@ var getFirebaseWebAuthnApi = (firebaseWebAuthnConfig, app) => onCall(
         } : {
           residentKey: "preferred",
           userVerification: "preferred"
-        },
-        extensions: {
-          appid: "https://" + callableRequest.rawRequest.hostname
         },
         rpID: callableRequest.rawRequest.hostname,
         rpName: firebaseWebAuthnConfig.relyingPartyName,

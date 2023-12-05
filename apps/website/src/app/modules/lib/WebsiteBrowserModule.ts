@@ -15,7 +15,6 @@ import { MatSnackBarModule }                                                    
 import { BrowserModule, provideClientHydration }                                   from "@angular/platform-browser";
 import { BrowserAnimationsModule }                                                 from "@angular/platform-browser/animations";
 import { RouterModule }                                                            from "@angular/router";
-import { TransferHttpCacheModule }                                                 from "@nguniversal/common";
 import { gitInfo }                                                                 from "../../../.git-info";
 import { packageVersion }                                                          from "../../../.package-version";
 import { environment }                                                             from "../../../environment";
@@ -70,13 +69,9 @@ import { AppCheckOptionsService }                                               
     ),
     SignedInComponent,
     SignedOutComponent,
-    TransferHttpCacheModule,
     MatDividerModule,
   ],
   providers:    [
-    provideClientHydration(),
-    ScreenTrackingService,
-    UserTrackingService,
     {
       provide:  ENVIRONMENT,
       useValue: environment,
@@ -89,6 +84,9 @@ import { AppCheckOptionsService }                                               
       provide:  PACKAGE_VERSION,
       useValue: packageVersion,
     },
+    provideClientHydration(),
+    ScreenTrackingService,
+    UserTrackingService,
   ],
 })
 export class WebsiteBrowserModule {

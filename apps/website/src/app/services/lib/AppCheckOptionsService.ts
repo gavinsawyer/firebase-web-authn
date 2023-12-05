@@ -21,7 +21,7 @@ export class AppCheckOptionsService {
       {
         getToken: (): Promise<AppCheckToken> => Promise.resolve(
           {
-            token:            process.env["APP_CHECK_TOKEN_" + this.environment.projectName.toUpperCase()] as string,
+            token:            process.env["APP_CHECK_TOKEN_" + this.environment.project.toUpperCase()] as string,
             expireTimeMillis: Date.now(),
           },
         ),

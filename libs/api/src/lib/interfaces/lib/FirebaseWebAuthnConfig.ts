@@ -10,7 +10,7 @@ export interface FirebaseWebAuthnConfig {
    * @default
    *  undefined
    */
-  "authenticatorAttachment"?: AuthenticatorAttachment;
+  "authenticatorAttachment"?: AuthenticatorAttachment
   /**
    * Optional {@link https://www.w3.org/TR/webauthn-2/#enum-attachment authenticator attachment} for second (2FA) factor passkeys.
    *
@@ -19,11 +19,11 @@ export interface FirebaseWebAuthnConfig {
    * @default
    *  undefined
    */
-  "authenticatorAttachment2FA"?: AuthenticatorAttachment;
+  "authenticatorAttachment2FA"?: AuthenticatorAttachment
   /**
    * Your app's display name in the passkey popup on some browsers.
    */
-  "relyingPartyName": string;
+  "relyingPartyName": string
   /**
    * Optional {@link https://www.w3.org/TR/webauthn/#enumdef-userverificationrequirement user verification requirement}.
    *
@@ -38,5 +38,5 @@ export interface FirebaseWebAuthnConfig {
    * @see
    *  {@link https://developers.yubico.com/WebAuthn/WebAuthn_Developer_Guide/User_Presence_vs_User_Verification.html User Presence vs User Verification}
    */
-  "userVerificationRequirement"?: UserVerificationRequirement;
+  "userVerificationRequirement"?: UserVerificationRequirement
 }

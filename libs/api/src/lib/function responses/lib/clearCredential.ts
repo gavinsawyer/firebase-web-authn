@@ -4,8 +4,8 @@ import { DocumentReference, DocumentSnapshot, FieldValue }                      
 
 
 interface ClearCredentialOptions {
-  clearingCredential?: WebAuthnUserCredentialFactor;
-  webAuthnUserDocumentReference: DocumentReference<WebAuthnUserDocument>;
+  clearingCredential?: WebAuthnUserCredentialFactor
+  webAuthnUserDocumentReference: DocumentReference<WebAuthnUserDocument>
 }
 
 export const clearCredential: (options: ClearCredentialOptions) => Promise<FunctionResponse> = (options: ClearCredentialOptions) => options.webAuthnUserDocumentReference.get().then<FunctionResponse, FunctionResponse>(

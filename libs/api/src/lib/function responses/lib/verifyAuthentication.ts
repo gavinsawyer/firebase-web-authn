@@ -7,18 +7,18 @@ import { DocumentReference, DocumentSnapshot, FieldValue, Timestamp }   from "fi
 
 interface VerifyAuthenticationOptions {
   authenticationOptions: {
-    expectedOrigin: string,
-    expectedRPID: string,
-    requireUserVerification: boolean,
-    response: AuthenticationResponseJSON,
-  },
-  authenticatorAttachment?: AuthenticatorAttachment,
-  authenticatorAttachment2FA?: AuthenticatorAttachment,
-  createCustomToken: (uid: string) => Promise<string>,
-  userID: string,
-  userVerificationRequirement?: UserVerificationRequirement,
-  webAuthnUserDocumentReference: DocumentReference<WebAuthnUserDocument>,
-  webAuthnUserDocumentReferenceTarget: DocumentReference<WebAuthnUserDocument>,
+    expectedOrigin: string
+    expectedRPID: string
+    requireUserVerification: boolean
+    response: AuthenticationResponseJSON
+  }
+  authenticatorAttachment?: AuthenticatorAttachment
+  authenticatorAttachment2FA?: AuthenticatorAttachment
+  createCustomToken: (uid: string) => Promise<string>
+  userID: string
+  userVerificationRequirement?: UserVerificationRequirement
+  webAuthnUserDocumentReference: DocumentReference<WebAuthnUserDocument>
+  webAuthnUserDocumentReferenceTarget: DocumentReference<WebAuthnUserDocument>
 }
 
 export const verifyAuthentication: (options: VerifyAuthenticationOptions) => Promise<FunctionResponse> = (options: VerifyAuthenticationOptions): Promise<FunctionResponse> => options.authenticationOptions.response.response.userHandle !== options.userID ? options.webAuthnUserDocumentReferenceTarget.get().then<FunctionResponse, FunctionResponse>(

@@ -6,14 +6,13 @@ import { DocumentReference, FieldValue }                                        
 
 
 interface CreateAuthenticationChallengeOptions {
-  authenticatingCredential?: WebAuthnUserCredentialFactor;
+  authenticatingCredential?: WebAuthnUserCredentialFactor
   authenticationOptions: {
-    attestationType: AttestationConveyancePreference;
-    extensions: AuthenticationExtensionsClientInputs;
-    rpID: string;
-    supportedAlgorithmIDs: COSEAlgorithmIdentifier[];
-  };
-  webAuthnUserDocumentReference: DocumentReference<WebAuthnUserDocument>;
+    attestationType: AttestationConveyancePreference
+    rpID: string
+    supportedAlgorithmIDs: COSEAlgorithmIdentifier[]
+  }
+  webAuthnUserDocumentReference: DocumentReference<WebAuthnUserDocument>
 }
 
 export const createAuthenticationChallenge: (options: CreateAuthenticationChallengeOptions) => Promise<FunctionResponse> = (options: CreateAuthenticationChallengeOptions): Promise<FunctionResponse> => generateAuthenticationOptions(options.authenticationOptions).then<FunctionResponse>(

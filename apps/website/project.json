@@ -14,7 +14,7 @@
       "dependsOn": [
         "prebuild"
       ],
-      "executor":  "@nrwl/linter:eslint",
+      "executor":  "@nx/linter:eslint",
       "options":   {
         "lintFilePatterns": [
           "apps/website/**/*.ts",
@@ -144,7 +144,7 @@
         "prebuild",
         "lint"
       ],
-      "executor":             "@nguniversal/builders:prerender",
+      "executor":             "@angular-devkit/build-angular:prerender",
       "options":              {
         "routes": [
           "/",
@@ -155,10 +155,12 @@
     "serve":    {
       "configurations":       {
         "development": {
-          "browserTarget": "website:browser:development"
+          "browserTarget": "website:browser:development",
+          "serverTarget":  "website:server:development"
         },
         "production":  {
-          "browserTarget": "website:browser:production"
+          "browserTarget": "website:browser:production",
+          "serverTarget":  "website:server:production"
         }
       },
       "defaultConfiguration": "development",
@@ -166,7 +168,7 @@
         "prebuild",
         "lint"
       ],
-      "executor":             "@angular-devkit/build-angular:dev-server",
+      "executor":             "@angular-devkit/build-angular:ssr-dev-server",
       "options":              {
         "port": 4430,
         "ssl":  true
@@ -177,13 +179,13 @@
         "prebuild",
         "lint"
       ],
-      "executor":  "@angular/fire--legacy:deploy",
+      "executor":  "@angular/fire:deploy",
       "options":   {
         "browserTarget":        "website:browser:production",
         "firebaseHostingSite":  "fir-web-authn",
         "firebaseProject":      "fir-web-authn",
         "functionName":         "ssr-website",
-        "functionsNodeVersion": "18.17",
+        "functionsNodeVersion": "18.19",
         "outputPath":           "dist/apps/website/run",
         "prerender":            true,
         "prerenderTarget":      "website:build:production",
