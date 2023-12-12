@@ -1,12 +1,17 @@
 {
   "name":            "@firebase-web-authn/source",
-  "version":         "10.3.2",
+  "version":         "10.3.3",
   "homepage":        "https://firebase-web-authn.dev",
+  "description":     "A Firebase Extension for authentication with WebAuthn passkeys.",
   "license":         "Apache-2.0",
   "author":          {
     "name":  "Gavin Sawyer",
     "email": "g@vinsawyer.dev",
     "url":   "https://gavinsawyer.dev"
+  },
+  "funding":         {
+    "type": "individual",
+    "url":  "https://gavinsawyer.dev/funding"
   },
   "repository":      {
     "type": "git",
@@ -24,37 +29,42 @@
     "@angular/common":                   "^17.0.5",
     "@angular/compiler":                 "^17.0.5",
     "@angular/core":                     "^17.0.5",
-    "@angular/fire":                     "^17.0.0-next.0",
-    "@angular/forms":                    "^17.0.5",
-    "@angular/material":                 "^17.0.2",
+    "@angular/fire":                     "^17.0.0",
+    "@angular/forms":                    "^17.0.6",
+    "@angular/material":                 "^17.0.3",
     "@angular/platform-browser":         "^17.0.5",
-    "@angular/platform-browser-dynamic": "^17.0.5",
-    "@angular/platform-server":          "^17.0.5",
-    "@angular/router":                   "^17.0.5",
+    "@angular/platform-browser-dynamic": "^17.0.6",
+    "@angular/platform-server":          "^17.0.6",
+    "@angular/router":                   "^17.0.6",
     "rxjs":                              "^7.8.1",
     "zone.js":                           "^0.14.2"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular":          "^17.0.5",
+    "@angular-devkit/build-angular":          "^17.0.6",
     "@angular-eslint/eslint-plugin":          "^17.1.1",
     "@angular-eslint/eslint-plugin-template": "^17.1.1",
     "@angular-eslint/template-parser":        "^17.1.1",
-    "@angular/cli":                           "^17.0.5",
-    "@angular/compiler-cli":                  "^17.0.5",
-    "@angular/language-service":              "^17.0.5",
-    "@angular/ssr":                           "^17.0.5",
-    "@nx/angular":                            "^17.1.3",
-    "@nx/esbuild":                            "^17.1.3",
-    "@nx/eslint-plugin":                      "^17.1.3",
+    "@angular/cli":                           "^17.0.6",
+    "@angular/compiler-cli":                  "^17.0.6",
+    "@angular/language-service":              "^17.0.6",
+    "@angular/ssr":                           "^17.0.6",
+    "@nx/angular":                            "^17.2.3",
+    "@nx/esbuild":                            "^17.2.3",
+    "@nx/eslint-plugin":                      "^17.2.3",
     "@simplewebauthn/browser":                "^8.3.4",
     "@simplewebauthn/server":                 "^8.3.5",
-    "@typescript-eslint/eslint-plugin":       "^6.13.2",
+    "@typescript-eslint/eslint-plugin":       "^6.14.0",
     "eslint":                                 "^8.55.0",
     "eslint-plugin-tsdoc":                    "^0.2.17",
     "firebase-functions":                     "^4.5.0",
-    "firebase-tools":                         "^12.9.1",
+    "firebase-tools":                         "^13.0.1",
     "git-describe":                           "^4.1.1",
-    "nx":                                     "^17.1.3",
+    "nx":                                     "^17.2.3",
     "url":                                    "^0.11.3"
+  },
+  "overrides":       {
+    "@angular/fire": {
+      "firebase-tools": "^13.0.1"
+    }
   }
 }
