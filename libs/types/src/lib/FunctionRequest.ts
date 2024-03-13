@@ -1,5 +1,5 @@
 import { AuthenticationResponseJSON, RegistrationResponseJSON } from "@simplewebauthn/types";
-import { WebAuthnUserCredentialFactor }                         from "./WebAuthnUserCredentialFactor";
+import { WebAuthnUserCredentialFactor }                         from "./WebAuthnUserCredentialFactor.js";
 
 
 interface UnknownFunctionRequest {

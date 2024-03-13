@@ -1,6 +1,6 @@
 import { FunctionRequest, FunctionResponse }                    from "@firebase-web-authn/types";
 import { Functions, httpsCallableFromURL, HttpsCallableResult } from "firebase/functions";
-import { FirebaseWebAuthnError }                                from "./FirebaseWebAuthnError";
+import { FirebaseWebAuthnError }                                from "./FirebaseWebAuthnError.js";
 
 
 export const clearChallenge: (functions: Functions) => Promise<void> = (functions: Functions) => httpsCallableFromURL<FunctionRequest, FunctionResponse>(

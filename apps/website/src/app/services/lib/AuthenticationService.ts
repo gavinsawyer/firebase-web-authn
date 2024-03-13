@@ -4,7 +4,7 @@ import { toSignal }                                                             
 import { Auth, onIdTokenChanged, signInAnonymously, User, UserCredential }                                         from "@angular/fire/auth";
 import { Functions }                                                                                               from "@angular/fire/functions";
 import { MatSnackBar }                                                                                             from "@angular/material/snack-bar";
-import { createUserWithPasskey, FirebaseWebAuthnError, linkWithPasskey, signInWithPasskey, verifyUserWithPasskey } from "@firebase-web-authn/browser";
+import { createUserWithPasskey, FirebaseWebAuthnError, linkWithPasskey, signInWithPasskey, verifyUserWithPasskey } from "dist/libs/browser";
 import { Observable, Observer, startWith, TeardownLogic }                                                          from "rxjs";
 import { ProfileDocument }                                                                                         from "../../interfaces";
 import { ProfileService }                                                                                          from "./ProfileService";

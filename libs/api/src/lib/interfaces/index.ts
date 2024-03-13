@@ -1,1 +1,1 @@
-export * from "./lib/FirebaseWebAuthnConfig";
+export * from "./lib/FirebaseWebAuthnConfig.js";

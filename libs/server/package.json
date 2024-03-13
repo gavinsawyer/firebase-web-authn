@@ -1,6 +1,6 @@
 {
   "name":         "@firebase-web-authn/server",
-  "version":      "10.3.5",
+  "version":      "10.3.6",
   "homepage":     "https://firebase-web-authn.dev",
   "description":  "A Firebase Extension for authentication with WebAuthn passkeys.",
   "license":      "Apache-2.0",

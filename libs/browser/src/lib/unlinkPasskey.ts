@@ -1,7 +1,7 @@
 import { FunctionRequest, FunctionResponse, WebAuthnUserCredentialFactor } from "@firebase-web-authn/types";
 import { Auth }                                                            from "firebase/auth";
 import { Functions, httpsCallableFromURL, HttpsCallableResult }            from "firebase/functions";
-import { FirebaseWebAuthnError }                                           from "./FirebaseWebAuthnError";
+import { FirebaseWebAuthnError }                                           from "./FirebaseWebAuthnError.js";
 
 
 // noinspection JSUnusedGlobalSymbols

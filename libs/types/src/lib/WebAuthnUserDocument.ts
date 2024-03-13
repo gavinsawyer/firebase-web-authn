@@ -1,7 +1,7 @@
 import { Timestamp }                    from "firebase-admin/firestore";
-import { WebAuthnProcess }              from "./WebAuthnProcess";
-import { WebAuthnUserCredential }       from "./WebAuthnUserCredential";
-import { WebAuthnUserCredentialFactor } from "./WebAuthnUserCredentialFactor";
+import { WebAuthnProcess }              from "./WebAuthnProcess.js";
+import { WebAuthnUserCredential }       from "./WebAuthnUserCredential.js";
+import { WebAuthnUserCredentialFactor } from "./WebAuthnUserCredentialFactor.js";
 
 
 /**

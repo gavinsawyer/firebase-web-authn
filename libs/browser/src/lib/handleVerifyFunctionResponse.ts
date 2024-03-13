@@ -1,6 +1,6 @@
 import { FunctionResponse }                            from "@firebase-web-authn/types";
 import { Auth, signInWithCustomToken, UserCredential } from "firebase/auth";
-import { FirebaseWebAuthnError }                       from "./FirebaseWebAuthnError";
+import { FirebaseWebAuthnError }                       from "./FirebaseWebAuthnError.js";
 
 
 export const handleVerifyFunctionResponse: (auth: Auth, functionResponse: FunctionResponse) => Promise<UserCredential> = (auth: Auth, functionResponse: FunctionResponse): Promise<UserCredential> => "customToken" in functionResponse ? signInWithCustomToken(

@@ -3,9 +3,9 @@ import { startRegistration }                                               from 
 import { RegistrationResponseJSON }                                        from "@simplewebauthn/types";
 import { Auth, UserCredential }                                            from "firebase/auth";
 import { Functions, httpsCallableFromURL, HttpsCallableResult }            from "firebase/functions";
-import { clearChallenge }                                                  from "./clearChallenge";
-import { FirebaseWebAuthnError }                                           from "./FirebaseWebAuthnError";
-import { handleVerifyFunctionResponse }                                    from "./handleVerifyFunctionResponse";
+import { clearChallenge }                                                  from "./clearChallenge.js";
+import { FirebaseWebAuthnError }                                           from "./FirebaseWebAuthnError.js";
+import { handleVerifyFunctionResponse }                                    from "./handleVerifyFunctionResponse.js";
 
 
 /**

@@ -1,7 +1,7 @@
 import { Auth, signInAnonymously, UserCredential } from "firebase/auth";
 import { Functions }                               from "firebase/functions";
-import { FirebaseWebAuthnError }                   from "./FirebaseWebAuthnError";
-import { linkWithPasskey }                         from "./linkWithPasskey";
+import { FirebaseWebAuthnError }                   from "./FirebaseWebAuthnError.js";
+import { linkWithPasskey }                         from "./linkWithPasskey.js";
 
 
 /**

@@ -4,7 +4,16 @@
   "projectType": "application",
   "sourceRoot":  "apps/website/src",
   "targets":     {
+    "build-libs": {
+      "executor": "nx:run-commands",
+      "options":  {
+        "command": "nx run-many --target build --projects api,browser,extension,server,types --parallel 1"
+      }
+    },
     "prebuild": {
+      "dependsOn": [
+        "build-libs"
+      ],
       "executor": "nx:run-commands",
       "options":  {
         "command": "node -p \"'export const packageVersion = ' + JSON.stringify(require('./package.json').version) + ';'\" > apps/website/src/.package-version.ts && node -p \"'import { GitInfo } from \\'git-describe\\';\\n\\n\\nexport const gitInfo: Partial<GitInfo> = ' + JSON.stringify(((gitInfo) => ({dirty: gitInfo.dirty,hash: gitInfo.hash}))(require('git-describe').gitDescribeSync())) + ';'\" > apps/website/src/.git-info.ts"
