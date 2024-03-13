@@ -1,4 +1,4 @@
-import { AuthenticationResponseJSON, RegistrationResponseJSON } from "@simplewebauthn/typescript-types";
+import { AuthenticationResponseJSON, RegistrationResponseJSON } from "@simplewebauthn/types";
 import { WebAuthnUserCredentialFactor }                         from "./WebAuthnUserCredentialFactor";
 
 

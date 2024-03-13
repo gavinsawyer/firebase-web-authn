@@ -16,10 +16,10 @@
   "type":         "module",
   "private":      true,
   "engines":      {
-    "node": "18"
+    "node": "20"
   },
   "dependencies": {
-    "@simplewebauthn/server": "^8.3.5",
-    "firebase-functions":     "^4.5.0"
+    "@simplewebauthn/server": "^9.0.3",
+    "firebase-functions":     "^4.8.0"
   }
 }

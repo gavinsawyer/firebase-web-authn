@@ -1,6 +1,6 @@
 import { FunctionRequest, FunctionResponse, WebAuthnUserCredentialFactor } from "@firebase-web-authn/types";
 import { startRegistration }                                               from "@simplewebauthn/browser";
-import { RegistrationResponseJSON }                                        from "@simplewebauthn/typescript-types";
+import { RegistrationResponseJSON }                                        from "@simplewebauthn/types";
 import { Auth, UserCredential }                                            from "firebase/auth";
 import { Functions, httpsCallableFromURL, HttpsCallableResult }            from "firebase/functions";
 import { clearChallenge }                                                  from "./clearChallenge";

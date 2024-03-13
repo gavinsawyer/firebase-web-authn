@@ -185,7 +185,7 @@
         "firebaseHostingSite":  "fir-web-authn",
         "firebaseProject":      "fir-web-authn",
         "functionName":         "ssr-website",
-        "functionsNodeVersion": "18.19",
+        "functionsNodeVersion": "20.11.1",
         "outputPath":           "dist/apps/website/run",
         "prerender":            true,
         "prerenderTarget":      "website:build:production",

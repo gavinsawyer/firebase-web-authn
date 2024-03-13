@@ -1,4 +1,4 @@
-import { PublicKeyCredentialCreationOptionsJSON, PublicKeyCredentialRequestOptionsJSON } from "@simplewebauthn/typescript-types";
+import { PublicKeyCredentialCreationOptionsJSON, PublicKeyCredentialRequestOptionsJSON } from "@simplewebauthn/types";
 import { FirebaseError }                                                                 from "firebase-admin";
 import { WebAuthnUserCredentialFactor }                                                  from "./WebAuthnUserCredentialFactor";
 

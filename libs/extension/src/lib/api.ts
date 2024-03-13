@@ -1,6 +1,6 @@
 import { getFirebaseWebAuthnApi }                               from "@firebase-web-authn/api";
 import { FunctionRequest, FunctionResponse }                    from "@firebase-web-authn/types";
-import { AuthenticatorAttachment, UserVerificationRequirement } from "@simplewebauthn/typescript-types";
+import { AuthenticatorAttachment, UserVerificationRequirement } from "@simplewebauthn/types";
 import { CallableFunction }                                     from "firebase-functions/v2/https";
 
 

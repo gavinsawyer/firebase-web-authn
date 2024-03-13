@@ -1,6 +1,6 @@
 import { FunctionResponse, WebAuthnUserCredentialFactor, WebAuthnUserDocument } from "@firebase-web-authn/types";
 import { generateRegistrationOptions }                                          from "@simplewebauthn/server";
-import { PublicKeyCredentialCreationOptionsJSON }                               from "@simplewebauthn/typescript-types";
+import { PublicKeyCredentialCreationOptionsJSON }                               from "@simplewebauthn/types";
 import { FirebaseError }                                                        from "firebase-admin";
 import { DocumentReference, DocumentSnapshot }                                  from "firebase-admin/firestore";
 

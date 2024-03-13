@@ -1,6 +1,6 @@
 import { FunctionResponse, WebAuthnUserDocument }                     from "@firebase-web-authn/types";
 import { VerifiedRegistrationResponse, verifyRegistrationResponse }   from "@simplewebauthn/server";
-import { RegistrationResponseJSON }                                   from "@simplewebauthn/typescript-types";
+import { RegistrationResponseJSON }                                   from "@simplewebauthn/types";
 import { FirebaseError }                                              from "firebase-admin";
 import { DocumentReference, DocumentSnapshot, FieldValue, Timestamp } from "firebase-admin/firestore";
 
