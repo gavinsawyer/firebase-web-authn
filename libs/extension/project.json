@@ -4,7 +4,7 @@
   "projectType": "library",
   "sourceRoot":  "libs/extension/src",
   "targets":     {
-    "lint":  {
+    "eslint":                           {
       "executor": "@nx/linter:eslint",
       "options":  {
         "lintFilePatterns": [
@@ -12,13 +12,13 @@
         ]
       }
     },
-    "build": {
+    "esbuild":                          {
       "dependsOn": [
-        "lint"
+        "eslint"
       ],
       "executor":  "@nx/esbuild:esbuild",
       "options":   {
-        "assets":     [
+        "assets":         [
           {
             "glob":   "CHANGELOG.md",
             "input":  "libs/extension",
@@ -55,14 +55,40 @@
             "output": "."
           }
         ],
-        "main":       "libs/extension/src/main.ts",
+        "main":           "libs/extension/src/main.ts",
         "outputFileName": "src/main.js",
-        "outputPath": "dist/libs/extension",
-        "tsConfig":   "libs/extension/tsconfig.lib.json"
+        "outputPath":     "dist/libs/extension",
+        "tsConfig":       "libs/extension/tsconfig.lib.json"
       },
       "outputs":   [
         "{options.outputPath}"
       ]
+    },
+    "package-lock-extension":           {
+      "dependsOn": [
+        "esbuild"
+      ],
+      "executor":  "nx:run-commands",
+      "options":   {
+        "command": "npm i --package-lock-only && cd src && npm i --package-lock-only",
+        "cwd":     "dist/libs/extension"
+      }
+    },
+    "package-lock-extension-functions": {
+      "dependsOn": [
+        "package-lock-extension"
+      ],
+      "executor":  "nx:run-commands",
+      "options":   {
+        "command": "npm i --package-lock-only",
+        "cwd":     "dist/libs/extension/src"
+      }
+    },
+    "build":                            {
+      "dependsOn": [
+        "package-lock-extension-functions"
+      ],
+      "executor":  "nx:noop"
     }
   }
 }

@@ -4,7 +4,7 @@
   "projectType": "library",
   "sourceRoot":  "libs/browser/src",
   "targets":     {
-    "lint":  {
+    "eslint": {
       "executor": "@nx/linter:eslint",
       "options":  {
         "lintFilePatterns": [
@@ -12,9 +12,9 @@
         ]
       }
     },
-    "build": {
+    "tsc":    {
       "dependsOn": [
-        "lint"
+        "eslint"
       ],
       "executor":  "@nx/js:tsc",
       "options":   {
@@ -32,6 +32,12 @@
       "outputs":   [
         "{options.outputPath}"
       ]
+    },
+    "build":  {
+      "dependsOn": [
+        "tsc"
+      ],
+      "executor":  "nx:noop"
     }
   }
 }

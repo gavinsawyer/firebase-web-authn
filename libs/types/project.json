@@ -4,7 +4,7 @@
   "projectType": "library",
   "sourceRoot":  "libs/types/src",
   "targets":     {
-    "lint":  {
+    "eslint":  {
       "executor": "@nx/linter:eslint",
       "options":  {
         "lintFilePatterns": [
@@ -12,12 +12,12 @@
         ]
       }
     },
-    "build": {
+    "tsc":   {
       "dependsOn": [
-        "lint"
+        "eslint"
       ],
-      "executor": "@nx/js:tsc",
-      "options":  {
+      "executor":  "@nx/js:tsc",
+      "options":   {
         "assets":     [
           {
             "glob":   "README.md",
@@ -29,9 +29,15 @@
         "outputPath": "dist/libs/types",
         "tsConfig":   "libs/types/tsconfig.lib.json"
       },
-      "outputs":  [
+      "outputs":   [
         "{options.outputPath}"
       ]
+    },
+    "build": {
+      "dependsOn": [
+        "tsc"
+      ],
+      "executor":  "nx:noop"
     }
   }
 }
