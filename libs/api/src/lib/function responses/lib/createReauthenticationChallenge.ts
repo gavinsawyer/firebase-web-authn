@@ -1,5 +1,6 @@
 import { FunctionResponse, WebAuthnUserCredentialFactor, WebAuthnUserDocument } from "@firebase-web-authn/types";
 import { generateAuthenticationOptions }                                        from "@simplewebauthn/server";
+import { isoUint8Array }                                                        from "@simplewebauthn/server/helpers";
 import { PublicKeyCredentialRequestOptionsJSON }                                from "@simplewebauthn/types";
 import { FirebaseError }                                                        from "firebase-admin";
 import { DocumentReference, DocumentSnapshot, FieldValue }                      from "firebase-admin/firestore";
@@ -21,22 +22,18 @@ export const createReauthenticationChallenge: (options: CreateReauthenticationCh
       ...options.authenticationOptions,
       allowCredentials: options.reauthenticatingCredentialFactor ? [
         {
-          id:   userDocument.credentials?.[options.reauthenticatingCredentialFactor]?.id || new Uint8Array(),
-          type: "public-key",
+          id: isoUint8Array.toUTF8String(userDocument.credentials?.[options.reauthenticatingCredentialFactor]?.id || new Uint8Array()),
         },
       ] : userDocument.credentials?.second ? [
         {
-          id:   userDocument.credentials.first.id || new Uint8Array(),
-          type: "public-key",
+          id: isoUint8Array.toUTF8String(userDocument.credentials.first.id || new Uint8Array()),
         },
         {
-          id:   userDocument.credentials.second.id,
-          type: "public-key",
+          id: isoUint8Array.toUTF8String(userDocument.credentials.second.id),
         },
       ] : [
         {
-          id:   userDocument.credentials?.first.id || new Uint8Array(),
-          type: "public-key",
+          id: isoUint8Array.toUTF8String(userDocument.credentials?.first.id || new Uint8Array()),
         },
       ],
     },

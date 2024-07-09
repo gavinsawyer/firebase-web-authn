@@ -12,8 +12,8 @@ import { ProfileDocument }                                                      
 })
 export class ProfileService {
 
-  private readonly auth:       Auth      = inject<Auth>(Auth);
-  private readonly firestore:  Firestore = inject<Firestore>(Firestore);
+  private readonly auth:      Auth      = inject<Auth>(Auth);
+  private readonly firestore: Firestore = inject<Firestore>(Firestore);
 
   public profileDocument$: Signal<ProfileDocument | null> = isPlatformBrowser(inject<object>(PLATFORM_ID)) ? toSignal<ProfileDocument | null>(
     new Observable<User | null>(
@@ -27,7 +27,7 @@ export class ProfileService {
         (user: User | null): Observable<ProfileDocument | null> => user?.isAnonymous === false ? docSnapshots<ProfileDocument>(
           doc(
             this.firestore,
-            "/profiles/" + user.uid,
+            `/profiles/${ user.uid }`,
           ) as DocumentReference<ProfileDocument>,
         ).pipe<DocumentSnapshot<ProfileDocument>, ProfileDocument | null>(
           catchError<DocumentSnapshot<ProfileDocument>, Observable<DocumentSnapshot<ProfileDocument>>>(

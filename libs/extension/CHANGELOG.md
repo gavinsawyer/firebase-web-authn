@@ -5,6 +5,10 @@ A Firebase Extension for authentication with WebAuthn passkeys.
 [![Latest version in NPM](https://img.shields.io/npm/v/@firebase-web-authn/extension?logo=npm)](https://www.npmjs.com/package/@firebase-web-authn/extension)
 [![Install](https://img.shields.io/static/v1?label=&message=Install%20in%20Firebase%20console&logo=firebase&color=blue)](https://console.firebase.google.com/u/0/project/_/extensions/install?ref=gavinsawyer%2Ffirebase-web-authn)
 
+## v10.4.0
+
+- Added `Relying Party ID` parameter to expand support to mobile apps without a domain or increased passkey scope.
+
 ## v10.3.7
 
 - Improved build process, fixed "dirty" deployment.

@@ -9,7 +9,7 @@
     Initializing Firebase Auth{{ ellipsesService.ellipses$() }}
   </p>
   <p *ngIf="authenticationService.user$()?.isAnonymous === true">
-    Input any username to get started or sign with an existing passkey.
+    Input any username to get started or sign in with an existing passkey.
   </p>
   <ng-container *ngIf="authenticationService.user$()?.isAnonymous === false">
     <p>

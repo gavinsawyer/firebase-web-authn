@@ -3,34 +3,49 @@
  */
 export interface FirebaseWebAuthnConfig {
   /**
-   * Optional {@link https://www.w3.org/TR/webauthn-2/#enum-attachment authenticator attachment}. `"cross-platform"` allows security keys. `"platform"` allows passkey managers.
+   * Optional {@link https://www.w3.org/TR/webauthn-2/#enum-attachment authenticator attachment} for primary passkeys. `"cross-platform"` only allows physical security keys. `"platform"` only allows passkey managers.
    *
-   * Default behavior allows either authenticator attachment.
-   *
-   * @default
-   *  undefined
-   */
-  "authenticatorAttachment"?: AuthenticatorAttachment
-  /**
-   * Optional {@link https://www.w3.org/TR/webauthn-2/#enum-attachment authenticator attachment} for second (2FA) factor passkeys.
-   *
-   * Default behavior follows {@link FirebaseWebAuthnConfig.authenticatorAttachment authenticator attachment configuration}, but can be set differently to support offline-only backup passkeys for example.
+   * Default behavior is `"any"` which allows either.
    *
    * @default
    *  undefined
    */
-  "authenticatorAttachment2FA"?: AuthenticatorAttachment
+  "authenticatorAttachment"?: AuthenticatorAttachment;
   /**
-   * Your app's display name in the passkey popup on some browsers.
+   * Optional {@link https://www.w3.org/TR/webauthn-2/#enum-attachment authenticator attachment} for secondary passkeys.
+   *
+   * Default behavior is `"cross-platform"` which only allows physical security keys to be used for 2FA. This should differ from the previous setting as it is intended to be a fail-safe.
+   *
+   * @default
+   *  undefined
    */
-  "relyingPartyName": string
+  "authenticatorAttachment2FA"?: AuthenticatorAttachment;
+  /**
+   * Optional Relying Party ID.
+   *
+   * For use...
+   * - in mobile apps without a domain (provide any domain you control in order to avoid phishing from fraudulent web-based logins), or
+   * - to increase passkeys' scope when hosting the app on a subdomain (provide the highest level of domain you control).
+   *
+   * Default behavior uses the hostname of origin, i.e. `login.example.com` when the origin is `https://login.example.com:3000`.
+   *
+   * @default
+   *  undefined
+   *
+   */
+  "relyingPartyID"?: string;
+  /**
+   * The relying party name appears in the passkey window in some browsers in place of your domain name.
+   */
+  "relyingPartyName": string;
   /**
    * Optional {@link https://www.w3.org/TR/webauthn/#enumdef-userverificationrequirement user verification requirement}.
    *
-   * - The `"required"` setting only works with `"platform"` {@link FirebaseWebAuthnConfig.authenticatorAttachment authenticator attachment} since biometric verification isn't possible with security keys.
-   * - If {@link FirebaseWebAuthnConfig.authenticatorAttachment2FA authenticator attachment for second (2FA) factor passkeys} is specified as `"cross-platform"`, this will only apply to first (1FA) factor passkeys.
+   * - `"preferred"` requests user verification when possible.
+   * - `"discouraged"` requests skipping user verification to speed up the interaction.
+   * - `"required"` requests user verification and fails if it is not provided, but does not apply with {@link FirebaseWebAuthnConfig.authenticatorAttachment authenticator attachment} set to `"cross-platform"` since user verification isn't possible with physical security keys. If {@link FirebaseWebAuthnConfig.authenticatorAttachment2FA authenticator attachment for secondary passkeys (2FA)} is set to `"cross-platform"`, `"required"` will not apply to secondary passkeys.
    *
-   * Default behavior follows `"preferred"`
+   * Default behavior is `"preferred"`.
    *
    * @default
    *  undefined
@@ -38,5 +53,5 @@ export interface FirebaseWebAuthnConfig {
    * @see
    *  {@link https://developers.yubico.com/WebAuthn/WebAuthn_Developer_Guide/User_Presence_vs_User_Verification.html User Presence vs User Verification}
    */
-  "userVerificationRequirement"?: UserVerificationRequirement
+  "userVerificationRequirement"?: UserVerificationRequirement;
 }

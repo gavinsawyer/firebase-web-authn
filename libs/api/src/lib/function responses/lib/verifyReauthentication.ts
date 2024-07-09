@@ -1,5 +1,6 @@
 import { FunctionResponse, WebAuthnUserDocument }                       from "@firebase-web-authn/types";
 import { VerifiedAuthenticationResponse, verifyAuthenticationResponse } from "@simplewebauthn/server";
+import { isoUint8Array }                                                from "@simplewebauthn/server/helpers";
 import { AuthenticationResponseJSON }                                   from "@simplewebauthn/types";
 import { FirebaseError }                                                from "firebase-admin";
 import { DocumentReference, DocumentSnapshot, FieldValue, Timestamp }   from "firebase-admin/firestore";
@@ -7,8 +8,8 @@ import { DocumentReference, DocumentSnapshot, FieldValue, Timestamp }   from "fi
 
 interface VerifyReauthenticationOptions {
   authenticationOptions: {
-    expectedOrigin: string
-    expectedRPID: string
+    expectedOrigin: string[]
+    expectedRPID: string[]
     requireUserVerification: boolean
     response: AuthenticationResponseJSON
   }
@@ -26,8 +27,8 @@ export const verifyReauthentication: (options: VerifyReauthenticationOptions) =>
       ...options.authenticationOptions,
       authenticator:           {
         counter:             userDocument?.credentials[userDocument.challenge.processingCredential || "first"]?.counter || 0,
-        credentialID:        userDocument?.credentials[userDocument.challenge.processingCredential || "first"]?.id || new Uint8Array(0),
-        credentialPublicKey: userDocument?.credentials[userDocument.challenge.processingCredential || "first"]?.publicKey || new Uint8Array(0),
+        credentialID:        isoUint8Array.toUTF8String(userDocument?.credentials[userDocument.challenge.processingCredential || "first"]?.id || new Uint8Array()),
+        credentialPublicKey: userDocument?.credentials[userDocument.challenge.processingCredential || "first"]?.publicKey || new Uint8Array(),
       },
       expectedChallenge:       userDocument.challenge.value,
       requireUserVerification: (userDocument.challenge.processingCredential === "second" && options.authenticatorAttachment2FA || options.authenticatorAttachment) === "platform" && options.userVerificationRequirement === "required",
@@ -72,7 +73,7 @@ export const verifyReauthentication: (options: VerifyReauthenticationOptions) =>
         ...options.authenticationOptions,
         authenticator:     {
           counter:             userDocument.credentials.second.counter,
-          credentialID:        userDocument.credentials.second.id,
+          credentialID:        isoUint8Array.toUTF8String(userDocument.credentials.second.id),
           credentialPublicKey: userDocument.credentials.second.publicKey,
         },
         expectedChallenge: userDocument.challenge?.value || "",

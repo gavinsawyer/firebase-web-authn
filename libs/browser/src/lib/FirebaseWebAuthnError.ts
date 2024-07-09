@@ -2,12 +2,8 @@ import { FunctionResponse } from "@firebase-web-authn/types";
 
 
 interface FirebaseWebAuthnErrorOptions {
-  "code": Extract<FunctionResponse, {
-    success: false
-  }>["code"] | "cancelled" | "invalid";
-  "message": Extract<FunctionResponse, {
-    success: false
-  }>["message"] | "Cancelled by user." | "Invalid function response.";
+  "code": Extract<FunctionResponse, { success: false }>["code"] | "cancelled" | "invalid";
+  "message": Extract<FunctionResponse, { success: false }>["message"] | "Cancelled by user." | "Invalid function response.";
   "method"?: "httpsCallableFromURL" | "signInAnonymously" | "signInWithCustomToken";
   "operation"?: FunctionResponse["operation"];
 }

@@ -1,6 +1,6 @@
 ### 🎉 2FA passkeys are here in ^10.3.0!
 #### This update brings support for linking secondary discoverable credentials using an alternate attachment (which defaults to `"cross-platform"`).
-#### By specifying a `factor` parameter to existing [browser library](https://github.com/gavinsawyer/firebase-web-authn#firebase-web-authnbrowser) methods, you can enable users gain access by inserting and activating or waving a security key over the device.
+#### By specifying a `factor` parameter to existing [browser library](https://github.com/gavinsawyer/firebase-web-authn#firebase-web-authnbrowser) methods, you can enable users to gain access by inserting and activating or waving a security key over the device.
 #### See the [full docs](https://github.com/gavinsawyer/firebase-web-authn) for examples and a feature complete demo.
 
 Use this extension and the [browser library](https://github.com/gavinsawyer/firebase-web-authn#firebase-web-authnbrowser) to create and sign in users with passkeys, link and unlink existing users to passkeys, and prompt signed-in users with a biometric verification request:
@@ -91,8 +91,8 @@ Before installing this extension, you'll need to set up these services in your p
     % firebase firestore:databases:create ext-firebase-web-authn --location ${MULTI_REGION_NAME} --delete-protection ENABLED
     ```
 
-2. As of September 2023, [supported roles for Firebase Extensions](https://firebase.google.com/docs/extensions/publishers/access#supported-roles) do not include `iam.serviceAccounts.signBlob` which is needed for custom auth providers.
-   - After deploying the extension, grant the `Service Account Token Creator` role to the extension's service account in [IAM](https://console.cloud.google.com/iam-admin/iam) under `Firebase Extensions firebase-web-authn service account` > Edit > Assign roles.
+2. As of July 2024, [supported roles for Firebase Extensions](https://firebase.google.com/docs/extensions/publishers/access#supported-roles) do not include `iam.serviceAccounts.signBlob` or `serviceusage.services.use` which are needed for custom auth providers.
+   - After deploying the extension, grant the `Service Account Token Creator` and `Service Usage Consumer` roles to the extension's service account in [IAM](https://console.cloud.google.com/iam-admin/iam) under `Firebase Extensions firebase-web-authn service account` > Edit > Assign roles.
    - If the service account isn't appearing, click `Grant Access` and enter its address as `ext-firebase-web-authn@${PROJECT_ID}.iam.gserviceaccount.com`
 3. The browser must reach FirebaseWebAuthn from the same domain as your website. Modify your `firebase.json` to include a rewrite on each app where you'd like to use passkeys:
 

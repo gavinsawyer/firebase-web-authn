@@ -10,8 +10,8 @@ interface VerifyRegistrationOptions {
   authenticatorAttachment2FA?: AuthenticatorAttachment
   createCustomToken: () => Promise<string>
   registrationOptions: {
-    expectedOrigin: string
-    expectedRPID: string
+    expectedOrigin: string[]
+    expectedRPID: string[]
     response: RegistrationResponseJSON
   }
   userVerificationRequirement?: UserVerificationRequirement

@@ -15,28 +15,28 @@ export interface WebAuthnUserDocument {
     "process": WebAuthnProcess
     "processingCredential"?: WebAuthnUserCredentialFactor
     "value": string
-  }
+  };
   /**
    * Information about the primary public key credential associated with the user.
    */
   "credentials"?: {
     "first": WebAuthnUserCredential
     "second"?: WebAuthnUserCredential
-  }
+  };
   /**
    * The last type of credential successfully used.
    */
-  "lastCredentialUsed"?: WebAuthnUserCredentialFactor
+  "lastCredentialUsed"?: WebAuthnUserCredentialFactor;
   /**
    * A {@link Timestamp} automatically updated on successful operations.
    */
-  "lastPresent"?: Timestamp
+  "lastPresent"?: Timestamp;
   /**
    * A {@link Timestamp} automatically updated on successful operations that verified the user with biometrics.
    */
-  "lastVerified"?: Timestamp
+  "lastVerified"?: Timestamp;
   /**
    * The last WebAuthn process successfully completed by the user.
    */
-  "lastWebAuthnProcess": WebAuthnProcess
+  "lastWebAuthnProcess": WebAuthnProcess;
 }

@@ -24,8 +24,12 @@ export class AuthenticationService {
     new Observable<User | null>(
       (userObserver: Observer<User | null>): TeardownLogic => onIdTokenChanged(
         this.auth,
-        async (user: User | null): Promise<void> => user === null ? signInAnonymously(this.auth).then<void>(
-          (userCredential: UserCredential): void => userObserver.next(userCredential.user),
+        async (user: User | null): Promise<void> => user === null ? signInAnonymously(
+          this.auth,
+        ).then<void>(
+          (userCredential: UserCredential): void => userObserver.next(
+            userCredential.user,
+          ),
         ) : userObserver.next(user),
       ),
     ).pipe<User | null>(

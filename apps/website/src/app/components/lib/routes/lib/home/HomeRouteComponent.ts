@@ -20,6 +20,6 @@ export class HomeRouteComponent extends RouteComponent {
 
   public readonly authenticationService: AuthenticationService = inject<AuthenticationService>(AuthenticationService);
   public readonly ellipsesService:       EllipsesService       = inject<EllipsesService>(EllipsesService);
-  public readonly webAuthnUnsupported:   boolean               = isPlatformBrowser(inject<object>(PLATFORM_ID)) && !window.PublicKeyCredential;
+  public readonly webAuthnUnsupported:   boolean               = !window.PublicKeyCredential || !isPlatformBrowser(inject<object>(PLATFORM_ID));
 
 }

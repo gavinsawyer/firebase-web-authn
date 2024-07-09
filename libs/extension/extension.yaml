@@ -1,5 +1,5 @@
 name: firebase-web-authn
-version: 10.3.7
+version: 10.4.0
 specVersion: v1beta
 icon: icon.png
 
@@ -43,12 +43,17 @@ resources:
 params:
   - param: RELYING_PARTY_NAME
     description: >-
-      What relying party name would you like to use with WebAuthn? This appears in the passkey window in some browsers in place of your domain name.
+      What relying party name would you like to use? This appears in the passkey window in some browsers in place of your domain name.
     label: Relying Party Name
     required: true
     type: string
+  - param: RELYING_PARTY_ID
+    description: >-
+      What (optional) relying party ID would you like to use? Default behavior uses the hostname of origin, i.e. "login.example.com" when the origin is "https://login.example.com:3000." This is for use (1.) in mobile apps without a domain–provide any domain you control in order to avoid phishing from fraudulent web-based logins–or (2.) to increase passkeys' scope when hosting the app on a subdomain–provide the highest level of domain you control.
+    label: Relying Party ID
+    type: string
   - param: LOCATION
-    default: "us-central1"
+    default: us-central1
     description: >-
       Where do you want to deploy the functions created for this extension? You usually want a location close to your database. For help selecting a location, refer to the [location selection guide](https://firebase.google.com/docs/functions/locations).
     immutable: true
@@ -103,7 +108,7 @@ params:
   - param: AUTHENTICATOR_ATTACHMENT
     default: any
     description: >-
-      Optional [authenticator attachment](https://www.w3.org/TR/webauthn-2/#enum-attachment). "cross-platform" allows security keys. "platform" allows passkey managers.
+      What (optional) [authenticator attachment](https://www.w3.org/TR/webauthn-2/#enum-attachment) for primary passkeys would you like to use? "Cross-platform" only allows physical security keys. "Platform" only allows passkey managers. Default behavior is "Any" which allows either.
     label: Authenticator Attachment
     options:
       - label: Any
@@ -115,23 +120,21 @@ params:
     required: true
     type: select
   - param: AUTHENTICATOR_ATTACHMENT_2FA
-    default: "cross-platform"
+    default: cross-platform
     description: >-
-      Optional [authenticator attachment](https://www.w3.org/TR/webauthn-2/#enum-attachment) for second (2FA) factor passkeys. Default behavior is "cross-platform" to support offline-only second-factor passkeys.
-    label: Authenticator Attachment for Second-Factor Passkeys
+      What (optional) [authenticator attachment](https://www.w3.org/TR/webauthn-2/#enum-attachment) for secondary passkeys would you like to use? Default behavior is "Cross-platform" which only allows physical security keys to be used for 2FA. This should differ from the previous setting as it is intended to be a fail-safe.
+    label: Authenticator Attachment for Secondary Passkeys (2FA)
     options:
-      - label: Any
-        value: any
-      - label: Platform
-        value: platform
       - label: Cross-platform
         value: cross-platform
+      - label: Platform
+        value: platform
     required: true
     type: select
   - param: USER_VERIFICATION_REQUIREMENT
-    default: "preferred"
+    default: preferred
     description: >-
-      Optional [user verification requirement](https://www.w3.org/TR/webauthn/#enumdef-userverificationrequirement). Please note, the `"required"` setting only works with Authenticator Attachment set to `"platform"` since biometric verification isn't possible with security keys. Also, if Authenticator Attachment for Second-Factor Passkeys is set to `"cross-platform"`, this will only apply to first (1FA) factor passkeys. Default behavior is `"preferred"`. See [User Presence vs. User Verification](https://developers.yubico.com/WebAuthn/WebAuthn_Developer_Guide/User_Presence_vs_User_Verification.html).
+      What (optional) [user verification requirement](https://www.w3.org/TR/webauthn/#enumdef-userverificationrequirement) would you like to use? Default behavior is "Preferred" which requests user verification when possible. "Required" requests user verification and fails if it is not provided, but does not apply with Authenticator Attachment set to "Cross-platform" since user verification isn't possible with physical security keys. If Authenticator Attachment for Secondary Passkeys (2FA) is set to "Cross-platform," "Required" will not apply to secondary passkeys. "Discouraged" requests skipping user verification to speed up the interaction. See [User Presence vs. User Verification](https://developers.yubico.com/WebAuthn/WebAuthn_Developer_Guide/User_Presence_vs_User_Verification.html).
     label: User Verification Requirement
     options:
       - label: Required

@@ -9,6 +9,7 @@ export const api: CallableFunction<FunctionRequest, Promise<FunctionResponse>> =
     authenticatorAttachment:     process.env["AUTHENTICATOR_ATTACHMENT"] as AuthenticatorAttachment | "any" === "any" ? undefined : (process.env["AUTHENTICATOR_ATTACHMENT"] as AuthenticatorAttachment),
     authenticatorAttachment2FA:  process.env["AUTHENTICATOR_ATTACHMENT_2FA"] as AuthenticatorAttachment | "any" === "any" ? undefined : (process.env["AUTHENTICATOR_ATTACHMENT_2FA"] as AuthenticatorAttachment),
     relyingPartyName:            process.env["RELYING_PARTY_NAME"] as string,
+    relyingPartyID:              process.env["RELYING_PARTY_ID"] as string,
     userVerificationRequirement: process.env["USER_VERIFICATION_REQUIREMENT"] as UserVerificationRequirement,
   },
 );

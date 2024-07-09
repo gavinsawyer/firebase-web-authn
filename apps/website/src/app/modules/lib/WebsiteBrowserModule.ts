@@ -4,6 +4,7 @@ import { Analytics, provideAnalytics, ScreenTrackingService, UserTrackingService
 import { FirebaseApp, initializeApp, provideFirebaseApp }                          from "@angular/fire/app";
 import { AppCheck, initializeAppCheck, provideAppCheck }                           from "@angular/fire/app-check";
 import { Auth, getAuth, provideAuth }                                              from "@angular/fire/auth";
+import { AngularFirestoreModule }                                                  from "@angular/fire/compat/firestore";
 import { Firestore, getFirestore, provideFirestore }                               from "@angular/fire/firestore";
 import { Functions, getFunctions, provideFunctions }                               from "@angular/fire/functions";
 import { ReactiveFormsModule }                                                     from "@angular/forms";
@@ -31,33 +32,13 @@ import { AppCheckOptionsService }                                               
     RootComponent,
   ],
   imports:      [
+    AngularFirestoreModule.enablePersistence(),
     BrowserAnimationsModule,
     BrowserModule,
     MatButtonModule,
     MatIconModule,
     MatMenuModule,
     MatSnackBarModule,
-    provideAnalytics(
-      (): Analytics => getAnalytics(),
-    ),
-    provideAppCheck(
-      (injector: Injector): AppCheck => initializeAppCheck(
-        undefined,
-        injector.get(AppCheckOptionsService).appCheckOptions,
-      ),
-    ),
-    provideAuth(
-      (): Auth => getAuth(),
-    ),
-    provideFirebaseApp(
-      (): FirebaseApp => initializeApp(environment.firebase),
-    ),
-    provideFirestore(
-      (): Firestore => getFirestore(),
-    ),
-    provideFunctions(
-      (): Functions => getFunctions(),
-    ),
     ReactiveFormsModule,
     RouterModule.forRoot(
       routes,
@@ -84,7 +65,28 @@ import { AppCheckOptionsService }                                               
       provide:  PACKAGE_VERSION,
       useValue: packageVersion,
     },
+    provideAnalytics(
+      (): Analytics => getAnalytics(),
+    ),
+    provideAppCheck(
+      (injector: Injector): AppCheck => initializeAppCheck(
+        undefined,
+        injector.get(AppCheckOptionsService).appCheckOptions,
+      ),
+    ),
+    provideAuth(
+      (): Auth => getAuth(),
+    ),
     provideClientHydration(),
+    provideFirebaseApp(
+      (): FirebaseApp => initializeApp(environment.firebase),
+    ),
+    provideFirestore(
+      (): Firestore => getFirestore(),
+    ),
+    provideFunctions(
+      (): Functions => getFunctions(),
+    ),
     ScreenTrackingService,
     UserTrackingService,
   ],

@@ -1,5 +1,6 @@
 import { FunctionResponse, WebAuthnUserCredentialFactor, WebAuthnUserDocument } from "@firebase-web-authn/types";
 import { generateRegistrationOptions }                                          from "@simplewebauthn/server";
+import { isoUint8Array }                                                        from "@simplewebauthn/server/helpers";
 import { PublicKeyCredentialCreationOptionsJSON }                               from "@simplewebauthn/types";
 import { FirebaseError }                                                        from "firebase-admin";
 import { DocumentReference, DocumentSnapshot }                                  from "firebase-admin/firestore";
@@ -13,7 +14,7 @@ interface CreateRegistrationChallengeOptions {
     rpID: string
     rpName: string
     supportedAlgorithmIDs: COSEAlgorithmIdentifier[]
-    userID: string
+    userID: Uint8Array
     userName: string
   }
   webAuthnUserDocumentReference: DocumentReference<WebAuthnUserDocument>
@@ -25,8 +26,7 @@ export const createRegistrationChallenge: (options: CreateRegistrationChallengeO
       ...options.registrationOptions,
       excludeCredentials: options.registeringCredentialFactor === "second" ? [
         {
-          id:   userDocument?.credentials?.first.id || new Uint8Array(),
-          type: "public-key",
+          id: isoUint8Array.toUTF8String(userDocument?.credentials?.first.id || new Uint8Array()),
         },
       ] : undefined,
     },
