@@ -1,6 +1,5 @@
 import { FunctionResponse, WebAuthnUserDocument }                       from "@firebase-web-authn/types";
 import { VerifiedAuthenticationResponse, verifyAuthenticationResponse } from "@simplewebauthn/server";
-import { isoUint8Array }                                                from "@simplewebauthn/server/helpers";
 import { AuthenticationResponseJSON }                                   from "@simplewebauthn/types";
 import { FirebaseError }                                                from "firebase-admin";
 import { DocumentReference, DocumentSnapshot, FieldValue, Timestamp }   from "firebase-admin/firestore";
@@ -8,17 +7,17 @@ import { DocumentReference, DocumentSnapshot, FieldValue, Timestamp }   from "fi
 
 interface VerifyReauthenticationOptions {
   authenticationOptions: {
-    expectedOrigin: string[]
-    expectedRPID: string[]
+    expectedOrigin: string
+    expectedRPID: string
     requireUserVerification: boolean
     response: AuthenticationResponseJSON
-  }
-  authenticatorAttachment?: AuthenticatorAttachment
-  authenticatorAttachment2FA?: AuthenticatorAttachment
-  createCustomToken: () => Promise<string>
-  userID: string
-  userVerificationRequirement?: UserVerificationRequirement
-  webAuthnUserDocumentReference: DocumentReference<WebAuthnUserDocument>
+  };
+  authenticatorAttachment?: AuthenticatorAttachment;
+  authenticatorAttachment2FA?: AuthenticatorAttachment;
+  createCustomToken: () => Promise<string>;
+  userID: string;
+  userVerificationRequirement?: UserVerificationRequirement;
+  webAuthnUserDocumentReference: DocumentReference<WebAuthnUserDocument>;
 }
 
 export const verifyReauthentication: (options: VerifyReauthenticationOptions) => Promise<FunctionResponse> = (options: VerifyReauthenticationOptions): Promise<FunctionResponse> => options.webAuthnUserDocumentReference.get().then<FunctionResponse>(
@@ -27,7 +26,7 @@ export const verifyReauthentication: (options: VerifyReauthenticationOptions) =>
       ...options.authenticationOptions,
       authenticator:           {
         counter:             userDocument?.credentials[userDocument.challenge.processingCredential || "first"]?.counter || 0,
-        credentialID:        isoUint8Array.toUTF8String(userDocument?.credentials[userDocument.challenge.processingCredential || "first"]?.id || new Uint8Array()),
+        credentialID:        userDocument?.credentials[userDocument.challenge.processingCredential || "first"]?.id || new Uint8Array(),
         credentialPublicKey: userDocument?.credentials[userDocument.challenge.processingCredential || "first"]?.publicKey || new Uint8Array(),
       },
       expectedChallenge:       userDocument.challenge.value,
@@ -73,7 +72,7 @@ export const verifyReauthentication: (options: VerifyReauthenticationOptions) =>
         ...options.authenticationOptions,
         authenticator:     {
           counter:             userDocument.credentials.second.counter,
-          credentialID:        isoUint8Array.toUTF8String(userDocument.credentials.second.id),
+          credentialID:        userDocument.credentials.second.id,
           credentialPublicKey: userDocument.credentials.second.publicKey,
         },
         expectedChallenge: userDocument.challenge?.value || "",

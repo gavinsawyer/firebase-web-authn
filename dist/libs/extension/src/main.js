@@ -2,7 +2,6 @@
 import { getApps, initializeApp } from "firebase-admin/app";
 
 // libs/api/src/lib/getFirebaseWebAuthnApi.ts
-import { isoUint8Array as isoUint8Array5 } from "@simplewebauthn/server/helpers";
 import { getAuth } from "firebase-admin/auth";
 import { getFirestore } from "firebase-admin/firestore";
 import { onCall } from "firebase-functions/v2/https";
@@ -110,7 +109,6 @@ var createAuthenticationChallenge = (options) => generateAuthenticationOptions(o
 
 // libs/api/src/lib/function responses/lib/createReauthenticationChallenge.ts
 import { generateAuthenticationOptions as generateAuthenticationOptions2 } from "@simplewebauthn/server";
-import { isoUint8Array } from "@simplewebauthn/server/helpers";
 import { FieldValue as FieldValue4 } from "firebase-admin/firestore";
 var createReauthenticationChallenge = (options) => options.webAuthnUserDocumentReference.get().then(
   (userDocumentSnapshot) => (async (userDocument) => userDocument ? (options.reauthenticatingCredentialFactor === "second" ? userDocument.credentials?.second : userDocument.credentials?.first) ? generateAuthenticationOptions2(
@@ -118,18 +116,22 @@ var createReauthenticationChallenge = (options) => options.webAuthnUserDocumentR
       ...options.authenticationOptions,
       allowCredentials: options.reauthenticatingCredentialFactor ? [
         {
-          id: isoUint8Array.toUTF8String(userDocument.credentials?.[options.reauthenticatingCredentialFactor]?.id || new Uint8Array())
+          id: userDocument.credentials?.[options.reauthenticatingCredentialFactor]?.id || new Uint8Array(),
+          type: "public-key"
         }
       ] : userDocument.credentials?.second ? [
         {
-          id: isoUint8Array.toUTF8String(userDocument.credentials.first.id || new Uint8Array())
+          id: userDocument.credentials.first.id || new Uint8Array(),
+          type: "public-key"
         },
         {
-          id: isoUint8Array.toUTF8String(userDocument.credentials.second.id)
+          id: userDocument.credentials.second.id,
+          type: "public-key"
         }
       ] : [
         {
-          id: isoUint8Array.toUTF8String(userDocument.credentials?.first.id || new Uint8Array())
+          id: userDocument.credentials?.first.id || new Uint8Array(),
+          type: "public-key"
         }
       ]
     }
@@ -180,14 +182,14 @@ var createReauthenticationChallenge = (options) => options.webAuthnUserDocumentR
 
 // libs/api/src/lib/function responses/lib/createRegistrationChallenge.ts
 import { generateRegistrationOptions } from "@simplewebauthn/server";
-import { isoUint8Array as isoUint8Array2 } from "@simplewebauthn/server/helpers";
 var createRegistrationChallenge = (options) => options.webAuthnUserDocumentReference.get().then(
   (userDocumentSnapshot) => (async (userDocument) => (options.registeringCredentialFactor === "second" ? !userDocument?.credentials?.second : !userDocument?.credentials?.first) ? options.registeringCredentialFactor !== "second" || userDocument && userDocument.credentials?.first ? generateRegistrationOptions(
     {
       ...options.registrationOptions,
       excludeCredentials: options.registeringCredentialFactor === "second" ? [
         {
-          id: isoUint8Array2.toUTF8String(userDocument?.credentials?.first.id || new Uint8Array())
+          id: userDocument?.credentials?.first.id || new Uint8Array(),
+          type: "public-key"
         }
       ] : void 0
     }
@@ -238,16 +240,15 @@ var createRegistrationChallenge = (options) => options.webAuthnUserDocumentRefer
 
 // libs/api/src/lib/function responses/lib/verifyAuthentication.ts
 import { verifyAuthenticationResponse } from "@simplewebauthn/server";
-import { isoUint8Array as isoUint8Array3 } from "@simplewebauthn/server/helpers";
 import { FieldValue as FieldValue5, Timestamp } from "firebase-admin/firestore";
-var verifyAuthentication = (options) => atob(options.authenticationOptions.response.response.userHandle || "") !== options.userID ? options.webAuthnUserDocumentReferenceTarget.get().then(
+var verifyAuthentication = (options) => options.authenticationOptions.response.response.userHandle !== options.userID ? options.webAuthnUserDocumentReferenceTarget.get().then(
   (userDocumentSnapshotTarget) => (async (userDocumentTarget) => userDocumentTarget ? options.webAuthnUserDocumentReference.get().then(
     (userDocumentSnapshot) => (async (userDocument) => userDocument ? userDocument.challenge && userDocument.challenge.process === "authentication" ? userDocumentTarget.credentials?.[userDocument.challenge?.processingCredential || "first"] ? verifyAuthenticationResponse(
       {
         ...options.authenticationOptions,
         authenticator: {
           counter: userDocumentTarget.credentials[userDocument.challenge.processingCredential || "first"]?.counter || 0,
-          credentialID: isoUint8Array3.toUTF8String(userDocumentTarget.credentials[userDocument.challenge.processingCredential || "first"]?.id || new Uint8Array()),
+          credentialID: userDocumentTarget.credentials[userDocument.challenge.processingCredential || "first"]?.id || new Uint8Array(),
           credentialPublicKey: userDocumentTarget.credentials[userDocument.challenge.processingCredential || "first"]?.publicKey || new Uint8Array()
         },
         expectedChallenge: userDocument.challenge.value,
@@ -259,7 +260,7 @@ var verifyAuthentication = (options) => atob(options.authenticationOptions.respo
           challenge: FieldValue5.delete()
         }
       ) : options.webAuthnUserDocumentReference.delete()).then(
-        () => verifiedAuthenticationResponse.verified ? options.createCustomToken(atob(options.authenticationOptions.response.response.userHandle || "")).then(
+        () => verifiedAuthenticationResponse.verified ? options.createCustomToken(options.authenticationOptions.response.response.userHandle || "").then(
           (customToken) => options.webAuthnUserDocumentReferenceTarget.update(
             {
               challenge: FieldValue5.delete(),
@@ -298,13 +299,13 @@ var verifyAuthentication = (options) => atob(options.authenticationOptions.respo
             ...options.authenticationOptions,
             authenticator: {
               counter: userDocumentTarget.credentials.second.counter,
-              credentialID: isoUint8Array3.toUTF8String(userDocumentTarget.credentials.second.id),
+              credentialID: userDocumentTarget.credentials.second.id,
               credentialPublicKey: userDocumentTarget.credentials.second.publicKey
             },
             expectedChallenge: userDocument.challenge?.value || ""
           }
         ).then(
-          (backupVerifiedAuthenticationResponse) => backupVerifiedAuthenticationResponse.verified ? options.createCustomToken(atob(options.authenticationOptions.response.response.userHandle || "")).then(
+          (backupVerifiedAuthenticationResponse) => backupVerifiedAuthenticationResponse.verified ? options.createCustomToken(options.authenticationOptions.response.response.userHandle || "").then(
             (customToken) => options.webAuthnUserDocumentReferenceTarget.update(
               {
                 challenge: FieldValue5.delete(),
@@ -461,7 +462,6 @@ var verifyAuthentication = (options) => atob(options.authenticationOptions.respo
 
 // libs/api/src/lib/function responses/lib/verifyReauthentication.ts
 import { verifyAuthenticationResponse as verifyAuthenticationResponse2 } from "@simplewebauthn/server";
-import { isoUint8Array as isoUint8Array4 } from "@simplewebauthn/server/helpers";
 import { FieldValue as FieldValue6, Timestamp as Timestamp2 } from "firebase-admin/firestore";
 var verifyReauthentication = (options) => options.webAuthnUserDocumentReference.get().then(
   (userDocumentSnapshot) => (async (userDocument) => userDocument ? userDocument.challenge && userDocument.challenge.process === "reauthentication" ? userDocument.credentials?.[userDocument.challenge?.processingCredential || "first"] ? verifyAuthenticationResponse2(
@@ -469,7 +469,7 @@ var verifyReauthentication = (options) => options.webAuthnUserDocumentReference.
       ...options.authenticationOptions,
       authenticator: {
         counter: userDocument?.credentials[userDocument.challenge.processingCredential || "first"]?.counter || 0,
-        credentialID: isoUint8Array4.toUTF8String(userDocument?.credentials[userDocument.challenge.processingCredential || "first"]?.id || new Uint8Array()),
+        credentialID: userDocument?.credentials[userDocument.challenge.processingCredential || "first"]?.id || new Uint8Array(),
         credentialPublicKey: userDocument?.credentials[userDocument.challenge.processingCredential || "first"]?.publicKey || new Uint8Array()
       },
       expectedChallenge: userDocument.challenge.value,
@@ -515,7 +515,7 @@ var verifyReauthentication = (options) => options.webAuthnUserDocumentReference.
         ...options.authenticationOptions,
         authenticator: {
           counter: userDocument.credentials.second.counter,
-          credentialID: isoUint8Array4.toUTF8String(userDocument.credentials.second.id),
+          credentialID: userDocument.credentials.second.id,
           credentialPublicKey: userDocument.credentials.second.publicKey
         },
         expectedChallenge: userDocument.challenge?.value || ""
@@ -798,7 +798,7 @@ var getFirebaseWebAuthnApi = (firebaseWebAuthnConfig, app) => onCall(
           -8,
           -257
         ],
-        userID: isoUint8Array5.fromUTF8String(userID),
+        userID,
         userName: callableRequest.data.name
       },
       webAuthnUserDocumentReference
@@ -806,8 +806,8 @@ var getFirebaseWebAuthnApi = (firebaseWebAuthnConfig, app) => onCall(
   ) : callableRequest.data.operation === "verify authentication" ? verifyAuthentication(
     {
       authenticationOptions: {
-        expectedOrigin: [callableRequest.rawRequest.headers.origin || ""],
-        expectedRPID: [firebaseWebAuthnConfig.relyingPartyID || callableRequest.rawRequest.headers.origin?.split("://")[1].split(":")[0] || ""],
+        expectedOrigin: callableRequest.rawRequest.headers.origin || "",
+        expectedRPID: firebaseWebAuthnConfig.relyingPartyID || callableRequest.rawRequest.headers.origin?.split("://")[1].split(":")[0] || "",
         requireUserVerification: (firebaseWebAuthnConfig.authenticatorAttachment2FA || firebaseWebAuthnConfig.authenticatorAttachment) === "platform" && firebaseWebAuthnConfig.userVerificationRequirement !== "discouraged",
         response: callableRequest.data.authenticationResponse
       },
@@ -822,8 +822,8 @@ var getFirebaseWebAuthnApi = (firebaseWebAuthnConfig, app) => onCall(
   ) : callableRequest.data.operation === "verify reauthentication" ? verifyReauthentication(
     {
       authenticationOptions: {
-        expectedOrigin: [callableRequest.rawRequest.headers.origin || ""],
-        expectedRPID: [firebaseWebAuthnConfig.relyingPartyID || callableRequest.rawRequest.headers.origin?.split("://")[1].split(":")[0] || ""],
+        expectedOrigin: callableRequest.rawRequest.headers.origin || "",
+        expectedRPID: firebaseWebAuthnConfig.relyingPartyID || callableRequest.rawRequest.headers.origin?.split("://")[1].split(":")[0] || "",
         requireUserVerification: (firebaseWebAuthnConfig.authenticatorAttachment2FA || firebaseWebAuthnConfig.authenticatorAttachment) === "platform" && firebaseWebAuthnConfig.userVerificationRequirement !== "discouraged",
         response: callableRequest.data.authenticationResponse
       },
@@ -840,8 +840,8 @@ var getFirebaseWebAuthnApi = (firebaseWebAuthnConfig, app) => onCall(
       authenticatorAttachment2FA: firebaseWebAuthnConfig.authenticatorAttachment2FA,
       createCustomToken: () => auth.createCustomToken(userID),
       registrationOptions: {
-        expectedOrigin: [callableRequest.rawRequest.headers.origin || ""],
-        expectedRPID: [firebaseWebAuthnConfig.relyingPartyID || callableRequest.rawRequest.headers.origin?.split("://")[1].split(":")[0] || ""],
+        expectedOrigin: callableRequest.rawRequest.headers.origin || "",
+        expectedRPID: firebaseWebAuthnConfig.relyingPartyID || callableRequest.rawRequest.headers.origin?.split("://")[1].split(":")[0] || "",
         response: callableRequest.data.registrationResponse
       },
       userVerificationRequirement: firebaseWebAuthnConfig.userVerificationRequirement,
@@ -853,7 +853,7 @@ var getFirebaseWebAuthnApi = (firebaseWebAuthnConfig, app) => onCall(
     app ? getAuth(app) : getAuth(),
     callableRequest.auth.uid,
     firestore.collection("users").doc(callableRequest.auth.uid),
-    firestore.collection("users").doc(callableRequest.data.operation === "verify authentication" && atob(callableRequest.data.authenticationResponse.response.userHandle || "") || callableRequest.auth.uid)
+    firestore.collection("users").doc(callableRequest.data.operation === "verify authentication" && callableRequest.data.authenticationResponse.response.userHandle || callableRequest.auth.uid)
   ))(
     app ? getFirestore(
       app,

@@ -1,23 +1,22 @@
 import { FunctionResponse, WebAuthnUserCredentialFactor, WebAuthnUserDocument } from "@firebase-web-authn/types";
 import { generateRegistrationOptions }                                          from "@simplewebauthn/server";
-import { isoUint8Array }                                                        from "@simplewebauthn/server/helpers";
 import { PublicKeyCredentialCreationOptionsJSON }                               from "@simplewebauthn/types";
 import { FirebaseError }                                                        from "firebase-admin";
 import { DocumentReference, DocumentSnapshot }                                  from "firebase-admin/firestore";
 
 
 interface CreateRegistrationChallengeOptions {
-  registeringCredentialFactor: WebAuthnUserCredentialFactor
+  registeringCredentialFactor: WebAuthnUserCredentialFactor;
   registrationOptions: {
     attestationType: AttestationConveyancePreference
     authenticatorSelection: AuthenticatorSelectionCriteria
     rpID: string
     rpName: string
     supportedAlgorithmIDs: COSEAlgorithmIdentifier[]
-    userID: Uint8Array
+    userID: string
     userName: string
-  }
-  webAuthnUserDocumentReference: DocumentReference<WebAuthnUserDocument>
+  };
+  webAuthnUserDocumentReference: DocumentReference<WebAuthnUserDocument>;
 }
 
 export const createRegistrationChallenge: (options: CreateRegistrationChallengeOptions) => Promise<FunctionResponse> = (options: CreateRegistrationChallengeOptions): Promise<FunctionResponse> => options.webAuthnUserDocumentReference.get().then<FunctionResponse, FunctionResponse>(
@@ -26,7 +25,8 @@ export const createRegistrationChallenge: (options: CreateRegistrationChallengeO
       ...options.registrationOptions,
       excludeCredentials: options.registeringCredentialFactor === "second" ? [
         {
-          id: isoUint8Array.toUTF8String(userDocument?.credentials?.first.id || new Uint8Array()),
+          id:   userDocument?.credentials?.first.id || new Uint8Array(),
+          type: "public-key",
         },
       ] : undefined,
     },

@@ -35,7 +35,15 @@ export const linkWithPasskey: (auth: Auth, functions: Functions, name: string, f
     },
   )
   .then<UserCredential, never>(
-    ({ data: functionResponse }: HttpsCallableResult<FunctionResponse>): Promise<UserCredential> => "creationOptions" in functionResponse ? startRegistration(functionResponse.creationOptions).then<UserCredential, never>(
+    ({ data: functionResponse }: HttpsCallableResult<FunctionResponse>): Promise<UserCredential> => "creationOptions" in functionResponse ? startRegistration(
+      {
+        ...functionResponse.creationOptions,
+        user: {
+          ...functionResponse.creationOptions.user,
+          id: functionResponse.creationOptions.user.id, // expecting string, actually uint8array :(
+        }
+      }
+    ).then<UserCredential, never>(
       (registrationResponse: RegistrationResponseJSON): Promise<UserCredential> => httpsCallableFromURL<FunctionRequest, FunctionResponse>(
         functions,
         "/firebase-web-authn-api",

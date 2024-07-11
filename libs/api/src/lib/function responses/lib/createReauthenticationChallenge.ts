@@ -1,6 +1,5 @@
 import { FunctionResponse, WebAuthnUserCredentialFactor, WebAuthnUserDocument } from "@firebase-web-authn/types";
 import { generateAuthenticationOptions }                                        from "@simplewebauthn/server";
-import { isoUint8Array }                                                        from "@simplewebauthn/server/helpers";
 import { PublicKeyCredentialRequestOptionsJSON }                                from "@simplewebauthn/types";
 import { FirebaseError }                                                        from "firebase-admin";
 import { DocumentReference, DocumentSnapshot, FieldValue }                      from "firebase-admin/firestore";
@@ -11,9 +10,9 @@ interface CreateReauthenticationChallengeOptions {
     attestationType: AttestationConveyancePreference
     rpID: string
     supportedAlgorithmIDs: COSEAlgorithmIdentifier[]
-  }
-  reauthenticatingCredentialFactor?: WebAuthnUserCredentialFactor
-  webAuthnUserDocumentReference: DocumentReference<WebAuthnUserDocument>
+  };
+  reauthenticatingCredentialFactor?: WebAuthnUserCredentialFactor;
+  webAuthnUserDocumentReference: DocumentReference<WebAuthnUserDocument>;
 }
 
 export const createReauthenticationChallenge: (options: CreateReauthenticationChallengeOptions) => Promise<FunctionResponse> = (options: CreateReauthenticationChallengeOptions): Promise<FunctionResponse> => options.webAuthnUserDocumentReference.get().then<FunctionResponse, FunctionResponse>(
@@ -22,18 +21,22 @@ export const createReauthenticationChallenge: (options: CreateReauthenticationCh
       ...options.authenticationOptions,
       allowCredentials: options.reauthenticatingCredentialFactor ? [
         {
-          id: isoUint8Array.toUTF8String(userDocument.credentials?.[options.reauthenticatingCredentialFactor]?.id || new Uint8Array()),
+          id:   userDocument.credentials?.[options.reauthenticatingCredentialFactor]?.id || new Uint8Array(),
+          type: "public-key",
         },
       ] : userDocument.credentials?.second ? [
         {
-          id: isoUint8Array.toUTF8String(userDocument.credentials.first.id || new Uint8Array()),
+          id:   userDocument.credentials.first.id || new Uint8Array(),
+          type: "public-key",
         },
         {
-          id: isoUint8Array.toUTF8String(userDocument.credentials.second.id),
+          id:   userDocument.credentials.second.id,
+          type: "public-key",
         },
       ] : [
         {
-          id: isoUint8Array.toUTF8String(userDocument.credentials?.first.id || new Uint8Array()),
+          id:   userDocument.credentials?.first.id || new Uint8Array(),
+          type: "public-key",
         },
       ],
     },

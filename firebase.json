@@ -1,12 +1,12 @@
 {
-  "extensions": {
+  "extensions":   {
     "firebase-web-authn": "./dist/libs/extension"
   },
-  "firestore":  {
+  "firestore":    {
     "indexes": "firestore.indexes.json",
     "rules":   "firestore.rules"
   },
-  "hosting":    {
+  "hosting":      {
     "headers":  [
       {
         "headers": [

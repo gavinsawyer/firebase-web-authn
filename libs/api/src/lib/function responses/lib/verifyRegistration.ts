@@ -6,16 +6,16 @@ import { DocumentReference, DocumentSnapshot, FieldValue, Timestamp } from "fire
 
 
 interface VerifyRegistrationOptions {
-  authenticatorAttachment?: AuthenticatorAttachment
-  authenticatorAttachment2FA?: AuthenticatorAttachment
-  createCustomToken: () => Promise<string>
+  authenticatorAttachment?: AuthenticatorAttachment;
+  authenticatorAttachment2FA?: AuthenticatorAttachment;
+  createCustomToken: () => Promise<string>;
   registrationOptions: {
-    expectedOrigin: string[]
-    expectedRPID: string[]
+    expectedOrigin: string
+    expectedRPID: string
     response: RegistrationResponseJSON
-  }
-  userVerificationRequirement?: UserVerificationRequirement
-  webAuthnUserDocumentReference: DocumentReference<WebAuthnUserDocument>
+  };
+  userVerificationRequirement?: UserVerificationRequirement;
+  webAuthnUserDocumentReference: DocumentReference<WebAuthnUserDocument>;
 }
 
 export const verifyRegistration: (options: VerifyRegistrationOptions) => Promise<FunctionResponse> = (options: VerifyRegistrationOptions): Promise<FunctionResponse> => options.webAuthnUserDocumentReference.get().then<FunctionResponse, FunctionResponse>(

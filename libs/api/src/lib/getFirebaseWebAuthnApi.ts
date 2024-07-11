@@ -1,5 +1,4 @@
 import { FunctionRequest, FunctionResponse, WebAuthnUserDocument }                                                                                                                                        from "@firebase-web-authn/types";
-import { isoUint8Array }                                                                                                                                                                                  from "@simplewebauthn/server/helpers";
 import { App }                                                                                                                                                                                            from "firebase-admin/app";
 import { Auth, getAuth }                                                                                                                                                                                  from "firebase-admin/auth";
 import { DocumentReference, Firestore, getFirestore }                                                                                                                                                     from "firebase-admin/firestore";
@@ -81,7 +80,7 @@ export const getFirebaseWebAuthnApi: (firebaseWebAuthnConfig: FirebaseWebAuthnCo
           - 8,
           - 257,
         ],
-        userID:                 isoUint8Array.fromUTF8String(userID),
+        userID:                 userID,
         userName:               callableRequest.data.name,
       },
       webAuthnUserDocumentReference: webAuthnUserDocumentReference,
@@ -89,8 +88,8 @@ export const getFirebaseWebAuthnApi: (firebaseWebAuthnConfig: FirebaseWebAuthnCo
   ) : callableRequest.data.operation === "verify authentication" ? verifyAuthentication(
     {
       authenticationOptions:               {
-        expectedOrigin:          [callableRequest.rawRequest.headers.origin || ""],
-        expectedRPID:            [firebaseWebAuthnConfig.relyingPartyID || callableRequest.rawRequest.headers.origin?.split("://")[1].split(":")[0] || ""],
+        expectedOrigin:          callableRequest.rawRequest.headers.origin || "",
+        expectedRPID:            firebaseWebAuthnConfig.relyingPartyID || callableRequest.rawRequest.headers.origin?.split("://")[1].split(":")[0] || "",
         requireUserVerification: (firebaseWebAuthnConfig.authenticatorAttachment2FA || firebaseWebAuthnConfig.authenticatorAttachment) === "platform" && firebaseWebAuthnConfig.userVerificationRequirement !== "discouraged",
         response:                callableRequest.data.authenticationResponse,
       },
@@ -105,8 +104,8 @@ export const getFirebaseWebAuthnApi: (firebaseWebAuthnConfig: FirebaseWebAuthnCo
   ) : callableRequest.data.operation === "verify reauthentication" ? verifyReauthentication(
     {
       authenticationOptions:         {
-        expectedOrigin:          [callableRequest.rawRequest.headers.origin || ""],
-        expectedRPID:            [firebaseWebAuthnConfig.relyingPartyID || callableRequest.rawRequest.headers.origin?.split("://")[1].split(":")[0] || ""],
+        expectedOrigin:          callableRequest.rawRequest.headers.origin || "",
+        expectedRPID:            firebaseWebAuthnConfig.relyingPartyID || callableRequest.rawRequest.headers.origin?.split("://")[1].split(":")[0] || "",
         requireUserVerification: (firebaseWebAuthnConfig.authenticatorAttachment2FA || firebaseWebAuthnConfig.authenticatorAttachment) === "platform" && firebaseWebAuthnConfig.userVerificationRequirement !== "discouraged",
         response:                callableRequest.data.authenticationResponse,
       },
@@ -123,8 +122,8 @@ export const getFirebaseWebAuthnApi: (firebaseWebAuthnConfig: FirebaseWebAuthnCo
       authenticatorAttachment2FA:    firebaseWebAuthnConfig.authenticatorAttachment2FA,
       createCustomToken:             () => auth.createCustomToken(userID),
       registrationOptions:           {
-        expectedOrigin: [callableRequest.rawRequest.headers.origin || ""],
-        expectedRPID:   [firebaseWebAuthnConfig.relyingPartyID || callableRequest.rawRequest.headers.origin?.split("://")[1].split(":")[0] || ""],
+        expectedOrigin: callableRequest.rawRequest.headers.origin || "",
+        expectedRPID:   firebaseWebAuthnConfig.relyingPartyID || callableRequest.rawRequest.headers.origin?.split("://")[1].split(":")[0] || "",
         response:       callableRequest.data.registrationResponse,
       },
       userVerificationRequirement:   firebaseWebAuthnConfig.userVerificationRequirement,
@@ -136,7 +135,7 @@ export const getFirebaseWebAuthnApi: (firebaseWebAuthnConfig: FirebaseWebAuthnCo
     app ? getAuth(app) : getAuth(),
     callableRequest.auth.uid,
     firestore.collection("users").doc(callableRequest.auth.uid) as DocumentReference<WebAuthnUserDocument>,
-    firestore.collection("users").doc(callableRequest.data.operation === "verify authentication" && atob(callableRequest.data.authenticationResponse.response.userHandle || "") || callableRequest.auth.uid) as DocumentReference<WebAuthnUserDocument>,
+    firestore.collection("users").doc(callableRequest.data.operation === "verify authentication" && callableRequest.data.authenticationResponse.response.userHandle || callableRequest.auth.uid) as DocumentReference<WebAuthnUserDocument>,
   ))(
     app ? getFirestore(
       app,
