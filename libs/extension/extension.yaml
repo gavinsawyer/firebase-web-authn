@@ -1,5 +1,5 @@
 name: firebase-web-authn
-version: 10.4.1
+version: 10.4.2
 specVersion: v1beta
 icon: icon.png
 
@@ -24,8 +24,6 @@ apis:
     reason: Needed for a custom auth provider to create user authentication tokens.
 
 roles:
-  - role: firebaseauth.viewer
-    reason: Allows the extension to view project users and auth configuration.
   - role: datastore.user
     reason: Allows the extension to write updates to the database where public keys are stored.
 
