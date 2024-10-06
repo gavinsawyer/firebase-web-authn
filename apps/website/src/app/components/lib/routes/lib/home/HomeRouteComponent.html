@@ -2,7 +2,7 @@
   <h1>
     FirebaseWebAuthn Demo
   </h1>
-  <p *ngIf="webAuthnUnsupported">
+  <p *ngIf="!hasWebAuthn$()">
     Please use a <a href="https://caniuse.com/webauthn">browser that supports WebAuthn</a>.
   </p>
   <p *ngIf="!authenticationService.user$()">

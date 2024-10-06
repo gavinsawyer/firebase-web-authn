@@ -107,7 +107,7 @@ export class SignedOutComponent {
       ))(
         doc(
           this.firestore,
-          "/profiles/" + user.uid,
+          `/profiles/${ user.uid }`,
         ) as DocumentReference<ProfileDocument>,
       );
     })() : void (0))(
