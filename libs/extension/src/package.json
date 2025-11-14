@@ -15,9 +15,7 @@
   "main":         "./main.js",
   "type":         "module",
   "private":      true,
-  "engines":      {
-    "node": "22"
-  },
+  "engines":      { "node": "22" },
   "dependencies": {
     "@simplewebauthn/server": "^9",
     "firebase-functions":     "^7"

@@ -116,4 +116,4 @@ Before installing this extension, you'll need to set up these services in your p
 
 To install an extension, your project must be on the Blaze (pay as you go) plan. This extension uses other Firebase and Google Cloud Platform services, which have associated charges if you exceed the service’s no-cost tier:
 - Firestore Database
-- Functions (Node.js 18 runtime)
+- Functions (Node.js 22 runtime)

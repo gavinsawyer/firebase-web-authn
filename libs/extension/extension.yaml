@@ -1,5 +1,5 @@
 name: firebase-web-authn
-version: 10.4.3
+version: 10.4.4
 specVersion: v1beta
 icon: icon.png
 
@@ -35,7 +35,7 @@ resources:
     properties:
       httpsTrigger: {}
       location: ${param:LOCATION}
-      runtime: nodejs18
+      runtime: nodejs22
       sourceDirectory: src
 
 params:
