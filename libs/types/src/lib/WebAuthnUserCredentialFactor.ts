@@ -1,3 +1,7 @@
+/*
+ * Copyright © 2025 Gavin Sawyer. All rights reserved.
+ */
+
 /**
  * The authentication factor associated with the credential. Credentials can be used for either first (1FA) or second (2FA) factor authentication.
  */

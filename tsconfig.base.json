@@ -7,6 +7,7 @@
   },
   "compileOnSave":          false,
   "compilerOptions":        {
+    "allowSyntheticDefaultImports":       true,
     "baseUrl":                            ".",
     "declaration":                        true,
     "emitDecoratorMetadata":              true,
@@ -25,25 +26,18 @@
     "noPropertyAccessFromIndexSignature": true,
     "outDir":                             "dist/out-tsc",
     "paths":                              {
-      "@firebase-web-authn/api":     [
-        "libs/api/src/index.ts"
-      ],
-      "@firebase-web-authn/browser": [
-        "libs/browser/src/index.ts"
-      ],
-      "@firebase-web-authn/server":  [
-        "libs/server/src/index.ts"
-      ],
-      "@firebase-web-authn/types":   [
-        "libs/types/src/index.ts"
-      ]
+      "@firebase-web-authn/api":     [ "libs/api/src/index.ts" ],
+      "@firebase-web-authn/browser": [ "libs/browser/src/index.ts" ],
+      "@firebase-web-authn/server":  [ "libs/server/src/index.ts" ],
+      "@firebase-web-authn/types":   [ "libs/types/src/index.ts" ]
     },
     "rootDir":                            ".",
     "skipDefaultLibCheck":                true,
     "skipLibCheck":                       true,
     "sourceMap":                          true,
     "strict":                             true,
-    "target":                             "ESNext"
+    "target":                             "ESNext",
+    "types":                              [ "@types/compression" ]
   },
   "exclude":                [
     "node_modules",

@@ -1,11 +1,15 @@
-import { FunctionRequest, FunctionResponse, WebAuthnUserCredentialFactor } from "@firebase-web-authn/types";
-import { startAuthentication }                                             from "@simplewebauthn/browser";
-import { AuthenticationResponseJSON }                                      from "@simplewebauthn/types";
-import { Auth }                                                            from "firebase/auth";
-import { Functions, httpsCallableFromURL, HttpsCallableResult }            from "firebase/functions";
-import { clearChallenge }                                                  from "./clearChallenge.js";
-import { FirebaseWebAuthnError }                                           from "./FirebaseWebAuthnError.js";
-import { handleVerifyFunctionResponse }                                    from "./handleVerifyFunctionResponse.js";
+/*
+ * Copyright © 2025 Gavin Sawyer. All rights reserved.
+ */
+
+import { type FunctionRequest, type FunctionResponse, type WebAuthnUserCredentialFactor } from "@firebase-web-authn/types";
+import { startAuthentication }                                                            from "@simplewebauthn/browser";
+import { type AuthenticationResponseJSON }                                                from "@simplewebauthn/types";
+import { type Auth }                                                                      from "firebase/auth";
+import { type Functions, httpsCallableFromURL, type HttpsCallableResult }                 from "firebase/functions";
+import { clearChallenge }                                                                 from "./clearChallenge.js";
+import { FirebaseWebAuthnError }                                                          from "./FirebaseWebAuthnError.js";
+import { handleVerifyFunctionResponse }                                                   from "./handleVerifyFunctionResponse.js";
 
 
 /**
@@ -27,70 +31,76 @@ import { handleVerifyFunctionResponse }                                    from 
  * @throws
  *  {@link FirebaseWebAuthnError}
  */
-export const verifyUserWithPasskey: (auth: Auth, functions: Functions, factor?: WebAuthnUserCredentialFactor) => Promise<void> = (auth: Auth, functions: Functions, factor?: WebAuthnUserCredentialFactor): Promise<void> => auth
-  .currentUser ? httpsCallableFromURL<FunctionRequest, FunctionResponse>(
-    functions,
-    "/firebase-web-authn-api",
-  )(
-    {
-      operation:                  "create reauthentication challenge",
-      reauthenticatingCredential: factor,
-    },
-  )
-  .then<void, never>(
-    ({ data: functionResponse }: HttpsCallableResult<FunctionResponse>): Promise<void> => "requestOptions" in functionResponse ? startAuthentication(functionResponse.requestOptions).then<void, never>(
-      (authenticationResponse: AuthenticationResponseJSON): Promise<void> => httpsCallableFromURL<FunctionRequest, FunctionResponse>(
-        functions,
-        "/firebase-web-authn-api",
-      )(
-        {
-          authenticationResponse: authenticationResponse,
-          operation:              "verify reauthentication",
-        },
+export const verifyUserWithPasskey: (
+  auth: Auth,
+  functions: Functions,
+  factor?: WebAuthnUserCredentialFactor,
+) => Promise<void> = (
+  auth: Auth,
+  functions: Functions,
+  factor?: WebAuthnUserCredentialFactor,
+): Promise<void> => auth.currentUser ? httpsCallableFromURL<FunctionRequest, FunctionResponse>(
+  functions,
+  "/firebase-web-authn-api",
+)(
+  {
+    operation:                  "create reauthentication challenge",
+    reauthenticatingCredential: factor,
+  },
+).then<void, never>(
+  ({ data: functionResponse }: HttpsCallableResult<FunctionResponse>): Promise<void> => "requestOptions" in functionResponse ? startAuthentication(functionResponse.requestOptions).then<void, never>(
+    (authenticationResponse: AuthenticationResponseJSON): Promise<void> => httpsCallableFromURL<FunctionRequest, FunctionResponse>(
+      functions,
+      "/firebase-web-authn-api",
+    )(
+      {
+        authenticationResponse: authenticationResponse,
+        operation:              "verify reauthentication",
+      },
+    ).then<void>(
+      ({ data: functionResponse }: HttpsCallableResult<FunctionResponse>): Promise<void> => handleVerifyFunctionResponse(
+        auth,
+        functionResponse,
       ).then<void>(
-        ({ data: functionResponse }: HttpsCallableResult<FunctionResponse>): Promise<void> => handleVerifyFunctionResponse(
-          auth,
-          functionResponse,
-        ).then<void>(
-          (): void => void (0),
+        (): void => void (0),
+      ),
+    ),
+    (): Promise<never> => clearChallenge(functions).then<never>(
+      (): never => {
+        throw new FirebaseWebAuthnError(
+          {
+            code:      "cancelled",
+            message:   "Cancelled by user.",
+            operation: functionResponse.operation,
+          },
+        );
+      },
+    ),
+  ) : "code" in functionResponse ? ((): never => {
+    throw new FirebaseWebAuthnError(functionResponse);
+  })() : ((): never => {
+    throw new FirebaseWebAuthnError(
+      {
+        code:      "invalid",
+        message:   "Invalid function response.",
+        operation: functionResponse.operation,
+      },
+    );
+  })(),
+  (firebaseError): never => {
+    throw new FirebaseWebAuthnError(
+      {
+        code:      firebaseError.code.replace(
+          "firebaseWebAuthn/",
+          "",
         ),
-      ),
-      (): Promise<never> => clearChallenge(functions).then<never>(
-        (): never => {
-          throw new FirebaseWebAuthnError(
-            {
-              code:      "cancelled",
-              message:   "Cancelled by user.",
-              operation: functionResponse.operation,
-            },
-          );
-        },
-      ),
-    ) : "code" in functionResponse ? ((): never => {
-      throw new FirebaseWebAuthnError(functionResponse);
-    })() : ((): never => {
-      throw new FirebaseWebAuthnError(
-        {
-          code:      "invalid",
-          message:   "Invalid function response.",
-          operation: functionResponse.operation,
-        },
-      );
-    })(),
-    (firebaseError): never => {
-      throw new FirebaseWebAuthnError(
-        {
-          code:      firebaseError.code.replace(
-            "firebaseWebAuthn/",
-            "",
-          ),
-          message:   firebaseError.message || "An unknown error occured.",
-          method:    "httpsCallableFromURL",
-          operation: "create reauthentication challenge",
-        },
-      );
-    },
-  ) : ((): never => {
+        message:   firebaseError.message || "An unknown error occured.",
+        method:    "httpsCallableFromURL",
+        operation: "create reauthentication challenge",
+      },
+    );
+  },
+) : ((): never => {
   throw new FirebaseWebAuthnError(
     {
       code:      "missing-auth",

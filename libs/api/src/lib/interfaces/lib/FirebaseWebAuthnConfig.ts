@@ -1,3 +1,7 @@
+/*
+ * Copyright © 2025 Gavin Sawyer. All rights reserved.
+ */
+
 /**
  * Configuration for your WebAuthn Cloud Function
  */

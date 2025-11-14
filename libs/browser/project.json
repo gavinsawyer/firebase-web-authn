@@ -5,7 +5,7 @@
   "sourceRoot":  "libs/browser/src",
   "targets":     {
     "eslint": {
-      "executor": "@nx/linter:eslint",
+      "executor": "@nx/eslint:lint",
       "options":  {
         "lintFilePatterns": [
           "libs/browser/src/**/*.ts"

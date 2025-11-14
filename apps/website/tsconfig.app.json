@@ -1,6 +1,11 @@
 {
-  "extends": "../../tsconfig.json",
-  "include": [
-    "src/**/*.ts"
-  ]
+  "compilerOptions": { "declaration": false },
+  "extends":         "../../tsconfig.base.json",
+  "files":           [
+    "src/app/main.browser.ts",
+    "src/app/main.server.ts",
+    "src/environment.prod.ts",
+    "src/polyfills.ts"
+  ],
+  "include":         [ "../../libs/symbols/src/lib/_*.ts" ]
 }

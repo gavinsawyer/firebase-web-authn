@@ -5,31 +5,10 @@ This package contains types and interfaces used internally by FirebaseWebAuthn a
 
 [![FirebaseWebAuthn version](https://img.shields.io/npm/v/@firebase-web-authn/types?logo=npm)](https://www.npmjs.com/package/@firebase-web-authn/types)
 [![Firebase Admin SDK version](https://img.shields.io/npm/dependency-version/@firebase-web-authn/types/firebase-admin?label=Firebase%20SDK%20for%20Cloud%20Functions&logo=firebase)](https://www.npmjs.com/package/firebase-functions)
-### WebAuthnUserCredential
-Information about the public key credential associated with the user
-```ts
-import { WebAuthnUserCredential } from "@firebase-web-authn/types";
-```
-```ts
-```
-### WebAuthnUserCredentialFactor
-The authentication factor associated with the credential.
-```ts
-import { WebAuthnUserCredentialFactor } from "@firebase-web-authn/types";
-```
-```ts
-type WebAuthnUserCredentialFactor = "first" | "second"
-```
-### WebAuthnProcess
-The WebAuthn process associated with operations and related cryptographic challenges.
-```ts
-import { WebAuthnProcess } from "@firebase-web-authn/types";
-```
-```ts
-type WebAuthnProcess = "authentication" | "reauthentication" | "registration"
-```
 ### WebAuthnUserDocument
-Document in the `users` collection of the `ext-firebase-web-authn` Firestore Database. This should not have read or write access from users.
+Document in the `users` collection of the `ext-firebase-web-authn` Firestore Database
+
+**(This should not have read or write access from users.)**
 ```ts
 import { WebAuthnUserDocument } from "@firebase-web-authn/types";
 ```
@@ -44,6 +23,36 @@ interface WebAuthnUserDocument {
   "lastVerified"?:        Timestamp;                    // Automatically updated on successful operations that verified the user with biometrics.
   "lastWebAuthnProcess"?: WebAuthnProcess;              // The last WebAuthnProcess successfully completed by the user..
 }
+```
+### WebAuthnUserCredential
+Information about the public key credential associated with the user
+```ts
+import { WebAuthnUserCredential } from "@firebase-web-authn/types";
+```
+```ts
+export interface WebAuthnUserCredential {
+  "authenticatorAttachment": AuthenticatorAttachment; // The AuthenticatorAttachment associated with the credential.
+  "backedUp":                boolean;                 // Whether the credential has been backed up successfully.
+  "counter":                 number;                  // Updated automatically by some authenticators to help prevent replay attacks.
+  "id":                      Uint8Array;              // ID associated with the credential.
+  "publicKey":               Uint8Array;              // Public key associated with the credential.
+}
+```
+### WebAuthnUserCredentialFactor
+The authentication factor associated with the credential
+```ts
+import { WebAuthnUserCredentialFactor } from "@firebase-web-authn/types";
+```
+```ts
+type WebAuthnUserCredentialFactor = "first" | "second"
+```
+### WebAuthnProcess
+The WebAuthn process associated with operations and related cryptographic challenges
+```ts
+import { WebAuthnProcess } from "@firebase-web-authn/types";
+```
+```ts
+type WebAuthnProcess = "authentication" | "reauthentication" | "registration"
 ```
 ## More packages
 - [@firebase-web-authn/extension](https://github.com/gavinsawyer/firebase-web-authn/tree/main/libs/extension)

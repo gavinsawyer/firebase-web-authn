@@ -1,13 +1,19 @@
-import { Location }                                                                                                                                                                                                                                                                                         from "@angular/common";
-import { inject, Injectable, Signal }                                                                                                                                                                                                                                                                       from "@angular/core";
-import { toSignal }                                                                                                                                                                                                                                                                                         from "@angular/core/rxjs-interop";
-import { ActivationEnd, ActivationStart, ChildActivationEnd, ChildActivationStart, GuardsCheckEnd, GuardsCheckStart, NavigationCancel, NavigationEnd, NavigationError, NavigationStart, ResolveEnd, ResolveStart, RouteConfigLoadEnd, RouteConfigLoadStart, Router, RouterEvent, RoutesRecognized, Scroll } from "@angular/router";
-import { filter, map, startWith }                                                                                                                                                                                                                                                                           from "rxjs";
+/*
+ * Copyright © 2025 Gavin Sawyer. All rights reserved.
+ */
+
+import { Location }                                                                                                                                                                                                                                                                                                                                                                         from "@angular/common";
+import { inject, Injectable, type Signal }                                                                                                                                                                                                                                                                                                                                                  from "@angular/core";
+import { toSignal }                                                                                                                                                                                                                                                                                                                                                                         from "@angular/core/rxjs-interop";
+import { type ActivationEnd, type ActivationStart, type ChildActivationEnd, type ChildActivationStart, type GuardsCheckEnd, type GuardsCheckStart, type NavigationCancel, NavigationEnd, type NavigationError, type NavigationStart, type ResolveEnd, type ResolveStart, type RouteConfigLoadEnd, type RouteConfigLoadStart, Router, type RouterEvent, type RoutesRecognized, type Scroll } from "@angular/router";
+import { filter, map, startWith }                                                                                                                                                                                                                                                                                                                                                           from "rxjs";
 
 
-@Injectable({
-  providedIn: "root",
-})
+@Injectable(
+  {
+    providedIn: "root",
+  },
+)
 export class PathService {
 
   public readonly path$: Signal<string> = toSignal<string>(

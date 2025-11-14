@@ -1,5 +1,5 @@
 name: firebase-web-authn
-version: 10.4.2
+version: 10.4.3
 specVersion: v1beta
 icon: icon.png
 
@@ -14,8 +14,8 @@ releaseNotesUrl: https://github.com/gavinsawyer/firebase-web-authn/blob/main/dis
 
 author:
   authorName: Gavin Sawyer
-  email: g@vinsawyer.dev
-  url: https://gavinsawyer.dev
+  email: g@vinsawyer.us
+  url: https://gavinsawyer.us
 
 billingRequired: true
 

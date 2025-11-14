@@ -7,9 +7,7 @@ on:
   pull_request:
 
 env:
-  APP_CHECK_TOKEN_WEBSITE: ${{ secrets.APP_CHECK_TOKEN_WEBSITE }}
-  NPM_ACCESS_TOKEN:        ${{ secrets.NPM_ACCESS_TOKEN }}
-  NX_CLOUD_ACCESS_TOKEN:   ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
+  NPM_ACCESS_TOKEN: ${{ secrets.NPM_ACCESS_TOKEN }}
 
 jobs:
   deploy:
@@ -17,8 +15,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
-        with:
-          node-version: 20
       - id:   cache-node-modules
         uses: actions/cache@v3
         with:
@@ -33,8 +29,13 @@ jobs:
           token_format:     access_token
       - run: npx nx run website:deploy
         env:
-          FIREBASE_TOKEN: ${{ steps.auth.outputs.access_token }}
+          APP_CHECK_TOKEN_WEBSITE:       ${{ secrets.APP_CHECK_TOKEN_WEBSITE }}
+          FIREBASE_SERVICE_ACCOUNT_PATH: ${{ steps.auth.outputs.credentials_file_path }}
+          FIREBASE_TOKEN:                ${{ steps.auth.outputs.access_token }}
+          NX_CLOUD_ACCESS_TOKEN:         ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
       - run: npx nx run-many --target build --projects api,browser,extension,server,types --parallel 1
+        env:
+          NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
       - run:               npm publish dist/libs/api --access public
         continue-on-error: true
       - run:               npm publish dist/libs/browser --access public

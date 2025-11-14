@@ -1,18 +1,22 @@
-import { isPlatformBrowser }                                                              from "@angular/common";
-import { inject, Injectable, PLATFORM_ID, signal, Signal }                                from "@angular/core";
-import { toSignal }                                                                       from "@angular/core/rxjs-interop";
-import { Auth, onIdTokenChanged, User }                                                   from "@angular/fire/auth";
-import { doc, docSnapshots, DocumentReference, DocumentSnapshot, Firestore }              from "@angular/fire/firestore";
-import { catchError, map, Observable, Observer, of, startWith, switchMap, TeardownLogic } from "rxjs";
-import { ProfileDocument }                                                                from "../../interfaces";
+/*
+ * Copyright © 2025 Gavin Sawyer. All rights reserved.
+ */
+
+import { isPlatformBrowser }                                                                        from "@angular/common";
+import { inject, Injectable, PLATFORM_ID, signal, type Signal }                                     from "@angular/core";
+import { toSignal }                                                                                 from "@angular/core/rxjs-interop";
+import { Auth, onIdTokenChanged, type User }                                                        from "@angular/fire/auth";
+import { doc, docSnapshots, type DocumentReference, type DocumentSnapshot, Firestore }              from "@angular/fire/firestore";
+import { catchError, map, Observable, type Observer, of, startWith, switchMap, type TeardownLogic } from "rxjs";
+import { type ProfileDocument }                                                                     from "../../interfaces";
 
 
 @Injectable({
-  providedIn: "root"
-})
+              providedIn: "root",
+            })
 export class ProfileService {
 
-  private readonly auth:      Auth      = inject<Auth>(Auth);
+  private readonly auth: Auth           = inject<Auth>(Auth);
   private readonly firestore: Firestore = inject<Firestore>(Firestore);
 
   public profileDocument$: Signal<ProfileDocument | null> = isPlatformBrowser(inject<object>(PLATFORM_ID)) ? toSignal<ProfileDocument | null>(
@@ -32,8 +36,7 @@ export class ProfileService {
         ).pipe<DocumentSnapshot<ProfileDocument>, ProfileDocument | null>(
           catchError<DocumentSnapshot<ProfileDocument>, Observable<DocumentSnapshot<ProfileDocument>>>(
             (error: unknown): Observable<DocumentSnapshot<ProfileDocument>> => {
-              console
-                .error(error);
+              console.error(error);
 
               return new Observable<DocumentSnapshot<ProfileDocument>>();
             },

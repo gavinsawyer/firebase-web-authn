@@ -1,3 +1,7 @@
+/*
+ * Copyright © 2025 Gavin Sawyer. All rights reserved.
+ */
+
 export * from "./lib/FunctionRequest.js";
 export * from "./lib/FunctionResponse.js";
 export * from "./lib/WebAuthnProcess.js";

@@ -1,3 +1,7 @@
+/*
+ * Copyright © 2025 Gavin Sawyer. All rights reserved.
+ */
+
 import { Timestamp }                    from "firebase-admin/firestore";
 import { WebAuthnProcess }              from "./WebAuthnProcess.js";
 import { WebAuthnUserCredential }       from "./WebAuthnUserCredential.js";
@@ -5,7 +9,9 @@ import { WebAuthnUserCredentialFactor } from "./WebAuthnUserCredentialFactor.js"
 
 
 /**
- * Document in the `users` collection of the `ext-firebase-web-authn` Firestore Database. This should not have read or write access from users.
+ * Document in the `users` collection of the `ext-firebase-web-authn` Firestore Database
+ *
+ * **(This should not have read or write access from users.)**
  */
 export interface WebAuthnUserDocument {
   /**

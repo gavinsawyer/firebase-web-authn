@@ -1,49 +1,69 @@
-import { AuthenticationResponseJSON, RegistrationResponseJSON } from "@simplewebauthn/types";
-import { WebAuthnUserCredentialFactor }                         from "./WebAuthnUserCredentialFactor.js";
+/*
+ * Copyright © 2025 Gavin Sawyer. All rights reserved.
+ */
+
+import { type AuthenticationResponseJSON, type RegistrationResponseJSON } from "@simplewebauthn/types";
+import { type WebAuthnUserCredentialFactor }                              from "./WebAuthnUserCredentialFactor.js";
 
 
 interface UnknownFunctionRequest {
   "operation": "clear challenge" | "clear credential" | "create authentication challenge" | "create reauthentication challenge" | "create registration challenge" | "verify authentication" | "verify reauthentication" | "verify registration";
 }
 
-interface ClearChallengeFunctionRequest extends UnknownFunctionRequest {
+interface ClearChallengeFunctionRequest
+  extends UnknownFunctionRequest {
   "operation": "clear challenge";
 }
 
-interface ClearUserDocFunctionRequest extends UnknownFunctionRequest {
+interface ClearUserDocFunctionRequest
+  extends UnknownFunctionRequest {
   "clearingCredential"?: WebAuthnUserCredentialFactor;
   "operation": "clear credential";
 }
 
-interface CreateAuthenticationChallengeFunctionRequest extends UnknownFunctionRequest {
+interface CreateAuthenticationChallengeFunctionRequest
+  extends UnknownFunctionRequest {
   "authenticatingCredential"?: WebAuthnUserCredentialFactor;
   "operation": "create authentication challenge";
 }
 
-interface CreateReauthenticationChallengeFunctionRequest extends UnknownFunctionRequest {
+interface CreateReauthenticationChallengeFunctionRequest
+  extends UnknownFunctionRequest {
   "operation": "create reauthentication challenge";
   "reauthenticatingCredential"?: WebAuthnUserCredentialFactor;
 }
 
-interface CreateRegistrationChallengeFunctionRequest extends UnknownFunctionRequest {
+interface CreateRegistrationChallengeFunctionRequest
+  extends UnknownFunctionRequest {
   "name": string;
   "operation": "create registration challenge";
   "registeringCredential": WebAuthnUserCredentialFactor;
 }
 
-interface VerifyAuthenticationFunctionRequest extends UnknownFunctionRequest {
+interface VerifyAuthenticationFunctionRequest
+  extends UnknownFunctionRequest {
   "authenticationResponse": AuthenticationResponseJSON;
   "operation": "verify authentication";
 }
 
-interface VerifyReauthenticationFunctionRequest extends UnknownFunctionRequest {
+interface VerifyReauthenticationFunctionRequest
+  extends UnknownFunctionRequest {
   "authenticationResponse": AuthenticationResponseJSON;
   "operation": "verify reauthentication";
 }
 
-interface VerifyRegistrationFunctionRequest extends UnknownFunctionRequest {
+interface VerifyRegistrationFunctionRequest
+  extends UnknownFunctionRequest {
   "operation": "verify registration";
   "registrationResponse": RegistrationResponseJSON;
 }
 
-export declare type FunctionRequest = ClearChallengeFunctionRequest | ClearUserDocFunctionRequest | CreateAuthenticationChallengeFunctionRequest | CreateReauthenticationChallengeFunctionRequest | CreateRegistrationChallengeFunctionRequest | VerifyAuthenticationFunctionRequest | VerifyReauthenticationFunctionRequest | VerifyRegistrationFunctionRequest
+export declare type FunctionRequest =
+  ClearChallengeFunctionRequest
+  | ClearUserDocFunctionRequest
+  | CreateAuthenticationChallengeFunctionRequest
+  | CreateReauthenticationChallengeFunctionRequest
+  | CreateRegistrationChallengeFunctionRequest
+  | VerifyAuthenticationFunctionRequest
+  | VerifyReauthenticationFunctionRequest
+  | VerifyRegistrationFunctionRequest

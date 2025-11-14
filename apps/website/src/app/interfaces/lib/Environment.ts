@@ -1,3 +1,7 @@
+/*
+ * Copyright © 2025 Gavin Sawyer. All rights reserved.
+ */
+
 export interface Environment {
   "firebase": {
     "apiKey": string

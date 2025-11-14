@@ -1,3 +1,7 @@
+/*
+ * Copyright © 2025 Gavin Sawyer. All rights reserved.
+ */
+
 export * from "./lib/createUserWithPasskey.js";
 export * from "./lib/FirebaseWebAuthnError.js";
 export * from "./lib/linkWithPasskey.js";

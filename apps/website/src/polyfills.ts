@@ -1,3 +1,7 @@
+/*
+ * Copyright © 2025 Gavin Sawyer. All rights reserved.
+ */
+
 /**
  * This file includes polyfills needed by Angular and is loaded before the app.
  * You can add your own extra polyfills to this file.
@@ -17,9 +21,6 @@
 /***************************************************************************************************
  * BROWSER POLYFILLS
  */
-
-window
-  .global = window;
 
 /**
  * By default, zone.js will patch all possible macroTask and DomEvents

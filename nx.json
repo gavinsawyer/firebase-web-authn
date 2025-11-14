@@ -1,69 +1,51 @@
 {
   "$schema":            "./node_modules/nx/schemas/nx-schema.json",
-  "affected":           {
-    "defaultBase": "main"
-  },
+  "affected":           { "defaultBase": "main" },
   "namedInputs":        {
     "default":       [
       "{projectRoot}/**/*",
       "sharedGlobals"
     ],
-    "production":    [
-      "default"
-    ],
-    "sharedGlobals": []
+    "production":    [ "default" ],
+    "sharedGlobals": [ ]
   },
   "npmScope":           "firebase-web-authn",
+  "nxCloudAccessToken": "${NX_CLOUD_ACCESS_TOKEN}",
+  "nxCloudId":          "${NX_CLOUD_ID}",
   "targetDefaults":     {
-    "build":  {
-      "dependsOn": [
-        "^build"
-      ],
+    "angular-build":     { "cache": true },
+    "angular-prerender": { "cache": true },
+    "angular-server":    { "cache": true },
+    "build":             {
+      "dependsOn": [ "^build" ],
       "inputs":    [
         "production",
         "^production"
       ]
     },
-    "serve":  {
-      "dependsOn": [
-        "^serve"
-      ],
-      "inputs":    [
-        "development",
-        "^development"
-      ]
-    },
-    "deploy": {
-      "dependsOn": [
-        "^deploy"
-      ],
+    "deploy":            {
+      "dependsOn": [ "^deploy" ],
       "inputs":    [
         "production",
         "^production"
       ]
     },
-    "eslint": {
+    "esbuild":           { "cache": true },
+    "eslint":            {
+      "cache":  true,
       "inputs": [
         "default",
         "{workspaceRoot}/.eslintrc.json",
         "{workspaceRoot}/.eslintignore"
       ]
-    }
-  },
-  "tasksRunnerOptions": {
-    "default": {
-      "options": {
-        "accessToken":         "${NX_CLOUD_ACCESS_TOKEN}",
-        "cacheableOperations": [
-          "angular-browser",
-          "angular-prerender",
-          "angular-server",
-          "esbuild",
-          "eslint",
-          "tsc"
-        ]
-      },
-      "runner":  "nx-cloud"
-    }
+    },
+    "serve":             {
+      "dependsOn": [ "^serve" ],
+      "inputs":    [
+        "development",
+        "^development"
+      ]
+    },
+    "tsc":               { "cache": true }
   }
 }

@@ -1,6 +1,10 @@
-import { WebAuthnUserDocument }                                                    from "@firebase-web-authn/types";
-import { App }                                                                     from "firebase-admin/app";
-import { DocumentReference, DocumentSnapshot, Firestore, getFirestore, Timestamp } from "firebase-admin/firestore";
+/*
+ * Copyright © 2025 Gavin Sawyer. All rights reserved.
+ */
+
+import { type WebAuthnUserDocument }                                                              from "@firebase-web-authn/types";
+import { type App }                                                                               from "firebase-admin/app";
+import { type DocumentReference, type DocumentSnapshot, type Firestore, getFirestore, Timestamp } from "firebase-admin/firestore";
 
 
 // noinspection JSUnusedGlobalSymbols
@@ -13,7 +17,13 @@ import { DocumentReference, DocumentSnapshot, Firestore, getFirestore, Timestamp
  * @returns
  *  A {@link Timestamp} for when the user was last verified or null if no passkey was found.
  */
-export const lastVerified: (uid: string, app?: App) => Promise<Timestamp | null> = (uid: string, app?: App): Promise<Timestamp | null> => ((firestore: Firestore): Promise<Timestamp | null> => (firestore.collection("users").doc(uid) as DocumentReference<WebAuthnUserDocument>).get().then<Timestamp | null>(
+export const lastVerified: (
+  uid: string,
+  app?: App,
+) => Promise<Timestamp | null> = (
+  uid: string,
+  app?: App,
+): Promise<Timestamp | null> => ((firestore: Firestore): Promise<Timestamp | null> => (firestore.collection("users").doc(uid) as DocumentReference<WebAuthnUserDocument>).get().then<Timestamp | null>(
   (documentSnapshot: DocumentSnapshot<WebAuthnUserDocument>): Timestamp | null => documentSnapshot.data()?.lastVerified || null,
 ))(app ? getFirestore(
   app,

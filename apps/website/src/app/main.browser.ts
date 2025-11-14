@@ -1,11 +1,10 @@
-import { enableProdMode }         from "@angular/core";
+/*
+ * Copyright © 2025 Gavin Sawyer. All rights reserved.
+ */
+
 import { platformBrowserDynamic } from "@angular/platform-browser-dynamic";
-import { environment }            from "../environment";
-import { WebsiteBrowserModule }   from "./modules";
+import { ProjectBrowserModule }   from "./modules";
 
-
-environment
-  .production && enableProdMode();
 
 (async (bootstrap: () => Promise<void>): Promise<void> => document.readyState === "complete" ? bootstrap() : document.addEventListener<"DOMContentLoaded">(
   "DOMContentLoaded",
@@ -14,7 +13,7 @@ environment
     once: true,
   },
 ))(
-  (): Promise<void> => platformBrowserDynamic().bootstrapModule<WebsiteBrowserModule>(WebsiteBrowserModule).then<void, void>(
+  (): Promise<void> => platformBrowserDynamic().bootstrapModule<ProjectBrowserModule>(ProjectBrowserModule).then<void, void>(
     (): void => void (0),
     (error: unknown): void => console.error(error),
   ),

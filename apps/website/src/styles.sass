@@ -1,21 +1,25 @@
+/*!
+ / Copyright © 2025 Gavin Sawyer. All rights reserved.
+ /
+
 @use '@angular/material' as mat
 @include mat.core()
 
-$demo-primary-dark: mat.define-palette(mat.$amber-palette, 200)
-$demo-primary-light: mat.define-palette(mat.$amber-palette, 500)
+$demo-primary-dark: mat.m2-define-palette(mat.$m2-amber-palette, 200)
+$demo-primary-light: mat.m2-define-palette(mat.$m2-amber-palette, 500)
 
-$demo-accent-dark: mat.define-palette(mat.$teal-palette, 100)
-$demo-accent-light: mat.define-palette(mat.$teal-palette, 300)
+$demo-accent-dark: mat.m2-define-palette(mat.$m2-teal-palette, 100)
+$demo-accent-light: mat.m2-define-palette(mat.$m2-teal-palette, 300)
 
-$demo-warn: mat.define-palette(mat.$deep-orange-palette, 400)
+$demo-warn: mat.m2-define-palette(mat.$m2-deep-orange-palette, 400)
 
 // Include theme styles for core and each component used in your app.
 // Alternatively, you can import and @include the theme mixins for each component
 // that you are using.
-@include mat.all-component-themes(mat.define-light-theme((color: (primary: $demo-primary-light, accent: $demo-accent-light, warn: $demo-warn), typography: mat.define-typography-config())))
+@include mat.all-component-themes(mat.m2-define-light-theme((color: (primary: $demo-primary-light, accent: $demo-accent-light, warn: $demo-warn), typography: mat.m2-define-typography-config())))
 
 @media (prefers-color-scheme: dark)
-  @include mat.all-component-colors(mat.define-dark-theme((color: (primary: $demo-primary-dark, accent: $demo-accent-dark, warn: $demo-warn), typography: mat.define-typography-config())))
+  @include mat.all-component-colors(mat.m2-define-dark-theme((color: (primary: $demo-primary-dark, accent: $demo-accent-dark, warn: $demo-warn), typography: mat.m2-define-typography-config())))
 
 body
   font-family: Roboto, "Helvetica Neue", sans-serif
@@ -42,10 +46,13 @@ body
 
   h1
     font-size: 2.2rem
+
   h2
     font-size: 1.8rem
+
   h3
     font-size: 1.2rem
+
   h4
     font-size: 0.8rem
 

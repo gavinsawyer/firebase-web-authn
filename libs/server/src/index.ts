@@ -1,3 +1,7 @@
+/*
+ * Copyright © 2025 Gavin Sawyer. All rights reserved.
+ */
+
 export * from "./lib/credentials.js";
 export * from "./lib/lastCredentialUsed.js";
 export * from "./lib/lastPresent.js";

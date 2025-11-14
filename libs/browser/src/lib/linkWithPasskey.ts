@@ -1,11 +1,15 @@
-import { FunctionRequest, FunctionResponse, WebAuthnUserCredentialFactor } from "@firebase-web-authn/types";
-import { startRegistration }                                               from "@simplewebauthn/browser";
-import { RegistrationResponseJSON }                                        from "@simplewebauthn/types";
-import { Auth, UserCredential }                                            from "firebase/auth";
-import { Functions, httpsCallableFromURL, HttpsCallableResult }            from "firebase/functions";
-import { clearChallenge }                                                  from "./clearChallenge.js";
-import { FirebaseWebAuthnError }                                           from "./FirebaseWebAuthnError.js";
-import { handleVerifyFunctionResponse }                                    from "./handleVerifyFunctionResponse.js";
+/*
+ * Copyright © 2025 Gavin Sawyer. All rights reserved.
+ */
+
+import { type FunctionRequest, type FunctionResponse, type WebAuthnUserCredentialFactor } from "@firebase-web-authn/types";
+import { startRegistration }                                                              from "@simplewebauthn/browser";
+import { type RegistrationResponseJSON }                                                  from "@simplewebauthn/types";
+import { type Auth, type UserCredential }                                                 from "firebase/auth";
+import { type Functions, httpsCallableFromURL, type HttpsCallableResult }                 from "firebase/functions";
+import { clearChallenge }                                                                 from "./clearChallenge.js";
+import { FirebaseWebAuthnError }                                                          from "./FirebaseWebAuthnError.js";
+import { handleVerifyFunctionResponse }                                                   from "./handleVerifyFunctionResponse.js";
 
 
 /**
@@ -23,93 +27,101 @@ import { handleVerifyFunctionResponse }                                    from 
  * @throws
  *  {@link FirebaseWebAuthnError}
  */
-export const linkWithPasskey: (auth: Auth, functions: Functions, name: string, factor?: WebAuthnUserCredentialFactor) => Promise<UserCredential> = (auth: Auth, functions: Functions, name: string, factor?: WebAuthnUserCredentialFactor): Promise<UserCredential> => auth
-  .currentUser ? httpsCallableFromURL<FunctionRequest, FunctionResponse>(
-    functions,
-    "/firebase-web-authn-api",
-  )(
+export const linkWithPasskey: (
+  auth: Auth,
+  functions: Functions,
+  name: string,
+  factor?: WebAuthnUserCredentialFactor,
+) => Promise<UserCredential> = (
+  auth: Auth,
+  functions: Functions,
+  name: string,
+  factor?: WebAuthnUserCredentialFactor,
+): Promise<UserCredential> => auth.currentUser ? httpsCallableFromURL<FunctionRequest, FunctionResponse>(
+  functions,
+  "/firebase-web-authn-api",
+)(
+  {
+    name:                  name,
+    operation:             "create registration challenge",
+    registeringCredential: factor || "first",
+  },
+).then<UserCredential, never>(
+  ({ data: functionResponse }: HttpsCallableResult<FunctionResponse>): Promise<UserCredential> => "creationOptions" in functionResponse ? startRegistration(
     {
-      name:                  name,
-      operation:             "create registration challenge",
-      registeringCredential: factor || "first",
+      ...functionResponse.creationOptions,
+      user: {
+        ...functionResponse.creationOptions.user,
+        id: functionResponse.creationOptions.user.id, // expecting string, actually uint8array :(
+      },
     },
-  )
-  .then<UserCredential, never>(
-    ({ data: functionResponse }: HttpsCallableResult<FunctionResponse>): Promise<UserCredential> => "creationOptions" in functionResponse ? startRegistration(
+  ).then<UserCredential, never>(
+    (registrationResponse: RegistrationResponseJSON): Promise<UserCredential> => httpsCallableFromURL<FunctionRequest, FunctionResponse>(
+      functions,
+      "/firebase-web-authn-api",
+    )(
       {
-        ...functionResponse.creationOptions,
-        user: {
-          ...functionResponse.creationOptions.user,
-          id: functionResponse.creationOptions.user.id, // expecting string, actually uint8array :(
-        }
-      }
+        registrationResponse: registrationResponse,
+        operation:            "verify registration",
+      },
     ).then<UserCredential, never>(
-      (registrationResponse: RegistrationResponseJSON): Promise<UserCredential> => httpsCallableFromURL<FunctionRequest, FunctionResponse>(
-        functions,
-        "/firebase-web-authn-api",
-      )(
-        {
-          registrationResponse: registrationResponse,
-          operation:            "verify registration",
-        },
-      ).then<UserCredential, never>(
-        ({ data: functionResponse }: HttpsCallableResult<FunctionResponse>): Promise<UserCredential> => handleVerifyFunctionResponse(
-          auth,
-          functionResponse,
-        ),
-        (firebaseError): never => {
-          throw new FirebaseWebAuthnError(
-            {
-              code:      firebaseError.code.replace(
-                "firebaseWebAuthn/",
-                "",
-              ),
-              message:   firebaseError.message,
-              method:    "httpsCallableFromURL",
-              operation: "verify registration",
-            },
-          );
-        },
+      ({ data: functionResponse }: HttpsCallableResult<FunctionResponse>): Promise<UserCredential> => handleVerifyFunctionResponse(
+        auth,
+        functionResponse,
       ),
-      (): Promise<never> => clearChallenge(functions).then<never>(
-        (): never => {
-          throw new FirebaseWebAuthnError(
-            {
-              code:    "cancelled",
-              message: "Cancelled by user.",
-            },
-          );
-        },
-      ),
-    ) : "code" in functionResponse ? ((): never => {
-      throw new FirebaseWebAuthnError(functionResponse);
-    })() : ((): never => {
-      throw new FirebaseWebAuthnError(
-        {
-          code:      "invalid",
-          message:   "Invalid function response.",
-          operation: functionResponse.operation,
-        },
-      );
-    })(),
-    (firebaseError): never => {
-      throw new FirebaseWebAuthnError(
-        {
-          code:      firebaseError.code.replace(
-            "firebaseWebAuthn/",
-            "",
-          ),
-          message:   firebaseError.message,
-          method:    "httpsCallableFromURL",
-          operation: "create registration challenge",
-        },
-      );
-    },
-  ) : ((): never => {
+      (firebaseError): never => {
+        throw new FirebaseWebAuthnError(
+          {
+            code:      firebaseError.code.replace(
+              "firebaseWebAuthn/",
+              "",
+            ),
+            message:   firebaseError.message,
+            method:    "httpsCallableFromURL",
+            operation: "verify registration",
+          },
+        );
+      },
+    ),
+    (): Promise<never> => clearChallenge(functions).then<never>(
+      (): never => {
+        throw new FirebaseWebAuthnError(
+          {
+            code:    "cancelled",
+            message: "Cancelled by user.",
+          },
+        );
+      },
+    ),
+  ) : "code" in functionResponse ? ((): never => {
+    throw new FirebaseWebAuthnError(functionResponse);
+  })() : ((): never => {
     throw new FirebaseWebAuthnError(
       {
-        code:    "missing-auth",
-        message: "No user is signed in.",
+        code:      "invalid",
+        message:   "Invalid function response.",
+        operation: functionResponse.operation,
       },
     );
-  })();
+  })(),
+  (firebaseError): never => {
+    throw new FirebaseWebAuthnError(
+      {
+        code:      firebaseError.code.replace(
+          "firebaseWebAuthn/",
+          "",
+        ),
+        message:   firebaseError.message,
+        method:    "httpsCallableFromURL",
+        operation: "create registration challenge",
+      },
+    );
+  },
+) : ((): never => {
+  throw new FirebaseWebAuthnError(
+    {
+      code:    "missing-auth",
+      message: "No user is signed in.",
+    },
+  );
+})();

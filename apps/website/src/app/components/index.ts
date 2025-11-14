@@ -1,3 +1,7 @@
+/*
+ * Copyright © 2025 Gavin Sawyer. All rights reserved.
+ */
+
 export * from "./lib/root/RootComponent";
 export * from "./lib/route component/RouteComponent";
 export * from "./lib/routes/routes";

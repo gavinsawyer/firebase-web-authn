@@ -1,3 +1,7 @@
+/*
+ * Copyright © 2025 Gavin Sawyer. All rights reserved.
+ */
+
 import { getFirebaseWebAuthnApi }                               from "@firebase-web-authn/api";
 import { FunctionRequest, FunctionResponse }                    from "@firebase-web-authn/types";
 import { AuthenticatorAttachment, UserVerificationRequirement } from "@simplewebauthn/types";

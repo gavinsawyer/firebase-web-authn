@@ -4,8 +4,8 @@
   "license":      "Apache-2.0",
   "author":       {
     "name":  "Gavin Sawyer",
-    "email": "g@vinsawyer.dev",
-    "url":   "https://gavinsawyer.dev"
+    "email": "g@vinsawyer.us",
+    "url":   "https://gavinsawyer.us"
   },
   "repository":   {
     "type":      "git",
@@ -16,10 +16,10 @@
   "type":         "module",
   "private":      true,
   "engines":      {
-    "node": "20"
+    "node": "22"
   },
   "dependencies": {
-    "@simplewebauthn/server": "^9.0.3",
-    "firebase-functions":     "^6.0.1"
+    "@simplewebauthn/server": "^9",
+    "firebase-functions":     "^7"
   }
 }

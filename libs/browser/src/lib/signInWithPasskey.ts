@@ -1,11 +1,15 @@
-import { FunctionRequest, FunctionResponse, WebAuthnUserCredentialFactor } from "@firebase-web-authn/types";
-import { startAuthentication }                                             from "@simplewebauthn/browser";
-import { AuthenticationResponseJSON }                                      from "@simplewebauthn/types";
-import { Auth, signInAnonymously, UserCredential }                         from "firebase/auth";
-import { Functions, httpsCallableFromURL, HttpsCallableResult }            from "firebase/functions";
-import { clearChallenge }                                                  from "./clearChallenge.js";
-import { FirebaseWebAuthnError }                                           from "./FirebaseWebAuthnError.js";
-import { handleVerifyFunctionResponse }                                    from "./handleVerifyFunctionResponse.js";
+/*
+ * Copyright © 2025 Gavin Sawyer. All rights reserved.
+ */
+
+import { type FunctionRequest, type FunctionResponse, type WebAuthnUserCredentialFactor } from "@firebase-web-authn/types";
+import { startAuthentication }                                                            from "@simplewebauthn/browser";
+import { type AuthenticationResponseJSON }                                                from "@simplewebauthn/types";
+import { type Auth, signInAnonymously, type UserCredential }                              from "firebase/auth";
+import { type Functions, httpsCallableFromURL, type HttpsCallableResult }                 from "firebase/functions";
+import { clearChallenge }                                                                 from "./clearChallenge.js";
+import { FirebaseWebAuthnError }                                                          from "./FirebaseWebAuthnError.js";
+import { handleVerifyFunctionResponse }                                                   from "./handleVerifyFunctionResponse.js";
 
 
 /**
@@ -22,7 +26,15 @@ import { handleVerifyFunctionResponse }                                    from 
  * @throws
  *  {@link FirebaseWebAuthnError}
  */
-export const signInWithPasskey: (auth: Auth, functions: Functions, factor?: WebAuthnUserCredentialFactor) => Promise<UserCredential> = (auth: Auth, functions: Functions, factor?: WebAuthnUserCredentialFactor): Promise<UserCredential> => ((handler: () => Promise<UserCredential>): Promise<UserCredential> => auth.currentUser ? handler() : signInAnonymously(auth).then<UserCredential, never>(
+export const signInWithPasskey: (
+  auth: Auth,
+  functions: Functions,
+  factor?: WebAuthnUserCredentialFactor,
+) => Promise<UserCredential> = (
+  auth: Auth,
+  functions: Functions,
+  factor?: WebAuthnUserCredentialFactor,
+): Promise<UserCredential> => ((handler: () => Promise<UserCredential>): Promise<UserCredential> => auth.currentUser ? handler() : signInAnonymously(auth).then<UserCredential, never>(
   (): Promise<UserCredential> => handler(),
   (firebaseError): never => {
     throw new FirebaseWebAuthnError(

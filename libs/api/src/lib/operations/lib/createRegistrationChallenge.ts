@@ -1,8 +1,12 @@
-import { FunctionResponse, WebAuthnUserCredentialFactor, WebAuthnUserDocument } from "@firebase-web-authn/types";
-import { generateRegistrationOptions }                                          from "@simplewebauthn/server";
-import { PublicKeyCredentialCreationOptionsJSON }                               from "@simplewebauthn/types";
-import { FirebaseError }                                                        from "firebase-admin";
-import { DocumentReference, DocumentSnapshot }                                  from "firebase-admin/firestore";
+/*
+ * Copyright © 2025 Gavin Sawyer. All rights reserved.
+ */
+
+import { type FunctionResponse, type WebAuthnUserCredentialFactor, type WebAuthnUserDocument } from "@firebase-web-authn/types";
+import { generateRegistrationOptions }                                                         from "@simplewebauthn/server";
+import { type PublicKeyCredentialCreationOptionsJSON }                                         from "@simplewebauthn/types";
+import { type FirebaseError }                                                                  from "firebase-admin";
+import { type DocumentReference, type DocumentSnapshot }                                       from "firebase-admin/firestore";
 
 
 interface CreateRegistrationChallengeOptions {

@@ -1,6 +1,10 @@
-import { WebAuthnProcess, WebAuthnUserDocument }                        from "@firebase-web-authn/types";
-import { App }                                                          from "firebase-admin/app";
-import { DocumentReference, DocumentSnapshot, Firestore, getFirestore } from "firebase-admin/firestore";
+/*
+ * Copyright © 2025 Gavin Sawyer. All rights reserved.
+ */
+
+import { type WebAuthnProcess, type WebAuthnUserDocument }                             from "@firebase-web-authn/types";
+import { type App }                                                                    from "firebase-admin/app";
+import { type DocumentReference, type DocumentSnapshot, type Firestore, getFirestore } from "firebase-admin/firestore";
 
 
 // noinspection JSUnusedGlobalSymbols
@@ -13,7 +17,13 @@ import { DocumentReference, DocumentSnapshot, Firestore, getFirestore } from "fi
  * @returns
  *  The last {@link WebAuthnProcess} successfully completed by the user.
  */
-export const lastWebAuthnProcess: (uid: string, app?: App) => Promise<WebAuthnProcess | null> = (uid: string, app?: App): Promise<WebAuthnProcess | null> => ((firestore: Firestore): Promise<WebAuthnProcess | null> => (firestore.collection("users").doc(uid) as DocumentReference<WebAuthnUserDocument>).get().then<WebAuthnProcess | null>(
+export const lastWebAuthnProcess: (
+  uid: string,
+  app?: App,
+) => Promise<WebAuthnProcess | null> = (
+  uid: string,
+  app?: App,
+): Promise<WebAuthnProcess | null> => ((firestore: Firestore): Promise<WebAuthnProcess | null> => (firestore.collection("users").doc(uid) as DocumentReference<WebAuthnUserDocument>).get().then<WebAuthnProcess | null>(
   (documentSnapshot: DocumentSnapshot<WebAuthnUserDocument>): WebAuthnProcess | null => documentSnapshot.data()?.lastWebAuthnProcess || null,
 ))(app ? getFirestore(
   app,

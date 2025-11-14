@@ -1,8 +1,12 @@
-import { FunctionResponse, WebAuthnUserCredentialFactor, WebAuthnUserDocument } from "@firebase-web-authn/types";
-import { generateAuthenticationOptions }                                        from "@simplewebauthn/server";
-import { PublicKeyCredentialRequestOptionsJSON }                                from "@simplewebauthn/types";
-import { FirebaseError }                                                        from "firebase-admin";
-import { DocumentReference, DocumentSnapshot, FieldValue }                      from "firebase-admin/firestore";
+/*
+ * Copyright © 2025 Gavin Sawyer. All rights reserved.
+ */
+
+import { type FunctionResponse, type WebAuthnUserCredentialFactor, type WebAuthnUserDocument } from "@firebase-web-authn/types";
+import { generateAuthenticationOptions }                                                       from "@simplewebauthn/server";
+import { type PublicKeyCredentialRequestOptionsJSON }                                          from "@simplewebauthn/types";
+import { type FirebaseError }                                                                  from "firebase-admin";
+import { type DocumentReference, type DocumentSnapshot, FieldValue }                           from "firebase-admin/firestore";
 
 
 interface CreateReauthenticationChallengeOptions {

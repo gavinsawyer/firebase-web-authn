@@ -1,3 +1,7 @@
+/*
+ * Copyright © 2025 Gavin Sawyer. All rights reserved.
+ */
+
 export * from "./lib/clearChallenge.js";
 export * from "./lib/clearCredential.js";
 export * from "./lib/createAuthenticationChallenge.js";

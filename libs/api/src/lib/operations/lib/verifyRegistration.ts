@@ -1,8 +1,12 @@
-import { FunctionResponse, WebAuthnUserDocument }                     from "@firebase-web-authn/types";
-import { VerifiedRegistrationResponse, verifyRegistrationResponse }   from "@simplewebauthn/server";
-import { RegistrationResponseJSON }                                   from "@simplewebauthn/types";
-import { FirebaseError }                                              from "firebase-admin";
-import { DocumentReference, DocumentSnapshot, FieldValue, Timestamp } from "firebase-admin/firestore";
+/*
+ * Copyright © 2025 Gavin Sawyer. All rights reserved.
+ */
+
+import { type FunctionResponse, type WebAuthnUserDocument }                     from "@firebase-web-authn/types";
+import { type VerifiedRegistrationResponse, verifyRegistrationResponse }        from "@simplewebauthn/server";
+import { type RegistrationResponseJSON }                                        from "@simplewebauthn/types";
+import { type FirebaseError }                                                   from "firebase-admin";
+import { type DocumentReference, type DocumentSnapshot, FieldValue, Timestamp } from "firebase-admin/firestore";
 
 
 interface VerifyRegistrationOptions {

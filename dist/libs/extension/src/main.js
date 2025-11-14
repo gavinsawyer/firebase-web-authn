@@ -6,44 +6,47 @@ import { getAuth } from "firebase-admin/auth";
 import { getFirestore } from "firebase-admin/firestore";
 import { onCall } from "firebase-functions/v2/https";
 
-// libs/api/src/lib/function responses/lib/clearChallenge.ts
+// libs/api/src/lib/operations/lib/clearChallenge.ts
 import { FieldValue } from "firebase-admin/firestore";
-var clearChallenge = (options) => options.webAuthnUserDocumentReference.get().then(
-  (userDocumentSnapshot) => (async (userDocument) => userDocument ? userDocument.challenge ? (userDocument.credentials ? options.webAuthnUserDocumentReference.update(
-    {
-      challenge: FieldValue.delete()
-    }
-  ) : options.webAuthnUserDocumentReference.delete()).then(
-    () => ({
+function clearChallenge(options) {
+  const webAuthnUserDocumentReference = options.firestore.collection("users").doc(options.userId);
+  return webAuthnUserDocumentReference.get().then(
+    (userDocumentSnapshot) => (async (userDocument) => userDocument ? userDocument.challenge ? (userDocument.credentials ? webAuthnUserDocumentReference.update(
+      {
+        challenge: FieldValue.delete()
+      }
+    ) : webAuthnUserDocumentReference.delete()).then(
+      () => ({
+        operation: "clear challenge",
+        success: true
+      }),
+      (firebaseError) => ({
+        code: firebaseError.code,
+        message: firebaseError.message,
+        operation: "clear challenge",
+        success: false
+      })
+    ) : {
+      code: "no-op",
+      message: "No operation is needed.",
       operation: "clear challenge",
-      success: true
-    }),
+      success: false
+    } : {
+      code: "missing-user-doc",
+      message: "No user document was found in Firestore.",
+      operation: "clear challenge",
+      success: false
+    })(userDocumentSnapshot.data()),
     (firebaseError) => ({
       code: firebaseError.code,
       message: firebaseError.message,
       operation: "clear challenge",
       success: false
     })
-  ) : {
-    code: "no-op",
-    message: "No operation is needed.",
-    operation: "clear challenge",
-    success: false
-  } : {
-    code: "missing-user-doc",
-    message: "No user document was found in Firestore.",
-    operation: "clear challenge",
-    success: false
-  })(userDocumentSnapshot.data()),
-  (firebaseError) => ({
-    code: firebaseError.code,
-    message: firebaseError.message,
-    operation: "clear challenge",
-    success: false
-  })
-);
+  );
+}
 
-// libs/api/src/lib/function responses/lib/clearCredential.ts
+// libs/api/src/lib/operations/lib/clearCredential.ts
 import { FieldValue as FieldValue2 } from "firebase-admin/firestore";
 var clearCredential = (options) => options.webAuthnUserDocumentReference.get().then(
   (userDocumentSnapshot) => (async (userDocument) => userDocument && userDocument.credentials?.[options.clearingCredential || "first"] ? options.webAuthnUserDocumentReference.update(
@@ -76,7 +79,7 @@ var clearCredential = (options) => options.webAuthnUserDocumentReference.get().t
   })
 );
 
-// libs/api/src/lib/function responses/lib/createAuthenticationChallenge.ts
+// libs/api/src/lib/operations/lib/createAuthenticationChallenge.ts
 import { generateAuthenticationOptions } from "@simplewebauthn/server";
 import { FieldValue as FieldValue3 } from "firebase-admin/firestore";
 var createAuthenticationChallenge = (options) => generateAuthenticationOptions(options.authenticationOptions).then(
@@ -107,7 +110,7 @@ var createAuthenticationChallenge = (options) => generateAuthenticationOptions(o
   )
 );
 
-// libs/api/src/lib/function responses/lib/createReauthenticationChallenge.ts
+// libs/api/src/lib/operations/lib/createReauthenticationChallenge.ts
 import { generateAuthenticationOptions as generateAuthenticationOptions2 } from "@simplewebauthn/server";
 import { FieldValue as FieldValue4 } from "firebase-admin/firestore";
 var createReauthenticationChallenge = (options) => options.webAuthnUserDocumentReference.get().then(
@@ -180,7 +183,7 @@ var createReauthenticationChallenge = (options) => options.webAuthnUserDocumentR
   })
 );
 
-// libs/api/src/lib/function responses/lib/createRegistrationChallenge.ts
+// libs/api/src/lib/operations/lib/createRegistrationChallenge.ts
 import { generateRegistrationOptions } from "@simplewebauthn/server";
 var createRegistrationChallenge = (options) => options.webAuthnUserDocumentReference.get().then(
   (userDocumentSnapshot) => (async (userDocument) => (options.registeringCredentialFactor === "second" ? !userDocument?.credentials?.second : !userDocument?.credentials?.first) ? options.registeringCredentialFactor !== "second" || userDocument && userDocument.credentials?.first ? generateRegistrationOptions(
@@ -238,7 +241,7 @@ var createRegistrationChallenge = (options) => options.webAuthnUserDocumentRefer
   })
 );
 
-// libs/api/src/lib/function responses/lib/verifyAuthentication.ts
+// libs/api/src/lib/operations/lib/verifyAuthentication.ts
 import { verifyAuthenticationResponse } from "@simplewebauthn/server";
 import { FieldValue as FieldValue5, Timestamp } from "firebase-admin/firestore";
 var verifyAuthentication = (options) => options.authenticationOptions.response.response.userHandle !== options.userID ? options.webAuthnUserDocumentReferenceTarget.get().then(
@@ -460,7 +463,7 @@ var verifyAuthentication = (options) => options.authenticationOptions.response.r
   })
 );
 
-// libs/api/src/lib/function responses/lib/verifyReauthentication.ts
+// libs/api/src/lib/operations/lib/verifyReauthentication.ts
 import { verifyAuthenticationResponse as verifyAuthenticationResponse2 } from "@simplewebauthn/server";
 import { FieldValue as FieldValue6, Timestamp as Timestamp2 } from "firebase-admin/firestore";
 var verifyReauthentication = (options) => options.webAuthnUserDocumentReference.get().then(
@@ -621,7 +624,7 @@ var verifyReauthentication = (options) => options.webAuthnUserDocumentReference.
   })(userDocumentSnapshot.data())
 );
 
-// libs/api/src/lib/function responses/lib/verifyRegistration.ts
+// libs/api/src/lib/operations/lib/verifyRegistration.ts
 import { verifyRegistrationResponse } from "@simplewebauthn/server";
 import { FieldValue as FieldValue7, Timestamp as Timestamp3 } from "firebase-admin/firestore";
 var verifyRegistration = (options) => options.webAuthnUserDocumentReference.get().then(
@@ -732,140 +735,161 @@ var verifyRegistration = (options) => options.webAuthnUserDocumentReference.get(
 );
 
 // libs/api/src/lib/getFirebaseWebAuthnApi.ts
-var getFirebaseWebAuthnApi = (firebaseWebAuthnConfig, app) => onCall(
-  {
-    enforceAppCheck: true,
-    ingressSettings: "ALLOW_ALL"
-  },
-  async (callableRequest) => callableRequest.auth ? ((firestore) => (async (auth, userID, webAuthnUserDocumentReference, webAuthnUserDocumentReferenceTarget) => callableRequest.data.operation === "clear challenge" ? clearChallenge(
+function getFirebaseWebAuthnApi(firebaseWebAuthnConfig, app) {
+  return onCall(
     {
-      webAuthnUserDocumentReference
+      enforceAppCheck: true,
+      ingressSettings: "ALLOW_ALL"
+    },
+    async (callableRequest) => {
+      if (callableRequest.auth) {
+        const auth = app ? getAuth(app) : getAuth();
+        const firestore = app ? getFirestore(
+          app,
+          "ext-firebase-web-authn"
+        ) : getFirestore("ext-firebase-web-authn");
+        const userID = callableRequest.auth.uid;
+        const webAuthnUserDocumentReference = firestore.collection("users").doc(callableRequest.auth.uid);
+        const webAuthnUserDocumentReferenceTarget = firestore.collection("users").doc(callableRequest.data.operation === "verify authentication" && callableRequest.data.authenticationResponse.response.userHandle || callableRequest.auth.uid);
+        switch (callableRequest.data.operation) {
+          case "clear challenge":
+            return clearChallenge(
+              {
+                firestore,
+                userId: callableRequest.auth.uid
+              }
+            );
+          case "clear credential":
+            return clearCredential(
+              {
+                clearingCredential: callableRequest.data.clearingCredential,
+                webAuthnUserDocumentReference
+              }
+            );
+          case "create authentication challenge":
+            return createAuthenticationChallenge(
+              {
+                authenticatingCredential: callableRequest.data.authenticatingCredential,
+                authenticationOptions: {
+                  attestationType: "indirect",
+                  rpID: firebaseWebAuthnConfig.relyingPartyID || callableRequest.rawRequest.headers.origin?.split("://")[1].split(":")[0] || "",
+                  supportedAlgorithmIDs: [
+                    -7,
+                    -8,
+                    -257
+                  ]
+                },
+                webAuthnUserDocumentReference
+              }
+            );
+          case "create reauthentication challenge":
+            return createReauthenticationChallenge(
+              {
+                authenticationOptions: {
+                  attestationType: "indirect",
+                  rpID: firebaseWebAuthnConfig.relyingPartyID || callableRequest.rawRequest.headers.origin?.split("://")[1].split(":")[0] || "",
+                  supportedAlgorithmIDs: [
+                    -7,
+                    -8,
+                    -257
+                  ]
+                },
+                reauthenticatingCredentialFactor: callableRequest.data.reauthenticatingCredential,
+                webAuthnUserDocumentReference
+              }
+            );
+          case "create registration challenge":
+            return createRegistrationChallenge(
+              {
+                registeringCredentialFactor: callableRequest.data.registeringCredential,
+                registrationOptions: {
+                  attestationType: "indirect",
+                  authenticatorSelection: callableRequest.data.registeringCredential === "second" && firebaseWebAuthnConfig.authenticatorAttachment2FA ? {
+                    authenticatorAttachment: firebaseWebAuthnConfig.authenticatorAttachment2FA,
+                    residentKey: "preferred",
+                    userVerification: firebaseWebAuthnConfig.authenticatorAttachment2FA === "platform" && firebaseWebAuthnConfig.userVerificationRequirement !== "discouraged" ? firebaseWebAuthnConfig.userVerificationRequirement : "preferred"
+                  } : firebaseWebAuthnConfig.authenticatorAttachment ? {
+                    authenticatorAttachment: firebaseWebAuthnConfig.authenticatorAttachment,
+                    residentKey: "preferred",
+                    userVerification: firebaseWebAuthnConfig.authenticatorAttachment === "platform" && firebaseWebAuthnConfig.userVerificationRequirement !== "discouraged" ? firebaseWebAuthnConfig.userVerificationRequirement : "preferred"
+                  } : {
+                    residentKey: "preferred",
+                    userVerification: "preferred"
+                  },
+                  rpID: firebaseWebAuthnConfig.relyingPartyID || callableRequest.rawRequest.headers.origin?.split("://")[1].split(":")[0] || "",
+                  rpName: firebaseWebAuthnConfig.relyingPartyName,
+                  supportedAlgorithmIDs: [
+                    -7,
+                    -8,
+                    -257
+                  ],
+                  userID,
+                  userName: callableRequest.data.name
+                },
+                webAuthnUserDocumentReference
+              }
+            );
+          case "verify authentication":
+            return verifyAuthentication(
+              {
+                authenticationOptions: {
+                  expectedOrigin: callableRequest.rawRequest.headers.origin || "",
+                  expectedRPID: firebaseWebAuthnConfig.relyingPartyID || callableRequest.rawRequest.headers.origin?.split("://")[1].split(":")[0] || "",
+                  requireUserVerification: (firebaseWebAuthnConfig.authenticatorAttachment2FA || firebaseWebAuthnConfig.authenticatorAttachment) === "platform" && firebaseWebAuthnConfig.userVerificationRequirement !== "discouraged",
+                  response: callableRequest.data.authenticationResponse
+                },
+                authenticatorAttachment: firebaseWebAuthnConfig.authenticatorAttachment,
+                authenticatorAttachment2FA: firebaseWebAuthnConfig.authenticatorAttachment2FA,
+                createCustomToken: (uid) => auth.createCustomToken(uid),
+                userID,
+                userVerificationRequirement: firebaseWebAuthnConfig.userVerificationRequirement,
+                webAuthnUserDocumentReference,
+                webAuthnUserDocumentReferenceTarget
+              }
+            );
+          case "verify reauthentication":
+            return verifyReauthentication(
+              {
+                authenticationOptions: {
+                  expectedOrigin: callableRequest.rawRequest.headers.origin || "",
+                  expectedRPID: firebaseWebAuthnConfig.relyingPartyID || callableRequest.rawRequest.headers.origin?.split("://")[1].split(":")[0] || "",
+                  requireUserVerification: (firebaseWebAuthnConfig.authenticatorAttachment2FA || firebaseWebAuthnConfig.authenticatorAttachment) === "platform" && firebaseWebAuthnConfig.userVerificationRequirement !== "discouraged",
+                  response: callableRequest.data.authenticationResponse
+                },
+                authenticatorAttachment: firebaseWebAuthnConfig.authenticatorAttachment,
+                authenticatorAttachment2FA: firebaseWebAuthnConfig.authenticatorAttachment2FA,
+                createCustomToken: () => auth.createCustomToken(userID),
+                userID,
+                userVerificationRequirement: firebaseWebAuthnConfig.userVerificationRequirement,
+                webAuthnUserDocumentReference
+              }
+            );
+          case "verify registration":
+            return verifyRegistration(
+              {
+                authenticatorAttachment: firebaseWebAuthnConfig.authenticatorAttachment,
+                authenticatorAttachment2FA: firebaseWebAuthnConfig.authenticatorAttachment2FA,
+                createCustomToken: () => auth.createCustomToken(userID),
+                registrationOptions: {
+                  expectedOrigin: callableRequest.rawRequest.headers.origin || "",
+                  expectedRPID: firebaseWebAuthnConfig.relyingPartyID || callableRequest.rawRequest.headers.origin?.split("://")[1].split(":")[0] || "",
+                  response: callableRequest.data.registrationResponse
+                },
+                userVerificationRequirement: firebaseWebAuthnConfig.userVerificationRequirement,
+                webAuthnUserDocumentReference
+              }
+            );
+        }
+      } else
+        return {
+          code: "missing-auth",
+          message: "No user is signed in.",
+          operation: callableRequest.data.operation,
+          success: false
+        };
     }
-  ) : callableRequest.data.operation == "clear credential" ? clearCredential(
-    {
-      clearingCredential: callableRequest.data.clearingCredential,
-      webAuthnUserDocumentReference
-    }
-  ) : callableRequest.data.operation === "create authentication challenge" ? createAuthenticationChallenge(
-    {
-      authenticatingCredential: callableRequest.data.authenticatingCredential,
-      authenticationOptions: {
-        attestationType: "indirect",
-        rpID: firebaseWebAuthnConfig.relyingPartyID || callableRequest.rawRequest.headers.origin?.split("://")[1].split(":")[0] || "",
-        supportedAlgorithmIDs: [
-          -7,
-          -8,
-          -257
-        ]
-      },
-      webAuthnUserDocumentReference
-    }
-  ) : callableRequest.data.operation === "create reauthentication challenge" ? createReauthenticationChallenge(
-    {
-      authenticationOptions: {
-        attestationType: "indirect",
-        rpID: firebaseWebAuthnConfig.relyingPartyID || callableRequest.rawRequest.headers.origin?.split("://")[1].split(":")[0] || "",
-        supportedAlgorithmIDs: [
-          -7,
-          -8,
-          -257
-        ]
-      },
-      reauthenticatingCredentialFactor: callableRequest.data.reauthenticatingCredential,
-      webAuthnUserDocumentReference
-    }
-  ) : callableRequest.data.operation === "create registration challenge" ? createRegistrationChallenge(
-    {
-      registeringCredentialFactor: callableRequest.data.registeringCredential,
-      registrationOptions: {
-        attestationType: "indirect",
-        authenticatorSelection: callableRequest.data.registeringCredential === "second" && firebaseWebAuthnConfig.authenticatorAttachment2FA ? {
-          authenticatorAttachment: firebaseWebAuthnConfig.authenticatorAttachment2FA,
-          residentKey: "preferred",
-          userVerification: firebaseWebAuthnConfig.authenticatorAttachment2FA === "platform" && firebaseWebAuthnConfig.userVerificationRequirement !== "discouraged" ? firebaseWebAuthnConfig.userVerificationRequirement : "preferred"
-        } : firebaseWebAuthnConfig.authenticatorAttachment ? {
-          authenticatorAttachment: firebaseWebAuthnConfig.authenticatorAttachment,
-          residentKey: "preferred",
-          userVerification: firebaseWebAuthnConfig.authenticatorAttachment === "platform" && firebaseWebAuthnConfig.userVerificationRequirement !== "discouraged" ? firebaseWebAuthnConfig.userVerificationRequirement : "preferred"
-        } : {
-          residentKey: "preferred",
-          userVerification: "preferred"
-        },
-        rpID: firebaseWebAuthnConfig.relyingPartyID || callableRequest.rawRequest.headers.origin?.split("://")[1].split(":")[0] || "",
-        rpName: firebaseWebAuthnConfig.relyingPartyName,
-        supportedAlgorithmIDs: [
-          -7,
-          -8,
-          -257
-        ],
-        userID,
-        userName: callableRequest.data.name
-      },
-      webAuthnUserDocumentReference
-    }
-  ) : callableRequest.data.operation === "verify authentication" ? verifyAuthentication(
-    {
-      authenticationOptions: {
-        expectedOrigin: callableRequest.rawRequest.headers.origin || "",
-        expectedRPID: firebaseWebAuthnConfig.relyingPartyID || callableRequest.rawRequest.headers.origin?.split("://")[1].split(":")[0] || "",
-        requireUserVerification: (firebaseWebAuthnConfig.authenticatorAttachment2FA || firebaseWebAuthnConfig.authenticatorAttachment) === "platform" && firebaseWebAuthnConfig.userVerificationRequirement !== "discouraged",
-        response: callableRequest.data.authenticationResponse
-      },
-      authenticatorAttachment: firebaseWebAuthnConfig.authenticatorAttachment,
-      authenticatorAttachment2FA: firebaseWebAuthnConfig.authenticatorAttachment2FA,
-      createCustomToken: (uid) => auth.createCustomToken(uid),
-      userID,
-      userVerificationRequirement: firebaseWebAuthnConfig.userVerificationRequirement,
-      webAuthnUserDocumentReference,
-      webAuthnUserDocumentReferenceTarget
-    }
-  ) : callableRequest.data.operation === "verify reauthentication" ? verifyReauthentication(
-    {
-      authenticationOptions: {
-        expectedOrigin: callableRequest.rawRequest.headers.origin || "",
-        expectedRPID: firebaseWebAuthnConfig.relyingPartyID || callableRequest.rawRequest.headers.origin?.split("://")[1].split(":")[0] || "",
-        requireUserVerification: (firebaseWebAuthnConfig.authenticatorAttachment2FA || firebaseWebAuthnConfig.authenticatorAttachment) === "platform" && firebaseWebAuthnConfig.userVerificationRequirement !== "discouraged",
-        response: callableRequest.data.authenticationResponse
-      },
-      authenticatorAttachment: firebaseWebAuthnConfig.authenticatorAttachment,
-      authenticatorAttachment2FA: firebaseWebAuthnConfig.authenticatorAttachment2FA,
-      createCustomToken: () => auth.createCustomToken(userID),
-      userID,
-      userVerificationRequirement: firebaseWebAuthnConfig.userVerificationRequirement,
-      webAuthnUserDocumentReference
-    }
-  ) : callableRequest.data.operation === "verify registration" ? verifyRegistration(
-    {
-      authenticatorAttachment: firebaseWebAuthnConfig.authenticatorAttachment,
-      authenticatorAttachment2FA: firebaseWebAuthnConfig.authenticatorAttachment2FA,
-      createCustomToken: () => auth.createCustomToken(userID),
-      registrationOptions: {
-        expectedOrigin: callableRequest.rawRequest.headers.origin || "",
-        expectedRPID: firebaseWebAuthnConfig.relyingPartyID || callableRequest.rawRequest.headers.origin?.split("://")[1].split(":")[0] || "",
-        response: callableRequest.data.registrationResponse
-      },
-      userVerificationRequirement: firebaseWebAuthnConfig.userVerificationRequirement,
-      webAuthnUserDocumentReference
-    }
-  ) : (() => {
-    throw new Error("Invalid operation.");
-  })())(
-    app ? getAuth(app) : getAuth(),
-    callableRequest.auth.uid,
-    firestore.collection("users").doc(callableRequest.auth.uid),
-    firestore.collection("users").doc(callableRequest.data.operation === "verify authentication" && callableRequest.data.authenticationResponse.response.userHandle || callableRequest.auth.uid)
-  ))(
-    app ? getFirestore(
-      app,
-      "ext-firebase-web-authn"
-    ) : getFirestore("ext-firebase-web-authn")
-  ) : {
-    code: "missing-auth",
-    message: "No user is signed in.",
-    operation: callableRequest.data.operation,
-    success: false
-  }
-);
+  );
+}
 
 // libs/extension/src/lib/api.ts
 var api = getFirebaseWebAuthnApi(
@@ -879,7 +903,8 @@ var api = getFirebaseWebAuthnApi(
 );
 
 // libs/extension/src/main.ts
-getApps().length === 0 && initializeApp();
+if (getApps().length === 0)
+  initializeApp();
 export {
   api
 };

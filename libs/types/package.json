@@ -1,17 +1,17 @@
 {
   "name":         "@firebase-web-authn/types",
-  "version":      "10.4.2",
+  "version":      "10.4.3",
   "homepage":     "https://firebase-web-authn.dev",
   "description":  "A Firebase Extension for authentication with WebAuthn passkeys.",
   "license":      "Apache-2.0",
   "author":       {
     "name":  "Gavin Sawyer",
-    "email": "g@vinsawyer.dev",
-    "url":   "https://gavinsawyer.dev"
+    "email": "g@vinsawyer.us",
+    "url":   "https://gavinsawyer.us"
   },
   "funding":      {
     "type": "individual",
-    "url":  "https://gavinsawyer.dev/funding"
+    "url":  "https://gavinsawyer.us/funding"
   },
   "repository":   {
     "type":      "git",
@@ -20,7 +20,7 @@
   },
   "private":      false,
   "dependencies": {
-    "@simplewebauthn/types": "^9.0.1",
-    "firebase-admin":        "^12.2.0"
+    "@simplewebauthn/types": "^9",
+    "firebase-admin":        "^13"
   }
 }

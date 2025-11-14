@@ -1,7 +1,11 @@
-import { Auth, signInAnonymously, UserCredential } from "firebase/auth";
-import { Functions }                               from "firebase/functions";
-import { FirebaseWebAuthnError }                   from "./FirebaseWebAuthnError.js";
-import { linkWithPasskey }                         from "./linkWithPasskey.js";
+/*
+ * Copyright © 2025 Gavin Sawyer. All rights reserved.
+ */
+
+import { type Auth, signInAnonymously, type UserCredential } from "firebase/auth";
+import { type Functions }                                    from "firebase/functions";
+import { FirebaseWebAuthnError }                             from "./FirebaseWebAuthnError.js";
+import { linkWithPasskey }                                   from "./linkWithPasskey.js";
 
 
 /**
@@ -18,29 +22,34 @@ import { linkWithPasskey }                         from "./linkWithPasskey.js";
  * @throws
  *  {@link FirebaseWebAuthnError}
  */
-export const createUserWithPasskey: (auth: Auth, functions: Functions, name: string) => Promise<UserCredential> = (auth: Auth, functions: Functions, name: string): Promise<UserCredential> => auth
-  .currentUser
-  ?.isAnonymous ? linkWithPasskey(
+export const createUserWithPasskey: (
+  auth: Auth,
+  functions: Functions,
+  name: string,
+) => Promise<UserCredential> = (
+  auth: Auth,
+  functions: Functions,
+  name: string,
+): Promise<UserCredential> => auth.currentUser?.isAnonymous ? linkWithPasskey(
+  auth,
+  functions,
+  name,
+) : signInAnonymously(auth).then<UserCredential, never>(
+  (): Promise<UserCredential> => linkWithPasskey(
     auth,
     functions,
     name,
-  ) : signInAnonymously(auth)
-  .then<UserCredential, never>(
-    (): Promise<UserCredential> => linkWithPasskey(
-      auth,
-      functions,
-      name,
-    ),
-    (firebaseError): never => {
-      throw new FirebaseWebAuthnError(
-        {
-          code:    firebaseError.code.replace(
-            "firebaseWebAuthn/",
-            "",
-          ),
-          message: firebaseError.message,
-          method:  "signInAnonymously",
-        },
-      );
-    },
-  );
+  ),
+  (firebaseError): never => {
+    throw new FirebaseWebAuthnError(
+      {
+        code: firebaseError.code.replace(
+          "firebaseWebAuthn/",
+          "",
+        ),
+        message: firebaseError.message,
+        method: "signInAnonymously",
+      },
+    );
+  },
+);
