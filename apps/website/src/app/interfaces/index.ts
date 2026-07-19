@@ -1,6 +1,6 @@
 /*
- * Copyright © 2025 Gavin Sawyer. All rights reserved.
+ * Copyright © 2026 Gavin William Sawyer. All rights reserved.
  */
 
-export * from "./lib/Environment";
-export * from "./lib/ProfileDocument";
+export type * from "./lib/Environment";
+export type * from "./lib/ProfileDocument";

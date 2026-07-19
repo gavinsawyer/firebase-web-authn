@@ -1,43 +1,49 @@
 {
   "$schema":     "../../node_modules/nx/schemas/project-schema.json",
+
   "name":        "api",
   "projectType": "library",
   "sourceRoot":  "libs/api/src",
+
   "targets":     {
-    "eslint": {
-      "executor": "@nx/eslint:lint",
-      "options":  {
-        "lintFilePatterns": [
-          "{projectRoot}/**/*.ts"
-        ]
-      }
-    },
-    "tsc":    {
-      "dependsOn": [
-        "eslint"
-      ],
-      "executor":  "@nx/js:tsc",
+    "build": {
+      "dependsOn": [ "lint" ],
+      "executor":  "@nx/esbuild:esbuild",
       "options":   {
-        "assets":     [
+        "assets":         [
           {
             "glob":   "README.md",
             "input":  "libs/api",
             "output": "."
           }
         ],
-        "main":       "libs/api/src/index.ts",
-        "outputPath": "dist/libs/api",
-        "tsConfig":   "libs/api/tsconfig.lib.json"
+        "declaration":    true,
+        "esbuildOptions": {
+          "banner": {
+            "css": "/*!\n / Copyright © 2026 Gavin William Sawyer. All rights reserved.\n /\n",
+            "js":  "/*\n * Copyright © 2026 Gavin William Sawyer. All rights reserved.\n */\n"
+          }
+        },
+        "external":       [ "@firebase-web-authn/*" ],
+        "main":           "libs/api/src/index.ts",
+        "metafile":       true,
+        "minify":         true,
+        "outputPath":     "dist/libs/api",
+        "platform":       "node",
+        "splitting":      true,
+        "treeShaking":    true,
+        "tsConfig":       "libs/api/tsconfig.lib.json"
       },
-      "outputs":   [
-        "{options.outputPath}"
-      ]
+      "outputs":   [ "{workspaceRoot}/dist/libs/api" ]
     },
-    "build":  {
-      "dependsOn": [
-        "tsc"
-      ],
-      "executor":  "nx:noop"
+    "lint":  {
+      "executor": "@nx/eslint:lint",
+      "options":  {
+        "lintFilePatterns": [
+          "libs/api/package.json",
+          "libs/api/src/**/*.ts"
+        ]
+      }
     }
   }
 }

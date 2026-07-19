@@ -15,38 +15,36 @@ If you would rather deploy the API from your existing Firebase Functions package
    - Firestore
    - Functions
 2. Run:
-
-   ```
-   % npm install @firebase-web-authn/api --save-dev
-   ```
-
+    ```
+    % npm install @firebase-web-authn/api --save-dev
+    ```
 3. Export the API from your Firebase Functions package's `main` file by calling `getFirebaseWebAuthnApi` with a config object.
-   ```ts
-   import { initializeApp }                     from "firebase-admin/app";
-   import { HttpsFunction }                     from "firebase-functions";
-   import { getFirebaseWebAuthnApi }            from "@firebase-web-authn/api";
-   import { FunctionRequest, FunctionResponse } from "firebase-web-authn/types";
+    ```ts
+    import { initializeApp }                               from "firebase-admin/app";
+    import { type HttpsFunction }                          from "firebase-functions";
+    import { getFirebaseWebAuthnApi }                      from "@firebase-web-authn/api";
+    import { type FunctionRequest, type FunctionResponse } from "firebase-web-authn/types";
 
 
-   getApps().length === 0 && initializeApp();
+    if (getApps().length === 0)
+      initializeApp();
 
-   export const firebaseWebAuthnAPI: CallableFunction<FunctionRequest, FunctionResponse> = getFirebaseWebAuthnApi({...});
+    export const firebaseWebAuthnApi: CallableFunction<FunctionRequest, FunctionResponse> = getFirebaseWebAuthnApi({...});
 
-   // Other api...
-   ```
-   ```ts
-   interface FirebaseWebAuthnConfig {
-     authenticatorAttachment?: AuthenticatorAttachment,         // Optional authenticator attachment. "cross-platform" allows security keys. "platform" allows passkey managers. Default behavior allows either attachment.
-     authenticatorAttachment2FA?: AuthenticatorAttachment,      // Optional authenticator attachment for second (2FA) factor passkeys. Default behavior follows the main authenticator attachment configuration.
-     relyingPartyName: string,                                  // Your app's display name in the passkey popup on some browsers.
-     userVerificationRequirement?: UserVerificationRequirement, // Your app's user verification requirement. "preferred" is default.
-   }
-   ```
+    // Other apis
+    ```
+    ```ts
+    interface FirebaseWebAuthnConfig {
+      authenticatorAttachment?: AuthenticatorAttachment,         // Optional authenticator attachment. "cross-platform" allows security keys. "platform" allows passkey managers. Default behavior allows either attachment.
+      authenticatorAttachment2FA?: AuthenticatorAttachment,      // Optional authenticator attachment for second (2FA) factor passkeys. Default behavior follows the main authenticator attachment configuration.
+      relyingPartyName: string,                                  // Your app's display name in the passkey popup on some browsers.
+      userVerificationRequirement?: UserVerificationRequirement, // Your app's user verification requirement. "preferred" is default.
+    }
+    ```
 4. Deploy your Firebase Functions:
-
-   ```
-   % firebase deploy --only functions
-   ```
+    ```
+    % firebase deploy --only functions
+    ```
 ### Additional setup
 1. Create a Firestore Database to store public key credentials with the ID `ext-firebase-web-authn` and location matching the function deployment. It is recommended to choose either `nam5` in North America or `eur3` in Europe and to enable delete protection:
 
@@ -64,7 +62,7 @@ If you would rather deploy the API from your existing Firebase Functions package
           "rewrites": [
             {
               "source": "/firebase-web-authn-api",
-              "function": "firebaseWebAuthnAPI"
+              "function": "firebaseWebAuthnApi"
             }
           ]
         }

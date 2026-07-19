@@ -1,12 +1,12 @@
 <!--
-  ~ Copyright © 2025 Gavin Sawyer. All rights reserved.
+  ~ Copyright © 2026 Gavin William Sawyer. All rights reserved.
   -->
 
 <main>
   <router-outlet />
   <aside>
-    <website-signed-in *ngIf="authenticationService.user$()?.isAnonymous === false" />
-    <website-signed-out *ngIf="authenticationService.user$()?.isAnonymous === true" />
+    <app--signed-in *ngIf="authenticationService.user$()?.isAnonymous === false" />
+    <app--signed-out *ngIf="authenticationService.user$()?.isAnonymous === true" />
   </aside>
 </main>
 <footer>
@@ -14,47 +14,48 @@
     <button
       mat-raised-button="mat-raised-button"
       [matMenuTriggerFor]="menu">
-      <mat-icon class="material-symbols-rounded">
-        exit_to_app
-      </mat-icon>
+      <mat-icon class="material-symbols-rounded">exit_to_app</mat-icon>
       NPM
     </button>
-    <span>
-      &copy; 2023 <a href="https://gavinsawyer.us">Gavin Sawyer</a>
-    </span>
-    <span>
-      Available under <a href="https://github.com/gavinsawyer/firebase-web-authn/blob/main/LICENSE.md">Apache License 2.0</a>
-    </span>
+    <span>&copy; 2026 <a
+      href="https://gavinsawyer.us"
+      target="_blank">Gavin William Sawyer</a></span>
+    <span>Available under <a
+      href="https://github.com/gavinsawyer/firebase-web-authn/blob/main/LICENSE.md"
+      target="_blank">Apache License 2.0</a></span>
   </div>
-  <span>
-    v{{ packageVersion + (gitInfo.dirty ? "-next" : "") }}+<a [href]="'https://github.com/gavinsawyer/firebase-web-authn/commit/' + gitInfo.hash">{{ gitInfo.hash }}</a>
-  </span>
+  <div>
+    <span *ngIf="connectivityService.connected$() === true"><mat-icon
+      class="material-symbols-rounded"
+      inline="inline">public</mat-icon>&nbsp;Connected</span>
+    <span *ngIf="connectivityService.connected$() === false"><mat-icon
+      class="material-symbols-rounded"
+      inline="inline">public_off</mat-icon>&nbsp;Disconnected</span>
+    <span>v{{ packageVersion + (gitInfoPartial.dirty ? "-next" : "") }}+<a
+      [href]="'https://github.com/gavinsawyer/firebase-web-authn/commit/' + gitInfoPartial.hash"
+      target="_blank">{{ gitInfoPartial.hash }}</a></span>
+  </div>
 </footer>
 <mat-menu #menu="matMenu">
   <a
     href="https://www.npmjs.com/package/@firebase-web-authn/extension"
-    mat-menu-item="mat-menu-item">
-    extension
-  </a>
+    mat-menu-item="mat-menu-item"
+    target="_blank">extension</a>
   <a
     href="https://www.npmjs.com/package/@firebase-web-authn/browser"
-    mat-menu-item="mat-menu-item">
-    browser
-  </a>
+    mat-menu-item="mat-menu-item"
+    target="_blank">browser</a>
   <a
     href="https://www.npmjs.com/package/@firebase-web-authn/server"
-    mat-menu-item="mat-menu-item">
-    server
-  </a>
+    mat-menu-item="mat-menu-item"
+    target="_blank">server</a>
   <mat-divider />
   <a
     href="https://www.npmjs.com/package/@firebase-web-authn/api"
-    mat-menu-item="mat-menu-item">
-    api
-  </a>
+    mat-menu-item="mat-menu-item"
+    target="_blank">api</a>
   <a
     href="https://www.npmjs.com/package/@firebase-web-authn/types"
-    mat-menu-item="mat-menu-item">
-    types
-  </a>
+    mat-menu-item="mat-menu-item"
+    target="_blank">types</a>
 </mat-menu>

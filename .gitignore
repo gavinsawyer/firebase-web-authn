@@ -2,24 +2,22 @@
 *-debug.log
 .DS_Store
 .angular
-.idea
+.idea/runConfigurations
 .nx
-.run
+dist/apps
+dist/libs/api
+dist/libs/browser
+dist/libs/server
+dist/libs/types
 node_modules
 tmp
 
 # Sensitive Firebase files
 .firebase
 .runtimeconfig.json
+.service-account.json
 gha-creds-*.json
 
 # Version side-effect files
-apps/*/src/.git-info.ts
-apps/*/src/.package-version.ts
-
-# Compiled output
-dist/apps
-dist/libs/api
-dist/libs/browser
-dist/libs/server
-dist/libs/types
+apps/*/src/.gitInfoPartial.ts
+apps/*/src/.packageVersion.ts

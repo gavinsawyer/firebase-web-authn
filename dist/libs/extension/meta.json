@@ -1,0 +1,577 @@
+{
+  "inputs": {
+    "libs/api/src/lib/interfaces/lib/FirebaseWebAuthnConfig.ts": {
+      "bytes": 2717,
+      "imports": [],
+      "format": "esm"
+    },
+    "libs/api/src/lib/interfaces/index.ts": {
+      "bytes": 118,
+      "imports": [
+        {
+          "path": "libs/api/src/lib/interfaces/lib/FirebaseWebAuthnConfig.ts",
+          "kind": "import-statement",
+          "original": "./lib/FirebaseWebAuthnConfig"
+        }
+      ],
+      "format": "esm"
+    },
+    "libs/api/src/lib/operations/lib/clearChallenge.ts": {
+      "bytes": 2147,
+      "imports": [
+        {
+          "path": "@firebase-web-authn/types",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "firebase-admin",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "firebase-admin/firestore",
+          "kind": "import-statement",
+          "external": true
+        }
+      ],
+      "format": "esm"
+    },
+    "libs/api/src/lib/operations/lib/clearCredential.ts": {
+      "bytes": 2007,
+      "imports": [
+        {
+          "path": "@firebase-web-authn/types",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "firebase-admin",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "firebase-admin/firestore",
+          "kind": "import-statement",
+          "external": true
+        }
+      ],
+      "format": "esm"
+    },
+    "libs/api/src/lib/operations/lib/createAuthenticationChallenge.ts": {
+      "bytes": 2189,
+      "imports": [
+        {
+          "path": "@firebase-web-authn/types",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "@simplewebauthn/server",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "firebase-admin",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "firebase-admin/firestore",
+          "kind": "import-statement",
+          "external": true
+        }
+      ],
+      "format": "esm"
+    },
+    "libs/api/src/lib/operations/lib/createReauthenticationChallenge.ts": {
+      "bytes": 3964,
+      "imports": [
+        {
+          "path": "@firebase-web-authn/types",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "@simplewebauthn/server",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "@simplewebauthn/server/helpers",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "firebase-admin",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "firebase-admin/firestore",
+          "kind": "import-statement",
+          "external": true
+        }
+      ],
+      "format": "esm"
+    },
+    "libs/api/src/lib/operations/lib/createRegistrationChallenge.ts": {
+      "bytes": 3982,
+      "imports": [
+        {
+          "path": "@firebase-web-authn/types",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "@simplewebauthn/server",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "@simplewebauthn/server/helpers",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "firebase-admin",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "firebase-admin/firestore",
+          "kind": "import-statement",
+          "external": true
+        }
+      ],
+      "format": "esm"
+    },
+    "libs/api/src/lib/operations/lib/verifyAuthentication.ts": {
+      "bytes": 13387,
+      "imports": [
+        {
+          "path": "@firebase-web-authn/types",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "@simplewebauthn/server",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "@simplewebauthn/server/helpers",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "firebase-admin",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "firebase-admin/firestore",
+          "kind": "import-statement",
+          "external": true
+        }
+      ],
+      "format": "esm"
+    },
+    "libs/api/src/lib/operations/lib/verifyReauthentication.ts": {
+      "bytes": 9887,
+      "imports": [
+        {
+          "path": "@firebase-web-authn/types",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "@simplewebauthn/server",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "@simplewebauthn/server/helpers",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "firebase-admin",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "firebase-admin/firestore",
+          "kind": "import-statement",
+          "external": true
+        }
+      ],
+      "format": "esm"
+    },
+    "libs/api/src/lib/operations/lib/verifyRegistration.ts": {
+      "bytes": 7297,
+      "imports": [
+        {
+          "path": "@firebase-web-authn/types",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "@simplewebauthn/server",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "@simplewebauthn/server/helpers",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "firebase-admin",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "firebase-admin/firestore",
+          "kind": "import-statement",
+          "external": true
+        }
+      ],
+      "format": "esm"
+    },
+    "libs/api/src/lib/operations/index.ts": {
+      "bytes": 440,
+      "imports": [
+        {
+          "path": "libs/api/src/lib/operations/lib/clearChallenge.ts",
+          "kind": "import-statement",
+          "original": "./lib/clearChallenge"
+        },
+        {
+          "path": "libs/api/src/lib/operations/lib/clearCredential.ts",
+          "kind": "import-statement",
+          "original": "./lib/clearCredential"
+        },
+        {
+          "path": "libs/api/src/lib/operations/lib/createAuthenticationChallenge.ts",
+          "kind": "import-statement",
+          "original": "./lib/createAuthenticationChallenge"
+        },
+        {
+          "path": "libs/api/src/lib/operations/lib/createReauthenticationChallenge.ts",
+          "kind": "import-statement",
+          "original": "./lib/createReauthenticationChallenge"
+        },
+        {
+          "path": "libs/api/src/lib/operations/lib/createRegistrationChallenge.ts",
+          "kind": "import-statement",
+          "original": "./lib/createRegistrationChallenge"
+        },
+        {
+          "path": "libs/api/src/lib/operations/lib/verifyAuthentication.ts",
+          "kind": "import-statement",
+          "original": "./lib/verifyAuthentication"
+        },
+        {
+          "path": "libs/api/src/lib/operations/lib/verifyReauthentication.ts",
+          "kind": "import-statement",
+          "original": "./lib/verifyReauthentication"
+        },
+        {
+          "path": "libs/api/src/lib/operations/lib/verifyRegistration.ts",
+          "kind": "import-statement",
+          "original": "./lib/verifyRegistration"
+        }
+      ],
+      "format": "esm"
+    },
+    "libs/api/src/lib/getFirebaseWebAuthnApi.ts": {
+      "bytes": 11349,
+      "imports": [
+        {
+          "path": "@firebase-web-authn/types",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "@simplewebauthn/server/helpers",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "firebase-admin/app",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "firebase-admin/auth",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "firebase-admin/firestore",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "firebase-functions/https",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "./interfaces",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "libs/api/src/lib/operations/index.ts",
+          "kind": "import-statement",
+          "original": "./operations"
+        }
+      ],
+      "format": "esm"
+    },
+    "libs/api/src/index.ts": {
+      "bytes": 153,
+      "imports": [
+        {
+          "path": "libs/api/src/lib/interfaces/index.ts",
+          "kind": "import-statement",
+          "original": "./lib/interfaces"
+        },
+        {
+          "path": "libs/api/src/lib/getFirebaseWebAuthnApi.ts",
+          "kind": "import-statement",
+          "original": "./lib/getFirebaseWebAuthnApi"
+        }
+      ],
+      "format": "esm"
+    },
+    "libs/extension/src/lib/api.ts": {
+      "bytes": 1332,
+      "imports": [
+        {
+          "path": "libs/api/src/index.ts",
+          "kind": "import-statement",
+          "original": "@firebase-web-authn/api"
+        },
+        {
+          "path": "@firebase-web-authn/types",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "@simplewebauthn/server",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "firebase-functions/https",
+          "kind": "import-statement",
+          "external": true
+        }
+      ],
+      "format": "esm"
+    },
+    "libs/extension/src/index.ts": {
+      "bytes": 99,
+      "imports": [
+        {
+          "path": "libs/extension/src/lib/api.ts",
+          "kind": "import-statement",
+          "original": "./lib/api"
+        }
+      ],
+      "format": "esm"
+    },
+    "libs/extension/src/lib/main.ts": {
+      "bytes": 204,
+      "imports": [
+        {
+          "path": "firebase-admin/app",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "libs/extension/src/index.ts",
+          "kind": "import-statement",
+          "original": "../"
+        }
+      ],
+      "format": "esm"
+    }
+  },
+  "outputs": {
+    "dist/libs/extension/src/main.js": {
+      "imports": [
+        {
+          "path": "firebase-admin/app",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "@simplewebauthn/server/helpers",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "firebase-admin/auth",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "firebase-admin/firestore",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "firebase-functions/https",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "firebase-admin/firestore",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "firebase-admin/firestore",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "@simplewebauthn/server",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "firebase-admin/firestore",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "@simplewebauthn/server",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "@simplewebauthn/server/helpers",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "firebase-admin/firestore",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "@simplewebauthn/server",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "@simplewebauthn/server/helpers",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "@simplewebauthn/server",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "@simplewebauthn/server/helpers",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "firebase-admin/firestore",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "@simplewebauthn/server",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "@simplewebauthn/server/helpers",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "firebase-admin/firestore",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "@simplewebauthn/server",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "@simplewebauthn/server/helpers",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "firebase-admin/firestore",
+          "kind": "import-statement",
+          "external": true
+        }
+      ],
+      "exports": [
+        "api"
+      ],
+      "entryPoint": "libs/extension/src/lib/main.ts",
+      "inputs": {
+        "libs/extension/src/lib/main.ts": {
+          "bytesInOutput": 84
+        },
+        "libs/api/src/lib/interfaces/index.ts": {
+          "bytesInOutput": 0
+        },
+        "libs/api/src/index.ts": {
+          "bytesInOutput": 0
+        },
+        "libs/api/src/lib/getFirebaseWebAuthnApi.ts": {
+          "bytesInOutput": 4346
+        },
+        "libs/api/src/lib/operations/lib/clearChallenge.ts": {
+          "bytesInOutput": 648
+        },
+        "libs/api/src/lib/operations/index.ts": {
+          "bytesInOutput": 0
+        },
+        "libs/api/src/lib/operations/lib/clearCredential.ts": {
+          "bytesInOutput": 620
+        },
+        "libs/api/src/lib/operations/lib/createAuthenticationChallenge.ts": {
+          "bytesInOutput": 565
+        },
+        "libs/api/src/lib/operations/lib/createReauthenticationChallenge.ts": {
+          "bytesInOutput": 1530
+        },
+        "libs/api/src/lib/operations/lib/createRegistrationChallenge.ts": {
+          "bytesInOutput": 1453
+        },
+        "libs/api/src/lib/operations/lib/verifyAuthentication.ts": {
+          "bytesInOutput": 5417
+        },
+        "libs/api/src/lib/operations/lib/verifyReauthentication.ts": {
+          "bytesInOutput": 4080
+        },
+        "libs/api/src/lib/operations/lib/verifyRegistration.ts": {
+          "bytesInOutput": 2971
+        },
+        "libs/extension/src/lib/api.ts": {
+          "bytesInOutput": 411
+        },
+        "libs/extension/src/index.ts": {
+          "bytesInOutput": 0
+        }
+      },
+      "bytes": 22216
+    }
+  }
+}

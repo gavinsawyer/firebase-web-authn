@@ -1,5 +1,5 @@
 /*
- * Copyright © 2025 Gavin Sawyer. All rights reserved.
+ * Copyright © 2026 Gavin William Sawyer. All rights reserved.
  */
 
 import { type FunctionResponse, type WebAuthnUserCredentialFactor, type WebAuthnUserDocument } from "@firebase-web-authn/types";
@@ -13,11 +13,7 @@ interface ClearCredentialOptions {
 }
 
 export const clearCredential: (options: ClearCredentialOptions) => Promise<FunctionResponse> = (options: ClearCredentialOptions) => options.webAuthnUserDocumentReference.get().then<FunctionResponse, FunctionResponse>(
-  (userDocumentSnapshot: DocumentSnapshot<WebAuthnUserDocument>): Promise<FunctionResponse> => (async (userDocument: WebAuthnUserDocument | undefined): Promise<FunctionResponse> => userDocument && userDocument.credentials?.[options.clearingCredential || "first"] ? options.webAuthnUserDocumentReference.update(
-    {
-      ["credentials." + (options.clearingCredential || "first")]: FieldValue.delete(),
-    },
-  ).then<FunctionResponse, FunctionResponse>(
+  (userDocumentSnapshot: DocumentSnapshot<WebAuthnUserDocument>): Promise<FunctionResponse> => (async (userDocument: WebAuthnUserDocument | undefined): Promise<FunctionResponse> => userDocument && userDocument.credentials?.[options.clearingCredential || "first"] ? options.webAuthnUserDocumentReference.update({ ["credentials." + (options.clearingCredential || "first")]: FieldValue.delete() }).then<FunctionResponse, FunctionResponse>(
     (): FunctionResponse => ({
       clearingCredential: options.clearingCredential,
       operation:          "clear credential",

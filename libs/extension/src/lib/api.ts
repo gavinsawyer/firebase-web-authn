@@ -1,11 +1,13 @@
+// noinspection JSUnusedGlobalSymbols
+
 /*
- * Copyright © 2025 Gavin Sawyer. All rights reserved.
+ * Copyright © 2026 Gavin William Sawyer. All rights reserved.
  */
 
-import { getFirebaseWebAuthnApi }                               from "@firebase-web-authn/api";
-import { FunctionRequest, FunctionResponse }                    from "@firebase-web-authn/types";
-import { AuthenticatorAttachment, UserVerificationRequirement } from "@simplewebauthn/types";
-import { CallableFunction }                                     from "firebase-functions/v2/https";
+import { getFirebaseWebAuthnApi }                                         from "@firebase-web-authn/api";
+import { type FunctionRequest, type FunctionResponse }                    from "@firebase-web-authn/types";
+import { type AuthenticatorAttachment, type UserVerificationRequirement } from "@simplewebauthn/server";
+import { type CallableFunction }                                          from "firebase-functions/https";
 
 
 export const api: CallableFunction<FunctionRequest, Promise<FunctionResponse>> = getFirebaseWebAuthnApi(

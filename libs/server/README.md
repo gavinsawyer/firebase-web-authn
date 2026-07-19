@@ -22,7 +22,8 @@ import { getApps, initializeApp } from "firebase-admin/app";
 import { lastVerified }           from "@firebase-web-authn/server";
 ```
 ```ts
-getApps().length === 0 && initializeApp();
+if (getApps().length === 0)
+  initializeApp();
 
 // If the user was verified within the past 30 seconds, proceed. Otherwise, ask for reverification:
 (await lastVerified(user.uid))?.seconds > (Date.now() / 1000) - 30 ?
@@ -32,9 +33,7 @@ getApps().length === 0 && initializeApp();
 If your check involves multiple pieces of data from `WebAuthnUserDocument`, use the `webAuthnUserDocument` method to reduce Firestore calls:
 ```ts
 // If the user was verified with their first-factor credential within the past 30 seconds, proceed. Otherwise, ask for reverification:
-(await webAuthnUserDocument(user.uid).then<boolean>(
-  (webAuthnUserDocument: WebAuthnUserDocument): boolean => webAuthnUserDocument.lastVerified?.seconds > (Date.now() / 1000) - 30 && webAuthnUserDocument.lastCredentialUsed === "first",
-)) ?
+(await webAuthnUserDocument(user.uid).then<boolean>((webAuthnUserDocument: WebAuthnUserDocument): boolean => webAuthnUserDocument.lastVerified?.seconds > (Date.now() / 1000) - 30 && webAuthnUserDocument.lastCredentialUsed === "first")) ?
   proceed() :
   askForReverification();
 ```

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2025 Gavin Sawyer. All rights reserved.
+ * Copyright © 2026 Gavin William Sawyer. All rights reserved.
  */
 
 import { Component, inject }                                      from "@angular/core";
@@ -17,7 +17,7 @@ import { AuthenticationService, EllipsesService, ProfileService } from "../../..
       MatIconModule,
 
     ],
-    selector:    "website-signed-in",
+    selector:    "app--signed-in",
     styleUrls:   [
       "./SignedInComponent.sass",
     ],

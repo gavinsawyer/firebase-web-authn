@@ -1,5 +1,5 @@
 /*
- * Copyright © 2025 Gavin Sawyer. All rights reserved.
+ * Copyright © 2026 Gavin William Sawyer. All rights reserved.
  */
 
 import { isPlatformBrowser }                                    from "@angular/common";
@@ -9,23 +9,15 @@ import { interval, map, startWith }                             from "rxjs";
 import { type Ellipses }                                        from "../../types";
 
 
-@Injectable(
-  {
-    providedIn: "root",
-  },
-)
+@Injectable({ providedIn: "root" })
 export class EllipsesService {
 
   public readonly ellipses$: Signal<Ellipses> = isPlatformBrowser(inject<object>(PLATFORM_ID)) ? toSignal<Ellipses>(
     interval(800).pipe<Ellipses, Ellipses>(
-      map<number, Ellipses>(
-        (n: number): Ellipses => ".".repeat(((n + 1) % 3) + 1) as Ellipses,
-      ),
+      map<number, Ellipses>((n: number): Ellipses => ".".repeat(((n + 1) % 3) + 1) as Ellipses),
       startWith<Ellipses>("."),
     ),
-    {
-      requireSync: true,
-    },
+    { requireSync: true },
   ) : signal<Ellipses>(".");
 
 }

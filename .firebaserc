@@ -10,13 +10,5 @@
         ]
       }
     }
-  },
-  "etags": {
-    "fir-web-authn": {
-      "extensionInstances": {
-        "firebase-web-authn": "22aa98f6d4ce67226cbdbe17be7d92eaf6e78c9b8d710fd2c292a159715b62ca"
-      }
-    }
-  },
-  "dataconnectEmulatorConfig": {}
+  }
 }

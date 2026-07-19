@@ -1,50 +1,46 @@
 /*
- * Copyright © 2025 Gavin Sawyer. All rights reserved.
+ * Copyright © 2026 Gavin William Sawyer. All rights reserved.
  */
 
-import { type FunctionResponse, type WebAuthnUserDocument }                     from "@firebase-web-authn/types";
-import { type VerifiedAuthenticationResponse, verifyAuthenticationResponse }    from "@simplewebauthn/server";
-import { type AuthenticationResponseJSON }                                      from "@simplewebauthn/types";
-import { type FirebaseError }                                                   from "firebase-admin";
-import { type DocumentReference, type DocumentSnapshot, FieldValue, Timestamp } from "firebase-admin/firestore";
+import { type FunctionResponse, type WebAuthnUserDocument }                                                   from "@firebase-web-authn/types";
+import { type AuthenticationResponseJSON, type VerifiedAuthenticationResponse, verifyAuthenticationResponse } from "@simplewebauthn/server";
+import { isoBase64URL }                                                                                       from "@simplewebauthn/server/helpers";
+import { type FirebaseError }                                                                                 from "firebase-admin";
+import { type DocumentReference, type DocumentSnapshot, FieldValue, Timestamp }                               from "firebase-admin/firestore";
 
 
 interface VerifyAuthenticationOptions {
   authenticationOptions: {
-    expectedOrigin: string
-    expectedRPID: string
-    requireUserVerification: boolean
-    response: AuthenticationResponseJSON
+    expectedOrigin: string;
+    expectedRPID: string;
+    requireUserVerification: boolean;
+    response: AuthenticationResponseJSON;
   };
   authenticatorAttachment?: AuthenticatorAttachment;
   authenticatorAttachment2FA?: AuthenticatorAttachment;
   createCustomToken: (uid: string) => Promise<string>;
-  userID: string;
+  userId: string;
   userVerificationRequirement?: UserVerificationRequirement;
   webAuthnUserDocumentReference: DocumentReference<WebAuthnUserDocument>;
   webAuthnUserDocumentReferenceTarget: DocumentReference<WebAuthnUserDocument>;
 }
 
-export const verifyAuthentication: (options: VerifyAuthenticationOptions) => Promise<FunctionResponse> = (options: VerifyAuthenticationOptions): Promise<FunctionResponse> => options.authenticationOptions.response.response.userHandle !== options.userID ? options.webAuthnUserDocumentReferenceTarget.get().then<FunctionResponse, FunctionResponse>(
+export const verifyAuthentication: (options: VerifyAuthenticationOptions) => Promise<FunctionResponse> = (options: VerifyAuthenticationOptions): Promise<FunctionResponse> => ((userHandle: string): Promise<FunctionResponse> => userHandle !== options.userId ? options.webAuthnUserDocumentReferenceTarget.get().then<FunctionResponse, FunctionResponse>(
   (userDocumentSnapshotTarget: DocumentSnapshot<WebAuthnUserDocument>): Promise<FunctionResponse> => (async (userDocumentTarget: WebAuthnUserDocument | undefined): Promise<FunctionResponse> => userDocumentTarget ? options.webAuthnUserDocumentReference.get().then<FunctionResponse, FunctionResponse>(
     (userDocumentSnapshot: DocumentSnapshot<WebAuthnUserDocument>): Promise<FunctionResponse> => (async (userDocument: WebAuthnUserDocument | undefined): Promise<FunctionResponse> => userDocument ? userDocument.challenge && userDocument.challenge.process === "authentication" ? userDocumentTarget.credentials?.[userDocument.challenge?.processingCredential || "first"] ? verifyAuthenticationResponse(
       {
         ...options.authenticationOptions,
-        authenticator:           {
-          counter:             userDocumentTarget.credentials[userDocument.challenge.processingCredential || "first"]?.counter || 0,
-          credentialID:        userDocumentTarget.credentials[userDocument.challenge.processingCredential || "first"]?.id || new Uint8Array(),
-          credentialPublicKey: userDocumentTarget.credentials[userDocument.challenge.processingCredential || "first"]?.publicKey || new Uint8Array(),
+        credential:              {
+          counter:   userDocumentTarget.credentials[userDocument.challenge.processingCredential || "first"]?.counter || 0,
+          id:        isoBase64URL.fromBuffer(userDocumentTarget.credentials[userDocument.challenge.processingCredential || "first"]?.id || new Uint8Array()),
+          publicKey: userDocumentTarget.credentials[userDocument.challenge.processingCredential || "first"]?.publicKey || new Uint8Array(),
         },
         expectedChallenge:       userDocument.challenge.value,
         requireUserVerification: (userDocument.challenge.processingCredential === "second" && options.authenticatorAttachment2FA || options.authenticatorAttachment) === "platform" && options.userVerificationRequirement !== "discouraged",
       },
     ).then<FunctionResponse>(
-      (verifiedAuthenticationResponse: VerifiedAuthenticationResponse): Promise<FunctionResponse> => (userDocument.lastPresent ? options.webAuthnUserDocumentReference.update(
-        {
-          challenge: FieldValue.delete(),
-        },
-      ) : options.webAuthnUserDocumentReference.delete()).then<FunctionResponse, FunctionResponse>(
-        (): Promise<FunctionResponse> => verifiedAuthenticationResponse.verified ? options.createCustomToken(options.authenticationOptions.response.response.userHandle || "").then<FunctionResponse, FunctionResponse>(
+      (verifiedAuthenticationResponse: VerifiedAuthenticationResponse): Promise<FunctionResponse> => (userDocument.lastPresent ? options.webAuthnUserDocumentReference.update({ challenge: FieldValue.delete() }) : options.webAuthnUserDocumentReference.delete()).then<FunctionResponse, FunctionResponse>(
+        (): Promise<FunctionResponse> => verifiedAuthenticationResponse.verified ? options.createCustomToken(userHandle).then<FunctionResponse, FunctionResponse>(
           (customToken: string): Promise<FunctionResponse> => options.webAuthnUserDocumentReferenceTarget.update(
             {
               challenge:                                                                                                FieldValue.delete(),
@@ -81,15 +77,15 @@ export const verifyAuthentication: (options: VerifyAuthenticationOptions) => Pro
         ) : userDocument.challenge?.processingCredential === undefined && userDocumentTarget.credentials?.second ? verifyAuthenticationResponse(
           {
             ...options.authenticationOptions,
-            authenticator:     {
-              counter:             userDocumentTarget.credentials.second.counter,
-              credentialID:        userDocumentTarget.credentials.second.id,
-              credentialPublicKey: userDocumentTarget.credentials.second.publicKey,
+            credential:        {
+              counter:   userDocumentTarget.credentials.second.counter,
+              id:        isoBase64URL.fromBuffer(userDocumentTarget.credentials.second.id),
+              publicKey: userDocumentTarget.credentials.second.publicKey,
             },
             expectedChallenge: userDocument.challenge?.value || "",
           },
         ).then<FunctionResponse>(
-          (backupVerifiedAuthenticationResponse: VerifiedAuthenticationResponse): Promise<FunctionResponse> => backupVerifiedAuthenticationResponse.verified ? options.createCustomToken(options.authenticationOptions.response.response.userHandle || "").then<FunctionResponse, FunctionResponse>(
+          (backupVerifiedAuthenticationResponse: VerifiedAuthenticationResponse): Promise<FunctionResponse> => backupVerifiedAuthenticationResponse.verified ? options.createCustomToken(userHandle).then<FunctionResponse, FunctionResponse>(
             (customToken: string): Promise<FunctionResponse> => options.webAuthnUserDocumentReferenceTarget.update(
               {
                 challenge:            FieldValue.delete(),
@@ -123,11 +119,7 @@ export const verifyAuthentication: (options: VerifyAuthenticationOptions) => Pro
               operation: "verify authentication",
               success:   false,
             }),
-          ) : (userDocument.credentials ? options.webAuthnUserDocumentReference.update(
-            {
-              challenge: FieldValue.delete(),
-            },
-          ) : options.webAuthnUserDocumentReference.delete()).then<FunctionResponse, FunctionResponse>(
+          ) : (userDocument.credentials ? options.webAuthnUserDocumentReference.update({ challenge: FieldValue.delete() }) : options.webAuthnUserDocumentReference.delete()).then<FunctionResponse, FunctionResponse>(
             (): FunctionResponse => ({
               code:      "not-verified",
               message:   "User not verified.",
@@ -141,11 +133,7 @@ export const verifyAuthentication: (options: VerifyAuthenticationOptions) => Pro
               success:   false,
             }),
           ),
-        ) : (userDocument.credentials ? options.webAuthnUserDocumentReference.update(
-          {
-            challenge: FieldValue.delete(),
-          },
-        ) : options.webAuthnUserDocumentReference.delete()).then<FunctionResponse, FunctionResponse>(
+        ) : (userDocument.credentials ? options.webAuthnUserDocumentReference.update({ challenge: FieldValue.delete() }) : options.webAuthnUserDocumentReference.delete()).then<FunctionResponse, FunctionResponse>(
           (): FunctionResponse => ({
             code:      "not-verified",
             message:   "User not verified.",
@@ -166,14 +154,10 @@ export const verifyAuthentication: (options: VerifyAuthenticationOptions) => Pro
           success:   false,
         }),
       ),
-    ) : options.webAuthnUserDocumentReference.update(
-      {
-        challenge: FieldValue.delete(),
-      },
-    ).then<FunctionResponse, FunctionResponse>(
+    ) : options.webAuthnUserDocumentReference.update({ challenge: FieldValue.delete() }).then<FunctionResponse, FunctionResponse>(
       (): FunctionResponse => ({
         code:      "user-doc-missing-passkey-fields",
-        message:   "User doc is missing passkey fields from prior operation.",
+        message:   "User document is missing passkey fields from prior operation.",
         operation: "verify authentication",
         success:   false,
       }),
@@ -185,13 +169,13 @@ export const verifyAuthentication: (options: VerifyAuthenticationOptions) => Pro
       }),
     ) : userDocument.credentials ? {
       code:      "user-doc-missing-challenge-field",
-      message:   "User doc is missing challenge field from prior operation.",
+      message:   "User document is missing challenge field from prior operation.",
       operation: "verify authentication",
       success:   false,
     } : options.webAuthnUserDocumentReference.delete().then<FunctionResponse, FunctionResponse>(
       (): FunctionResponse => ({
         code:      "user-doc-missing-challenge-field",
-        message:   "User doc is missing challenge field from prior operation.",
+        message:   "User document is missing challenge field from prior operation.",
         operation: "verify authentication",
         success:   false,
       }),
@@ -225,11 +209,7 @@ export const verifyAuthentication: (options: VerifyAuthenticationOptions) => Pro
     operation: "verify authentication",
     success:   false,
   }),
-) : options.webAuthnUserDocumentReference.update(
-  {
-    challenge: FieldValue.delete(),
-  },
-).then<FunctionResponse, FunctionResponse>(
+) : options.webAuthnUserDocumentReference.update({ challenge: FieldValue.delete() }).then<FunctionResponse, FunctionResponse>(
   (): FunctionResponse => ({
     code:      "no-op",
     message:   "No operation is needed.",
@@ -242,4 +222,4 @@ export const verifyAuthentication: (options: VerifyAuthenticationOptions) => Pro
     operation: "verify authentication",
     success:   false,
   }),
-);
+))(options.authenticationOptions.response.response.userHandle ? isoBase64URL.toUTF8String(options.authenticationOptions.response.response.userHandle) : options.userId);

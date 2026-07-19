@@ -1,12 +1,13 @@
 /*
- * Copyright © 2025 Gavin Sawyer. All rights reserved.
+ * Copyright © 2026 Gavin William Sawyer. All rights reserved.
  */
 
 import { type FunctionRequest, type FunctionResponse, type WebAuthnUserDocument }                                                                                                                         from "@firebase-web-authn/types";
+import { isoBase64URL }                                                                                                                                                                                   from "@simplewebauthn/server/helpers";
 import { type App }                                                                                                                                                                                       from "firebase-admin/app";
 import { type Auth, getAuth }                                                                                                                                                                             from "firebase-admin/auth";
 import { type DocumentReference, type Firestore, getFirestore }                                                                                                                                           from "firebase-admin/firestore";
-import { type CallableFunction, type CallableRequest, onCall }                                                                                                                                            from "firebase-functions/v2/https";
+import { type CallableFunction, type CallableRequest, onCall }                                                                                                                                            from "firebase-functions/https";
 import { type FirebaseWebAuthnConfig }                                                                                                                                                                    from "./interfaces";
 import { clearChallenge, clearCredential, createAuthenticationChallenge, createReauthenticationChallenge, createRegistrationChallenge, verifyAuthentication, verifyReauthentication, verifyRegistration } from "./operations";
 
@@ -18,7 +19,7 @@ import { clearChallenge, clearCredential, createAuthenticationChallenge, createR
  * @returns
  *  A {@link CallableFunction} which will need to be exported from your Firebase Functions package index.
  */
-function getFirebaseWebAuthnApi(
+export function getFirebaseWebAuthnApi(
   firebaseWebAuthnConfig: FirebaseWebAuthnConfig,
   app?: App,
 ): CallableFunction<FunctionRequest, Promise<FunctionResponse>> {
@@ -34,16 +35,16 @@ function getFirebaseWebAuthnApi(
           app,
           "ext-firebase-web-authn",
         ) : getFirestore("ext-firebase-web-authn");
-        const userID: string                                                               = callableRequest.auth.uid;
-        const webAuthnUserDocumentReference: DocumentReference<WebAuthnUserDocument>       = firestore.collection("users").doc(callableRequest.auth.uid) as DocumentReference<WebAuthnUserDocument>;
-        const webAuthnUserDocumentReferenceTarget: DocumentReference<WebAuthnUserDocument> = firestore.collection("users").doc(callableRequest.data.operation === "verify authentication" && callableRequest.data.authenticationResponse.response.userHandle || callableRequest.auth.uid) as DocumentReference<WebAuthnUserDocument>;
+        const userId: string                                                               = callableRequest.auth.uid;
+        const webAuthnUserDocumentReference: DocumentReference<WebAuthnUserDocument>       = firestore.collection("users").doc(userId) as DocumentReference<WebAuthnUserDocument>;
+        const webAuthnUserDocumentReferenceTarget: DocumentReference<WebAuthnUserDocument> = firestore.collection("users").doc(callableRequest.data.operation === "verify authentication" && callableRequest.data.authenticationResponse.response.userHandle ? isoBase64URL.toUTF8String(callableRequest.data.authenticationResponse.response.userHandle) : userId) as DocumentReference<WebAuthnUserDocument>;
 
         switch (callableRequest.data.operation) {
           case "clear challenge":
             return clearChallenge(
               {
                 firestore: firestore,
-                userId:    callableRequest.auth.uid,
+                userId,
               },
             );
           case "clear credential":
@@ -90,8 +91,8 @@ function getFirebaseWebAuthnApi(
               {
                 registeringCredentialFactor: callableRequest.data.registeringCredential,
                 registrationOptions:         {
-                  attestationType:        "indirect",
-                  authenticatorSelection: callableRequest.data.registeringCredential === "second" && firebaseWebAuthnConfig.authenticatorAttachment2FA ? {
+                  attestationConveyancePreference: "indirect",
+                  authenticatorSelection:          callableRequest.data.registeringCredential === "second" && firebaseWebAuthnConfig.authenticatorAttachment2FA ? {
                     authenticatorAttachment: firebaseWebAuthnConfig.authenticatorAttachment2FA,
                     residentKey:             "preferred",
                     userVerification:        firebaseWebAuthnConfig.authenticatorAttachment2FA === "platform" && firebaseWebAuthnConfig.userVerificationRequirement !== "discouraged" ? firebaseWebAuthnConfig.userVerificationRequirement : "preferred",
@@ -103,15 +104,15 @@ function getFirebaseWebAuthnApi(
                     residentKey:      "preferred",
                     userVerification: "preferred",
                   },
-                  rpID:                   firebaseWebAuthnConfig.relyingPartyID || callableRequest.rawRequest.headers.origin?.split("://")[1].split(":")[0] || "",
-                  rpName:                 firebaseWebAuthnConfig.relyingPartyName,
-                  supportedAlgorithmIDs:  [
+                  rpID:                            firebaseWebAuthnConfig.relyingPartyID || callableRequest.rawRequest.headers.origin?.split("://")[1].split(":")[0] || "",
+                  rpName:                          firebaseWebAuthnConfig.relyingPartyName,
+                  supportedAlgorithmIDs:           [
                     - 7,
                     - 8,
                     - 257,
                   ],
-                  userID:                 userID,
-                  userName:               callableRequest.data.name,
+                  userId,
+                  userName:                        callableRequest.data.name,
                 },
                 webAuthnUserDocumentReference,
               },
@@ -128,7 +129,7 @@ function getFirebaseWebAuthnApi(
                 authenticatorAttachment:     firebaseWebAuthnConfig.authenticatorAttachment,
                 authenticatorAttachment2FA:  firebaseWebAuthnConfig.authenticatorAttachment2FA,
                 createCustomToken:           (uid: string) => auth.createCustomToken(uid),
-                userID:                      userID,
+                userId,
                 userVerificationRequirement: firebaseWebAuthnConfig.userVerificationRequirement,
                 webAuthnUserDocumentReference,
                 webAuthnUserDocumentReferenceTarget,
@@ -145,8 +146,8 @@ function getFirebaseWebAuthnApi(
                 },
                 authenticatorAttachment:     firebaseWebAuthnConfig.authenticatorAttachment,
                 authenticatorAttachment2FA:  firebaseWebAuthnConfig.authenticatorAttachment2FA,
-                createCustomToken:           () => auth.createCustomToken(userID),
-                userID:                      userID,
+                createCustomToken:           () => auth.createCustomToken(userId),
+                userId,
                 userVerificationRequirement: firebaseWebAuthnConfig.userVerificationRequirement,
                 webAuthnUserDocumentReference,
               },
@@ -156,7 +157,7 @@ function getFirebaseWebAuthnApi(
               {
                 authenticatorAttachment:     firebaseWebAuthnConfig.authenticatorAttachment,
                 authenticatorAttachment2FA:  firebaseWebAuthnConfig.authenticatorAttachment2FA,
-                createCustomToken:           () => auth.createCustomToken(userID),
+                createCustomToken:           () => auth.createCustomToken(userId),
                 registrationOptions:         {
                   expectedOrigin: callableRequest.rawRequest.headers.origin || "",
                   expectedRPID:   firebaseWebAuthnConfig.relyingPartyID || callableRequest.rawRequest.headers.origin?.split("://")[1].split(":")[0] || "",
@@ -177,7 +178,3 @@ function getFirebaseWebAuthnApi(
     },
   );
 }
-
-export {
-  getFirebaseWebAuthnApi,
-};

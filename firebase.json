@@ -1,12 +1,17 @@
 {
-  "extensions":   {
-    "firebase-web-authn": "./dist/libs/extension"
+  "emulators":  {
+    "auth":              { "port": 9099 },
+    "database":          { "port": 9000 },
+    "firestore":         { "port": 8080 },
+    "singleProjectMode": true,
+    "ui":                { "enabled": true }
   },
-  "firestore":    {
+  "extensions": { "firebase-web-authn": "./dist/libs/extension" },
+  "firestore":  {
     "indexes": "firestore.indexes.json",
     "rules":   "firestore.rules"
   },
-  "hosting":      {
+  "hosting":    {
     "headers":  [
       {
         "headers": [
@@ -24,12 +29,10 @@
             "value": "no-cache"
           }
         ],
-        "source":  "/@(ngsw-worker.js|ngsw.json)"
+        "source":  "/main.service-worker.js"
       }
     ],
-    "ignore":   [
-      "**/.*"
-    ],
+    "ignore":   [ "**/.*" ],
     "public":   "dist/apps/website/browser",
     "rewrites": [
       {
@@ -37,13 +40,11 @@
         "source":   "/firebase-web-authn-api"
       },
       {
-        "run":    {
-          "pinTag":    true,
-          "serviceId": "ssr-website"
-        },
+        "run":    { "serviceId": "ssr-website" },
         "source": "**"
       }
     ],
     "target":   "website"
-  }
+  },
+  "storage":    { "rules": "storage.rules" }
 }

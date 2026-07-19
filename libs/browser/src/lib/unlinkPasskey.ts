@@ -1,11 +1,11 @@
 /*
- * Copyright © 2025 Gavin Sawyer. All rights reserved.
+ * Copyright © 2026 Gavin William Sawyer. All rights reserved.
  */
 
-import { type FunctionRequest, type FunctionResponse, type WebAuthnUserCredentialFactor } from "@firebase-web-authn/types";
-import { type Auth }                                                                      from "firebase/auth";
-import { type Functions, httpsCallableFromURL, type HttpsCallableResult }                 from "firebase/functions";
-import { FirebaseWebAuthnError }                                                          from "./FirebaseWebAuthnError.js";
+import { type FunctionRequest, type FunctionResponse, type WebAuthnUserCredentialFactor }      from "@firebase-web-authn/types";
+import { type Auth }                                                                           from "firebase/auth";
+import { type Functions, type FunctionsError, httpsCallableFromURL, type HttpsCallableResult } from "firebase/functions";
+import { FirebaseWebAuthnError }                                                               from "./FirebaseWebAuthnError";
 
 
 // noinspection JSUnusedGlobalSymbols
@@ -43,14 +43,14 @@ export const unlinkPasskey: (
   ({ data: functionResponse }: HttpsCallableResult<FunctionResponse>): void => "code" in functionResponse ? ((): never => {
     throw new FirebaseWebAuthnError(functionResponse);
   })() : void (0),
-  (firebaseError): never => {
+  (functionsError: FunctionsError): never => {
     throw new FirebaseWebAuthnError(
       {
-        code:      firebaseError.code.replace(
+        code:      functionsError.code.replace(
           "firebaseWebAuthn/",
           "",
         ),
-        message:   firebaseError.message,
+        message:   functionsError.message,
         method:    "httpsCallableFromURL",
         operation: "clear credential",
       },

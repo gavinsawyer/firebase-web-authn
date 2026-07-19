@@ -1,5 +1,5 @@
 /*
- * Copyright © 2025 Gavin Sawyer. All rights reserved.
+ * Copyright © 2026 Gavin William Sawyer. All rights reserved.
  */
 
 import { type FunctionResponse, type WebAuthnUserDocument }                          from "@firebase-web-authn/types";
@@ -8,7 +8,7 @@ import { type DocumentReference, type DocumentSnapshot, FieldValue, type Firesto
 
 
 interface ClearChallengeOptions {
-  firestore: Firestore,
+  firestore: Firestore;
   userId: string;
 }
 
@@ -16,11 +16,7 @@ export function clearChallenge(options: ClearChallengeOptions): Promise<Function
   const webAuthnUserDocumentReference: DocumentReference<WebAuthnUserDocument> = options.firestore.collection("users").doc(options.userId) as DocumentReference<WebAuthnUserDocument>;
 
   return webAuthnUserDocumentReference.get().then<FunctionResponse, FunctionResponse>(
-    (userDocumentSnapshot: DocumentSnapshot<WebAuthnUserDocument>): Promise<FunctionResponse> => (async (userDocument: WebAuthnUserDocument | undefined): Promise<FunctionResponse> => userDocument ? userDocument.challenge ? (userDocument.credentials ? webAuthnUserDocumentReference.update(
-      {
-        challenge: FieldValue.delete(),
-      },
-    ) : webAuthnUserDocumentReference.delete()).then<FunctionResponse, FunctionResponse>(
+    (userDocumentSnapshot: DocumentSnapshot<WebAuthnUserDocument>): Promise<FunctionResponse> => (async (userDocument: WebAuthnUserDocument | undefined): Promise<FunctionResponse> => userDocument ? userDocument.challenge ? (userDocument.credentials ? webAuthnUserDocumentReference.update({ challenge: FieldValue.delete() }) : webAuthnUserDocumentReference.delete()).then<FunctionResponse, FunctionResponse>(
       (): FunctionResponse => ({
         operation: "clear challenge",
         success:   true,

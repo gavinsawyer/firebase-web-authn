@@ -1,19 +1,19 @@
 /*
- * Copyright © 2025 Gavin Sawyer. All rights reserved.
+ * Copyright © 2026 Gavin William Sawyer. All rights reserved.
  */
 
 import { type FunctionResponse, type WebAuthnUserCredentialFactor, type WebAuthnUserDocument } from "@firebase-web-authn/types";
-import { generateAuthenticationOptions }                                                       from "@simplewebauthn/server";
-import { type PublicKeyCredentialRequestOptionsJSON }                                          from "@simplewebauthn/types";
+import { generateAuthenticationOptions, type PublicKeyCredentialRequestOptionsJSON }           from "@simplewebauthn/server";
+import { isoBase64URL }                                                                        from "@simplewebauthn/server/helpers";
 import { type FirebaseError }                                                                  from "firebase-admin";
 import { type DocumentReference, type DocumentSnapshot, FieldValue }                           from "firebase-admin/firestore";
 
 
 interface CreateReauthenticationChallengeOptions {
   authenticationOptions: {
-    attestationType: AttestationConveyancePreference
-    rpID: string
-    supportedAlgorithmIDs: COSEAlgorithmIdentifier[]
+    attestationType: AttestationConveyancePreference;
+    rpID: string;
+    supportedAlgorithmIDs: COSEAlgorithmIdentifier[];
   };
   reauthenticatingCredentialFactor?: WebAuthnUserCredentialFactor;
   webAuthnUserDocumentReference: DocumentReference<WebAuthnUserDocument>;
@@ -23,26 +23,10 @@ export const createReauthenticationChallenge: (options: CreateReauthenticationCh
   (userDocumentSnapshot: DocumentSnapshot<WebAuthnUserDocument>): Promise<FunctionResponse> => (async (userDocument: WebAuthnUserDocument | undefined): Promise<FunctionResponse> => userDocument ? (options.reauthenticatingCredentialFactor === "second" ? userDocument.credentials?.second : userDocument.credentials?.first) ? generateAuthenticationOptions(
     {
       ...options.authenticationOptions,
-      allowCredentials: options.reauthenticatingCredentialFactor ? [
-        {
-          id:   userDocument.credentials?.[options.reauthenticatingCredentialFactor]?.id || new Uint8Array(),
-          type: "public-key",
-        },
-      ] : userDocument.credentials?.second ? [
-        {
-          id:   userDocument.credentials.first.id || new Uint8Array(),
-          type: "public-key",
-        },
-        {
-          id:   userDocument.credentials.second.id,
-          type: "public-key",
-        },
-      ] : [
-        {
-          id:   userDocument.credentials?.first.id || new Uint8Array(),
-          type: "public-key",
-        },
-      ],
+      allowCredentials: options.reauthenticatingCredentialFactor ? [ { id: isoBase64URL.fromBuffer(userDocument.credentials?.[options.reauthenticatingCredentialFactor]?.id || new Uint8Array()) } ] : userDocument.credentials?.second ? [
+        { id: isoBase64URL.fromBuffer(userDocument.credentials.first.id) },
+        { id: isoBase64URL.fromBuffer(userDocument.credentials.second.id) },
+      ] : [ { id: isoBase64URL.fromBuffer(userDocument.credentials?.first.id || new Uint8Array()) } ],
     },
   ).then<FunctionResponse>(
     (publicKeyCredentialRequestOptions: PublicKeyCredentialRequestOptionsJSON): Promise<FunctionResponse> => options.webAuthnUserDocumentReference.set(
@@ -53,9 +37,7 @@ export const createReauthenticationChallenge: (options: CreateReauthenticationCh
           value:                publicKeyCredentialRequestOptions.challenge,
         },
       },
-      {
-        merge: true,
-      },
+      { merge: true },
     ).then<FunctionResponse, FunctionResponse>(
       (): FunctionResponse => ({
         operation:                  "create reauthentication challenge",
@@ -72,7 +54,7 @@ export const createReauthenticationChallenge: (options: CreateReauthenticationCh
     ),
   ) : {
     code:      "user-doc-missing-passkey-fields",
-    message:   "User doc is missing passkey fields from prior operation.",
+    message:   "User document is missing passkey fields from prior operation.",
     operation: "create reauthentication challenge",
     success:   false,
   } : {

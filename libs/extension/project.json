@@ -1,21 +1,17 @@
 {
   "$schema":     "../../node_modules/nx/schemas/project-schema.json",
+
   "name":        "extension",
   "projectType": "library",
   "sourceRoot":  "libs/extension/src",
+
   "targets":     {
-    "eslint":                           {
-      "executor": "@nx/eslint:lint",
-      "options":  {
-        "lintFilePatterns": [
-          "libs/extension/src/**/*.ts"
-        ]
-      }
+    "build":              {
+      "dependsOn": [ "install--extension" ],
+      "executor":  "nx:noop"
     },
-    "esbuild":                          {
-      "dependsOn": [
-        "eslint"
-      ],
+    "esbuild":            {
+      "dependsOn": [ "lint" ],
       "executor":  "@nx/esbuild:esbuild",
       "options":   {
         "assets":         [
@@ -55,40 +51,40 @@
             "output": "."
           }
         ],
-        "main":           "libs/extension/src/main.ts",
+        "esbuildOptions": {
+          "banner": {
+            "css": "/*!\n / Copyright © 2026 Gavin William Sawyer. All rights reserved.\n /\n",
+            "js":  "/*\n * Copyright © 2026 Gavin William Sawyer. All rights reserved.\n */\n"
+          }
+        },
+        "main":           "libs/extension/src/lib/main.ts",
+        "metafile":       true,
+        "minify":         true,
         "outputFileName": "src/main.js",
         "outputPath":     "dist/libs/extension",
+        "platform":       "node",
+        "splitting":      true,
+        "treeShaking":    true,
         "tsConfig":       "libs/extension/tsconfig.lib.json"
       },
-      "outputs":   [
-        "{options.outputPath}"
-      ]
+      "outputs":   [ "{workspaceRoot}/dist/libs/extension" ]
     },
-    "package-lock-extension":           {
-      "dependsOn": [
-        "esbuild"
-      ],
+    "install--extension": {
+      "dependsOn": [ "esbuild" ],
       "executor":  "nx:run-commands",
       "options":   {
         "command": "npm i --package-lock-only && cd src && npm i --package-lock-only",
         "cwd":     "dist/libs/extension"
       }
     },
-    "package-lock-extension-functions": {
-      "dependsOn": [
-        "package-lock-extension"
-      ],
-      "executor":  "nx:run-commands",
-      "options":   {
-        "command": "npm i --package-lock-only",
-        "cwd":     "dist/libs/extension/src"
+    "lint":               {
+      "executor": "@nx/eslint:lint",
+      "options":  {
+        "lintFilePatterns": [
+          "libs/extension/package.json",
+          "libs/extension/src/**/*.ts"
+        ]
       }
-    },
-    "build":                            {
-      "dependsOn": [
-        "package-lock-extension-functions"
-      ],
-      "executor":  "nx:noop"
     }
   }
 }

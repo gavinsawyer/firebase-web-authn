@@ -1,10 +1,10 @@
 /*
- * Copyright © 2025 Gavin Sawyer. All rights reserved.
+ * Copyright © 2026 Gavin William Sawyer. All rights reserved.
  */
 
-import { type FunctionResponse }                                 from "@firebase-web-authn/types";
-import { type Auth, signInWithCustomToken, type UserCredential } from "firebase/auth";
-import { FirebaseWebAuthnError }                                 from "./FirebaseWebAuthnError.js";
+import { type FunctionResponse }                                                 from "@firebase-web-authn/types";
+import { type Auth, type AuthError, signInWithCustomToken, type UserCredential } from "firebase/auth";
+import { FirebaseWebAuthnError }                                                 from "./FirebaseWebAuthnError";
 
 
 export const handleVerifyFunctionResponse: (
@@ -17,14 +17,14 @@ export const handleVerifyFunctionResponse: (
   auth,
   functionResponse.customToken,
 ).catch<never>(
-  (firebaseError): never => {
+  (authError: AuthError): never => {
     throw new FirebaseWebAuthnError(
       {
-        code:    firebaseError.code.replace(
+        code:    authError.code.replace(
           "firebaseWebAuthn/",
           "",
         ),
-        message: firebaseError.message,
+        message: authError.message,
         method:  "signInWithCustomToken",
       },
     );

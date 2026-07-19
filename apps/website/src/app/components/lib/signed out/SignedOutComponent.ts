@@ -1,5 +1,5 @@
 /*
- * Copyright © 2025 Gavin Sawyer. All rights reserved.
+ * Copyright © 2026 Gavin William Sawyer. All rights reserved.
  */
 
 import { NgIf }                                                      from "@angular/common";
@@ -12,7 +12,7 @@ import { MatCardModule }                                             from "@angu
 import { MatFormFieldModule }                                        from "@angular/material/form-field";
 import { MatIconModule }                                             from "@angular/material/icon";
 import { MatInputModule }                                            from "@angular/material/input";
-import { type FirebaseWebAuthnError }                                from "dist/libs/browser";
+import { type FirebaseWebAuthnError }                                from "@firebase-web-authn/browser";
 import { type ProfileDocument }                                      from "../../../interfaces";
 import { AuthenticationService, EllipsesService }                    from "../../../services";
 
@@ -28,7 +28,7 @@ import { AuthenticationService, EllipsesService }                    from "../..
       NgIf,
       ReactiveFormsModule,
     ],
-    selector:    "website-signed-out",
+    selector:    "app--signed-out",
     styleUrls:   [
       "./SignedOutComponent.sass",
     ],

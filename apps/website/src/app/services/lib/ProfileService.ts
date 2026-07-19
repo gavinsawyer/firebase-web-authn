@@ -1,5 +1,5 @@
 /*
- * Copyright © 2025 Gavin Sawyer. All rights reserved.
+ * Copyright © 2026 Gavin William Sawyer. All rights reserved.
  */
 
 import { isPlatformBrowser }                                                                        from "@angular/common";
@@ -11,9 +11,7 @@ import { catchError, map, Observable, type Observer, of, startWith, switchMap, t
 import { type ProfileDocument }                                                                     from "../../interfaces";
 
 
-@Injectable({
-              providedIn: "root",
-            })
+@Injectable({ providedIn: "root" })
 export class ProfileService {
 
   private readonly auth: Auth           = inject<Auth>(Auth);
@@ -47,9 +45,7 @@ export class ProfileService {
         ) : of<ProfileDocument | null>(null),
       ),
     ),
-    {
-      requireSync: true,
-    },
+    { requireSync: true },
   ) : signal<ProfileDocument | null>(null);
 
 }

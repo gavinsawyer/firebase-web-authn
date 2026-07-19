@@ -1,5 +1,5 @@
 /*
- * Copyright © 2025 Gavin Sawyer. All rights reserved.
+ * Copyright © 2026 Gavin William Sawyer. All rights reserved.
  */
 
 import { type FunctionResponse } from "@firebase-web-authn/types";
@@ -19,7 +19,7 @@ export class FirebaseWebAuthnError
   extends Error {
 
   /**
-   * FirebaseError["message"] | "No user is signed in." | "No user document was found in Firestore." | "No operation is needed." | "User not verified." | "User doc is missing challenge field from prior operation." | "User doc is missing passkey fields from prior operation."
+   * FirebaseError["message"] | "No user is signed in." | "No user document was found in Firestore." | "No operation is needed." | "User not verified." | "User document is missing challenge field from prior operation." | "User document is missing passkey fields from prior operation."
    */
   public override readonly message!: FirebaseWebAuthnErrorOptions["message"];
   public override readonly name!: string;

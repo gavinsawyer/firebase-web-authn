@@ -1,15 +1,14 @@
 /*
- * Copyright © 2025 Gavin Sawyer. All rights reserved.
+ * Copyright © 2026 Gavin William Sawyer. All rights reserved.
  */
 
-import { type FunctionRequest, type FunctionResponse, type WebAuthnUserCredentialFactor } from "@firebase-web-authn/types";
-import { startAuthentication }                                                            from "@simplewebauthn/browser";
-import { type AuthenticationResponseJSON }                                                from "@simplewebauthn/types";
-import { type Auth }                                                                      from "firebase/auth";
-import { type Functions, httpsCallableFromURL, type HttpsCallableResult }                 from "firebase/functions";
-import { clearChallenge }                                                                 from "./clearChallenge.js";
-import { FirebaseWebAuthnError }                                                          from "./FirebaseWebAuthnError.js";
-import { handleVerifyFunctionResponse }                                                   from "./handleVerifyFunctionResponse.js";
+import { type FunctionRequest, type FunctionResponse, type WebAuthnUserCredentialFactor }      from "@firebase-web-authn/types";
+import { type AuthenticationResponseJSON, startAuthentication }                                from "@simplewebauthn/browser";
+import { type Auth }                                                                           from "firebase/auth";
+import { type Functions, type FunctionsError, httpsCallableFromURL, type HttpsCallableResult } from "firebase/functions";
+import { clearChallenge }                                                                      from "./clearChallenge";
+import { FirebaseWebAuthnError }                                                               from "./FirebaseWebAuthnError";
+import { handleVerifyFunctionResponse }                                                        from "./handleVerifyFunctionResponse";
 
 
 /**
@@ -48,22 +47,20 @@ export const verifyUserWithPasskey: (
     reauthenticatingCredential: factor,
   },
 ).then<void, never>(
-  ({ data: functionResponse }: HttpsCallableResult<FunctionResponse>): Promise<void> => "requestOptions" in functionResponse ? startAuthentication(functionResponse.requestOptions).then<void, never>(
+  ({ data: functionResponse }: HttpsCallableResult<FunctionResponse>): Promise<void> => "requestOptions" in functionResponse ? startAuthentication({ optionsJSON: functionResponse.requestOptions }).then<void, never>(
     (authenticationResponse: AuthenticationResponseJSON): Promise<void> => httpsCallableFromURL<FunctionRequest, FunctionResponse>(
       functions,
       "/firebase-web-authn-api",
     )(
       {
-        authenticationResponse: authenticationResponse,
-        operation:              "verify reauthentication",
+        authenticationResponse,
+        operation: "verify reauthentication",
       },
     ).then<void>(
       ({ data: functionResponse }: HttpsCallableResult<FunctionResponse>): Promise<void> => handleVerifyFunctionResponse(
         auth,
         functionResponse,
-      ).then<void>(
-        (): void => void (0),
-      ),
+      ).then<void>((): void => void (0)),
     ),
     (): Promise<never> => clearChallenge(functions).then<never>(
       (): never => {
@@ -87,14 +84,14 @@ export const verifyUserWithPasskey: (
       },
     );
   })(),
-  (firebaseError): never => {
+  (functionsError: FunctionsError): never => {
     throw new FirebaseWebAuthnError(
       {
-        code:      firebaseError.code.replace(
+        code:      functionsError.code.replace(
           "firebaseWebAuthn/",
           "",
         ),
-        message:   firebaseError.message || "An unknown error occured.",
+        message:   functionsError.message || "An unknown error occured.",
         method:    "httpsCallableFromURL",
         operation: "create reauthentication challenge",
       },

@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="gavinsawyer" pattern="file[firebase-web-authn]:*/&amp;&amp;!file:.firebaserc&amp;&amp;!file:.npmrc&amp;&amp;!file:.service-account.json&amp;&amp;!file:package-lock.json" />
+</component>

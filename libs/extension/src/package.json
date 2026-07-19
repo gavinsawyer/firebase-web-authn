@@ -3,7 +3,7 @@
   "homepage":     "https://firebase-web-authn.dev",
   "license":      "Apache-2.0",
   "author":       {
-    "name":  "Gavin Sawyer",
+    "name":  "Gavin William Sawyer",
     "email": "g@vinsawyer.us",
     "url":   "https://gavinsawyer.us"
   },
@@ -17,7 +17,7 @@
   "private":      true,
   "engines":      { "node": "22" },
   "dependencies": {
-    "@simplewebauthn/server": "^9",
-    "firebase-functions":     "^7"
+    "@simplewebauthn/server": "13",
+    "firebase-functions":     "7"
   }
 }

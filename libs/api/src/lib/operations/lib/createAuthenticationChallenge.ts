@@ -1,10 +1,9 @@
 /*
- * Copyright © 2025 Gavin Sawyer. All rights reserved.
+ * Copyright © 2026 Gavin William Sawyer. All rights reserved.
  */
 
 import { type FunctionResponse, type WebAuthnUserCredentialFactor, type WebAuthnUserDocument } from "@firebase-web-authn/types";
-import { generateAuthenticationOptions }                                                       from "@simplewebauthn/server";
-import { type PublicKeyCredentialRequestOptionsJSON }                                          from "@simplewebauthn/types";
+import { generateAuthenticationOptions, type PublicKeyCredentialRequestOptionsJSON }           from "@simplewebauthn/server";
 import { type FirebaseError }                                                                  from "firebase-admin";
 import { type DocumentReference, FieldValue }                                                  from "firebase-admin/firestore";
 
@@ -12,9 +11,9 @@ import { type DocumentReference, FieldValue }                                   
 interface CreateAuthenticationChallengeOptions {
   authenticatingCredential?: WebAuthnUserCredentialFactor;
   authenticationOptions: {
-    attestationType: AttestationConveyancePreference
-    rpID: string
-    supportedAlgorithmIDs: COSEAlgorithmIdentifier[]
+    attestationType: AttestationConveyancePreference;
+    rpID: string;
+    supportedAlgorithmIDs: COSEAlgorithmIdentifier[];
   };
   webAuthnUserDocumentReference: DocumentReference<WebAuthnUserDocument>;
 }
@@ -28,9 +27,7 @@ export const createAuthenticationChallenge: (options: CreateAuthenticationChalle
         value:                publicKeyCredentialRequestOptionsJSON.challenge,
       },
     },
-    {
-      merge: true,
-    },
+    { merge: true },
   ).then<FunctionResponse, FunctionResponse>(
     (): FunctionResponse => ({
       authenticatingCredential: options.authenticatingCredential,

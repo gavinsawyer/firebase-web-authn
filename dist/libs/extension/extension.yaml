@@ -1,61 +1,61 @@
-name: firebase-web-authn
-version: 10.4.4
-specVersion: v1beta
-icon: icon.png
+name:            firebase-web-authn
+version:         10.4.5
+specVersion:     v1beta
+icon:            icon.png
 
-displayName: Authenticate with WebAuthn
-description: Adds support for biometrics as a primary or multi-factor auth provider using WebAuthn passkeys.
+displayName:     Authenticate with WebAuthn
+description:     Adds support for biometrics as a primary or multi-factor auth provider using WebAuthn passkeys.
 tags: [ utilities ]
 
-license: Apache-2.0
+license:         Apache-2.0
 
-sourceUrl: https://github.com/gavinsawyer/firebase-web-authn/tree/main/dist/libs/extension
+sourceUrl:       https://github.com/gavinsawyer/firebase-web-authn/tree/main/dist/libs/extension
 releaseNotesUrl: https://github.com/gavinsawyer/firebase-web-authn/blob/main/dist/libs/extension/CHANGELOG.md
 
 author:
-  authorName: Gavin Sawyer
-  email: g@vinsawyer.us
-  url: https://gavinsawyer.us
+  authorName: Gavin William Sawyer
+  email:      g@vinsawyer.us
+  url:        https://gavinsawyer.us
 
 billingRequired: true
 
 apis:
   - apiName: iamcredentials.googleapis.com
-    reason: Needed for a custom auth provider to create user authentication tokens.
+    reason:  Needed for a custom auth provider to create user authentication tokens.
 
 roles:
-  - role: datastore.user
+  - role:   datastore.user
     reason: Allows the extension to write updates to the database where public keys are stored.
 
 resources:
-  - name: api
-    type: firebaseextensions.v1beta.function
+  - name:        api
+    type:        firebaseextensions.v1beta.function
     description: >-
-      Registers and authenticates WebAuthn passkeys, manages public key credentials in Firestore, and cleans up data if the user cancels a process or unlinks a passkey.
+                 Registers and authenticates WebAuthn passkeys, manages public key credentials in Firestore, and cleans up data if the user cancels a process or unlinks a passkey.
     properties:
-      httpsTrigger: {}
-      location: ${param:LOCATION}
-      runtime: nodejs22
+      httpsTrigger: { }
+      location:        ${param:LOCATION}
+      runtime:         nodejs22
       sourceDirectory: src
 
 params:
-  - param: RELYING_PARTY_NAME
+  - param:       RELYING_PARTY_NAME
     description: >-
-      What relying party name would you like to use? This appears in the passkey window in some browsers in place of your domain name.
-    label: Relying Party Name
-    required: true
-    type: string
-  - param: RELYING_PARTY_ID
+                 What relying party name would you like to use? This appears in the passkey window in some browsers in place of your domain name.
+    label:       Relying Party Name
+    required:    true
+    type:        string
+  - param:       RELYING_PARTY_ID
     description: >-
-      What (optional) relying party ID would you like to use? Default behavior uses the hostname of origin, i.e. "login.example.com" when the origin is "https://login.example.com:3000." This is for use (1.) in mobile apps without a domain–provide any domain you control in order to avoid phishing from fraudulent web-based logins–or (2.) to increase passkeys' scope when hosting the app on a subdomain–provide the highest level of domain you control.
-    label: Relying Party ID
-    type: string
-  - param: LOCATION
-    default: us-central1
+                 What (optional) relying party ID would you like to use? Default behavior uses the hostname of origin, i.e. "login.example.com" when the origin is "https://login.example.com:3000." This is for use (1.) in mobile apps without a domain–provide any domain you control in order to avoid phishing from fraudulent web-based logins–or (2.) to increase passkeys' scope when hosting the app on a subdomain–provide the highest level of domain you control.
+    label:       Relying Party ID
+    type:        string
+  - param:       LOCATION
+    default:     us-central1
     description: >-
-      Where do you want to deploy the functions created for this extension? You usually want a location close to your database. For help selecting a location, refer to the [location selection guide](https://firebase.google.com/docs/functions/locations).
-    immutable: true
-    label: Cloud Functions Location
+                 Where do you want to deploy the functions created for this extension? You usually want a location close to your database. For help selecting a location, refer to the [location selection guide](https://firebase.google.com/docs/functions/locations).
+    immutable:   true
+    label:       Cloud Functions Location
     options:
       - label: Iowa (us-central1) (Low carbon emissions)
         value: us-central1
@@ -101,13 +101,13 @@ params:
         value: asia-south1
       - label: Sydney (australia-southeast1) (Tier 2 pricing)
         value: australia-southeast1\
-    required: true
-    type: select
-  - param: AUTHENTICATOR_ATTACHMENT
-    default: any
+    required:    true
+    type:        select
+  - param:       AUTHENTICATOR_ATTACHMENT
+    default:     any
     description: >-
-      What (optional) [authenticator attachment](https://www.w3.org/TR/webauthn-2/#enum-attachment) for primary passkeys would you like to use? "Cross-platform" only allows physical security keys. "Platform" only allows passkey managers. Default behavior is "Any" which allows either.
-    label: Authenticator Attachment
+                 What (optional) [authenticator attachment](https://www.w3.org/TR/webauthn-2/#enum-attachment) for primary passkeys would you like to use? "Cross-platform" only allows physical security keys. "Platform" only allows passkey managers. Default behavior is "Any" which allows either.
+    label:       Authenticator Attachment
     options:
       - label: Any
         value: any
@@ -115,25 +115,25 @@ params:
         value: platform
       - label: Cross-platform
         value: cross-platform
-    required: true
-    type: select
-  - param: AUTHENTICATOR_ATTACHMENT_2FA
-    default: cross-platform
+    required:    true
+    type:        select
+  - param:       AUTHENTICATOR_ATTACHMENT_2FA
+    default:     cross-platform
     description: >-
-      What (optional) [authenticator attachment](https://www.w3.org/TR/webauthn-2/#enum-attachment) for secondary passkeys would you like to use? Default behavior is "Cross-platform" which only allows physical security keys to be used for 2FA. This should differ from the previous setting as it is intended to be a fail-safe.
-    label: Authenticator Attachment for Secondary Passkeys (2FA)
+                 What (optional) [authenticator attachment](https://www.w3.org/TR/webauthn-2/#enum-attachment) for secondary passkeys would you like to use? Default behavior is "Cross-platform" which only allows physical security keys to be used for 2FA. This should differ from the previous setting as it is intended to be a fail-safe.
+    label:       Authenticator Attachment for Secondary Passkeys (2FA)
     options:
       - label: Cross-platform
         value: cross-platform
       - label: Platform
         value: platform
-    required: true
-    type: select
-  - param: USER_VERIFICATION_REQUIREMENT
-    default: preferred
+    required:    true
+    type:        select
+  - param:       USER_VERIFICATION_REQUIREMENT
+    default:     preferred
     description: >-
-      What (optional) [user verification requirement](https://www.w3.org/TR/webauthn/#enumdef-userverificationrequirement) would you like to use? Default behavior is "Preferred" which requests user verification when possible. "Required" requests user verification and fails if it is not provided, but does not apply with Authenticator Attachment set to "Cross-platform" since user verification isn't possible with physical security keys. If Authenticator Attachment for Secondary Passkeys (2FA) is set to "Cross-platform," "Required" will not apply to secondary passkeys. "Discouraged" requests skipping user verification to speed up the interaction. See [User Presence vs. User Verification](https://developers.yubico.com/WebAuthn/WebAuthn_Developer_Guide/User_Presence_vs_User_Verification.html).
-    label: User Verification Requirement
+                 What (optional) [user verification requirement](https://www.w3.org/TR/webauthn/#enumdef-userverificationrequirement) would you like to use? Default behavior is "Preferred" which requests user verification when possible. "Required" requests user verification and fails if it is not provided, but does not apply with Authenticator Attachment set to "Cross-platform" since user verification isn't possible with physical security keys. If Authenticator Attachment for Secondary Passkeys (2FA) is set to "Cross-platform," "Required" will not apply to secondary passkeys. "Discouraged" requests skipping user verification to speed up the interaction. See [User Presence vs. User Verification](https://developers.yubico.com/WebAuthn/WebAuthn_Developer_Guide/User_Presence_vs_User_Verification.html).
+    label:       User Verification Requirement
     options:
       - label: Required
         value: required
@@ -141,5 +141,5 @@ params:
         value: preferred
       - label: Discouraged
         value: discouraged
-    required: true
-    type: select
+    required:    true
+    type:        select

@@ -1,31 +1,17 @@
 <!--
-  ~ Copyright © 2025 Gavin Sawyer. All rights reserved.
+  ~ Copyright © 2026 Gavin William Sawyer. All rights reserved.
   -->
 
 <section>
-  <h1>
-    FirebaseWebAuthn Demo
-  </h1>
-  <p *ngIf="!hasWebAuthn$()">
-    Please use a <a href="https://caniuse.com/webauthn">browser that supports WebAuthn</a>.
-  </p>
-  <p *ngIf="!authenticationService.user$()">
-    Initializing Firebase Auth{{ ellipsesService.ellipses$() }}
-  </p>
-  <p *ngIf="authenticationService.user$()?.isAnonymous === true">
-    Input any username to get started or sign in with an existing passkey.
-  </p>
+  <h1>FirebaseWebAuthn Demo</h1>
+  <p *ngIf="!hasWebAuthn$()">Please use a <a href="https://caniuse.com/webauthn">browser that supports WebAuthn</a>.</p>
+  <p *ngIf="!authenticationService.user$()">Initializing Firebase Auth{{ ellipsesService.ellipses$() }}</p>
+  <p *ngIf="authenticationService.user$()?.isAnonymous === true">Input any username to get started or sign in with an existing passkey.</p>
   <ng-container *ngIf="authenticationService.user$()?.isAnonymous === false">
-    <p>
-      You're in!
-    </p>
-    <p>
-      Next, try creating another account to see WebAuthn's built-in account switcher, linking a backup security key, or re-verifing your identity.
-    </p>
+    <p>You're in!</p>
+    <p>Next, try creating another account to see WebAuthn's built-in account switcher, linking a backup security key, or re-verifing your identity.</p>
   </ng-container>
-  <p>
-    <a routerLink="/privacy">Privacy&nbsp;<mat-icon
-      class="material-symbols-rounded"
-      inline="inline">info</mat-icon></a>
-  </p>
+  <p><a routerLink="/privacy">Privacy&nbsp;<mat-icon
+    class="material-symbols-rounded"
+    inline="inline">info</mat-icon></a></p>
 </section>

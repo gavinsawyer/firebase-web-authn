@@ -10,7 +10,7 @@ Document in the `users` collection of the `ext-firebase-web-authn` Firestore Dat
 
 **(This should not have read or write access from users.)**
 ```ts
-import { WebAuthnUserDocument } from "@firebase-web-authn/types";
+import { type WebAuthnUserDocument } from "@firebase-web-authn/types";
 ```
 ```ts
 interface WebAuthnUserDocument {
@@ -27,7 +27,7 @@ interface WebAuthnUserDocument {
 ### WebAuthnUserCredential
 Information about the public key credential associated with the user
 ```ts
-import { WebAuthnUserCredential } from "@firebase-web-authn/types";
+import { type WebAuthnUserCredential } from "@firebase-web-authn/types";
 ```
 ```ts
 export interface WebAuthnUserCredential {
@@ -41,7 +41,7 @@ export interface WebAuthnUserCredential {
 ### WebAuthnUserCredentialFactor
 The authentication factor associated with the credential
 ```ts
-import { WebAuthnUserCredentialFactor } from "@firebase-web-authn/types";
+import { type WebAuthnUserCredentialFactor } from "@firebase-web-authn/types";
 ```
 ```ts
 type WebAuthnUserCredentialFactor = "first" | "second"
@@ -49,7 +49,7 @@ type WebAuthnUserCredentialFactor = "first" | "second"
 ### WebAuthnProcess
 The WebAuthn process associated with operations and related cryptographic challenges
 ```ts
-import { WebAuthnProcess } from "@firebase-web-authn/types";
+import { type WebAuthnProcess } from "@firebase-web-authn/types";
 ```
 ```ts
 type WebAuthnProcess = "authentication" | "reauthentication" | "registration"

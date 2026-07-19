@@ -1,12 +1,12 @@
 /*
- * Copyright © 2025 Gavin Sawyer. All rights reserved.
+ * Copyright © 2026 Gavin William Sawyer. All rights reserved.
  */
 
-import { type FunctionResponse, type WebAuthnUserDocument }                     from "@firebase-web-authn/types";
-import { type VerifiedRegistrationResponse, verifyRegistrationResponse }        from "@simplewebauthn/server";
-import { type RegistrationResponseJSON }                                        from "@simplewebauthn/types";
-import { type FirebaseError }                                                   from "firebase-admin";
-import { type DocumentReference, type DocumentSnapshot, FieldValue, Timestamp } from "firebase-admin/firestore";
+import { type FunctionResponse, type WebAuthnUserDocument }                                             from "@firebase-web-authn/types";
+import { type RegistrationResponseJSON, type VerifiedRegistrationResponse, verifyRegistrationResponse } from "@simplewebauthn/server";
+import { isoBase64URL }                                                                                 from "@simplewebauthn/server/helpers";
+import { type FirebaseError }                                                                           from "firebase-admin";
+import { type DocumentReference, type DocumentSnapshot, FieldValue, Timestamp }                         from "firebase-admin/firestore";
 
 
 interface VerifyRegistrationOptions {
@@ -14,9 +14,9 @@ interface VerifyRegistrationOptions {
   authenticatorAttachment2FA?: AuthenticatorAttachment;
   createCustomToken: () => Promise<string>;
   registrationOptions: {
-    expectedOrigin: string
-    expectedRPID: string
-    response: RegistrationResponseJSON
+    expectedOrigin: string;
+    expectedRPID: string;
+    response: RegistrationResponseJSON;
   };
   userVerificationRequirement?: UserVerificationRequirement;
   webAuthnUserDocumentReference: DocumentReference<WebAuthnUserDocument>;
@@ -37,9 +37,9 @@ export const verifyRegistration: (options: VerifyRegistrationOptions) => Promise
           [userDocument.challenge?.processingCredential === "second" ? "credentials.second" : "credentials.first"]: {
             authenticatorAttachment: verifiedRegistrationResponse.registrationInfo?.credentialDeviceType === "multiDevice" ? "platform" : "cross-platform",
             backedUp:                verifiedRegistrationResponse.registrationInfo?.credentialBackedUp,
-            counter:                 verifiedRegistrationResponse.registrationInfo?.counter,
-            id:                      verifiedRegistrationResponse.registrationInfo?.credentialID,
-            publicKey:               verifiedRegistrationResponse.registrationInfo?.credentialPublicKey,
+            counter:                 verifiedRegistrationResponse.registrationInfo?.credential.counter,
+            id:                      isoBase64URL.toBuffer(verifiedRegistrationResponse.registrationInfo?.credential.id),
+            publicKey:               verifiedRegistrationResponse.registrationInfo?.credential.publicKey || new Uint8Array(),
           },
           lastCredentialUsed:                                                                                       userDocument.challenge?.processingCredential || "first",
           lastPresent:                                                                                              Timestamp.fromDate(new Date()),
@@ -66,11 +66,7 @@ export const verifyRegistration: (options: VerifyRegistrationOptions) => Promise
         operation: "verify reauthentication",
         success:   false,
       }),
-    ) : (userDocument.credentials ? options.webAuthnUserDocumentReference.update(
-      {
-        challenge: FieldValue.delete(),
-      },
-    ) : options.webAuthnUserDocumentReference.delete()).then<FunctionResponse, FunctionResponse>(
+    ) : (userDocument.credentials ? options.webAuthnUserDocumentReference.update({ challenge: FieldValue.delete() }) : options.webAuthnUserDocumentReference.delete()).then<FunctionResponse, FunctionResponse>(
       (): FunctionResponse => ({
         code:      "not-verified",
         message:   "User not verified.",
@@ -87,7 +83,7 @@ export const verifyRegistration: (options: VerifyRegistrationOptions) => Promise
   ) : options.webAuthnUserDocumentReference.delete().then<FunctionResponse, FunctionResponse>(
     (): FunctionResponse => ({
       code:      "user-doc-missing-passkey-fields",
-      message:   "User doc is missing passkey fields from prior operation.",
+      message:   "User document is missing passkey fields from prior operation.",
       operation: "verify registration",
       success:   false,
     }),
@@ -99,13 +95,13 @@ export const verifyRegistration: (options: VerifyRegistrationOptions) => Promise
     }),
   ) : userDocument.credentials?.first ? {
     code:      "user-doc-missing-challenge-field",
-    message:   "User doc is missing challenge field from prior operation.",
+    message:   "User document is missing challenge field from prior operation.",
     operation: "verify registration",
     success:   false,
   } : options.webAuthnUserDocumentReference.delete().then<FunctionResponse, FunctionResponse>(
     (): FunctionResponse => ({
       code:      "user-doc-missing-challenge-field",
-      message:   "User doc is missing challenge field from prior operation.",
+      message:   "User document is missing challenge field from prior operation.",
       operation: "verify registration",
       success:   false,
     }),

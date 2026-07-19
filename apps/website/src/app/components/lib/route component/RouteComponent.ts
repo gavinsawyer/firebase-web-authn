@@ -1,15 +1,15 @@
 /*
- * Copyright © 2025 Gavin Sawyer. All rights reserved.
+ * Copyright © 2026 Gavin William Sawyer. All rights reserved.
  */
 
-import { Component, inject, Input, OnInit } from "@angular/core";
-import { Meta }                             from "@angular/platform-browser";
+import { ChangeDetectionStrategy, Component, inject, input, type InputSignal, OnInit } from "@angular/core";
+import { Meta }                                                                        from "@angular/platform-browser";
 
 
 @Component(
   {
-    selector: "website-route",
-    template: "",
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    template:        "",
 
     standalone: true,
   },
@@ -17,17 +17,15 @@ import { Meta }                             from "@angular/platform-browser";
 export class RouteComponent
   implements OnInit {
 
-  @Input({
-           required: true,
-         }) private readonly description!: string;
-
   private readonly meta: Meta = inject<Meta>(Meta);
 
-  ngOnInit(): void {
+  public readonly descriptionInput$: InputSignal<string> = input.required<string>({ alias: "description" });
+
+  public ngOnInit(): void {
     this.meta.updateTag(
       {
-        "name":    "description",
-        "content": this.description,
+        name:    "description",
+        content: this.descriptionInput$(),
       },
     );
   }

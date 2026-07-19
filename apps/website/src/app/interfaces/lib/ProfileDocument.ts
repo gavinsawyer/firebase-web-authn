@@ -1,7 +1,7 @@
 /*
- * Copyright © 2025 Gavin Sawyer. All rights reserved.
+ * Copyright © 2026 Gavin William Sawyer. All rights reserved.
  */
 
 export interface ProfileDocument {
-  "name": string,
+  "name": string;
 }

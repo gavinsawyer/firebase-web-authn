@@ -1,5 +1,5 @@
 /*
- * Copyright © 2025 Gavin Sawyer. All rights reserved.
+ * Copyright © 2026 Gavin William Sawyer. All rights reserved.
  */
 
 import { isPlatformBrowser }                                                                                            from "@angular/common";
@@ -8,17 +8,13 @@ import { toSignal }                                                             
 import { Auth, onIdTokenChanged, signInAnonymously, type User, type UserCredential }                                    from "@angular/fire/auth";
 import { Functions }                                                                                                    from "@angular/fire/functions";
 import { MatSnackBar }                                                                                                  from "@angular/material/snack-bar";
-import { createUserWithPasskey, type FirebaseWebAuthnError, linkWithPasskey, signInWithPasskey, verifyUserWithPasskey } from "dist/libs/browser";
+import { createUserWithPasskey, type FirebaseWebAuthnError, linkWithPasskey, signInWithPasskey, verifyUserWithPasskey } from "@firebase-web-authn/browser";
 import { Observable, type Observer, startWith, type TeardownLogic }                                                     from "rxjs";
 import { type ProfileDocument }                                                                                         from "../../interfaces";
 import { ProfileService }                                                                                               from "./ProfileService";
 
 
-@Injectable(
-  {
-    providedIn: "root",
-  },
-)
+@Injectable({ providedIn: "root" })
 export class AuthenticationService {
 
   private readonly auth: Auth                     = inject<Auth>(Auth);
@@ -30,20 +26,10 @@ export class AuthenticationService {
     new Observable<User | null>(
       (userObserver: Observer<User | null>): TeardownLogic => onIdTokenChanged(
         this.auth,
-        async (user: User | null): Promise<void> => user === null ? signInAnonymously(
-          this.auth,
-        ).then<void>(
-          (userCredential: UserCredential): void => userObserver.next(
-            userCredential.user,
-          ),
-        ) : userObserver.next(user),
+        async (user: User | null): Promise<void> => user === null ? signInAnonymously(this.auth).then<void>((userCredential: UserCredential): void => userObserver.next(userCredential.user)) : userObserver.next(user),
       ),
-    ).pipe<User | null>(
-      startWith<User | null, [ User | null ]>(this.auth.currentUser),
-    ),
-    {
-      requireSync: true,
-    },
+    ).pipe<User | null>(startWith<User | null, [ User | null ]>(this.auth.currentUser)),
+    { requireSync: true },
   ) : signal<User | null>(null);
   public readonly createUserWithPasskey: (name: string) => Promise<void> = (name: string): Promise<void> => createUserWithPasskey(
     this.auth,

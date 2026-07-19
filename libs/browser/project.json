@@ -1,43 +1,49 @@
 {
   "$schema":     "../../node_modules/nx/schemas/project-schema.json",
+
   "name":        "browser",
   "projectType": "library",
   "sourceRoot":  "libs/browser/src",
+
   "targets":     {
-    "eslint": {
-      "executor": "@nx/eslint:lint",
-      "options":  {
-        "lintFilePatterns": [
-          "libs/browser/src/**/*.ts"
-        ]
-      }
-    },
-    "tsc":    {
-      "dependsOn": [
-        "eslint"
-      ],
-      "executor":  "@nx/js:tsc",
+    "build": {
+      "dependsOn": [ "lint" ],
+      "executor":  "@nx/esbuild:esbuild",
       "options":   {
-        "assets":     [
+        "assets":         [
           {
             "glob":   "README.md",
             "input":  "libs/browser",
             "output": "."
           }
         ],
-        "main":       "libs/browser/src/index.ts",
-        "outputPath": "dist/libs/browser",
-        "tsConfig":   "libs/browser/tsconfig.lib.json"
+        "declaration":    true,
+        "esbuildOptions": {
+          "banner": {
+            "css": "/*!\n / Copyright © 2026 Gavin William Sawyer. All rights reserved.\n /\n",
+            "js":  "/*\n * Copyright © 2026 Gavin William Sawyer. All rights reserved.\n */\n"
+          }
+        },
+        "external":       [ "@firebase-web-authn/*" ],
+        "main":           "libs/browser/src/index.ts",
+        "metafile":       true,
+        "minify":         true,
+        "outputPath":     "dist/libs/browser",
+        "platform":       "browser",
+        "splitting":      true,
+        "treeShaking":    true,
+        "tsConfig":       "libs/browser/tsconfig.lib.json"
       },
-      "outputs":   [
-        "{options.outputPath}"
-      ]
+      "outputs":   [ "{workspaceRoot}/dist/libs/browser" ]
     },
-    "build":  {
-      "dependsOn": [
-        "tsc"
-      ],
-      "executor":  "nx:noop"
+    "lint":  {
+      "executor": "@nx/eslint:lint",
+      "options":  {
+        "lintFilePatterns": [
+          "libs/browser/package.json",
+          "libs/browser/src/**/*.ts"
+        ]
+      }
     }
   }
 }

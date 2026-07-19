@@ -1,5 +1,5 @@
 /*
- * Copyright © 2025 Gavin Sawyer. All rights reserved.
+ * Copyright © 2026 Gavin William Sawyer. All rights reserved.
  */
 
 const { configs }    = require("@eslint/js");
@@ -61,6 +61,27 @@ module.exports = [
     }),
   ),
   {
+    files:           [ "**/*.json" ],
+    languageOptions: { parser: require("jsonc-eslint-parser") },
+    rules:           {
+      "@nx/dependency-checks": [
+        "error",
+        {
+          buildTargets:        [ "build", "build--cloud-functions" ],
+          ignoredDependencies: [
+            "@firebase-web-authn/api",
+            "@firebase-web-authn/browser",
+            "@firebase-web-authn/extension",
+            "@firebase-web-authn/server",
+            "@firebase-web-authn/types",
+            "firebase-admin",
+            "firebase-functions",
+          ],
+        },
+      ],
+    },
+  },
+  {
     files: [ "**/*.ts" ],
     rules: {
       "@angular-eslint/no-input-rename":  [ "off" ],
@@ -81,37 +102,27 @@ module.exports = [
     },
   },
   {
-    files: [ "apps/website/src/app/components/lib/**/*.ts" ],
+    files: [ "apps/**/*.ts" ],
     rules: {
       "@angular-eslint/component-selector": [
         "error",
         {
-          prefix: "website",
+          prefix: "app-",
           style:  "kebab-case",
           type:   "element",
         },
       ],
-    },
-  },
-  {
-    files: [ "apps/website/src/app/directives/lib/**/*.ts" ],
-    rules: {
       "@angular-eslint/directive-selector": [
         "error",
         {
-          prefix: "website",
+          prefix: "app",
           style:  "camelCase",
           type:   "attribute",
         },
       ],
-    },
-  },
-  {
-    files: [ "apps/website/src/app/pipes/src/lib/**/*.ts" ],
-    rules: {
-      "@angular-eslint/pipe-prefix": [
+      "@angular-eslint/pipe-prefix":        [
         "error",
-        { prefixes: [ "website" ] },
+        { prefixes: [ "app" ] },
       ],
     },
   },

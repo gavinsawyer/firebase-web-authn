@@ -1,9 +1,9 @@
 /*
- * Copyright © 2025 Gavin Sawyer. All rights reserved.
+ * Copyright © 2026 Gavin William Sawyer. All rights reserved.
  */
 
-import { type AuthenticationResponseJSON, type RegistrationResponseJSON } from "@simplewebauthn/types";
-import { type WebAuthnUserCredentialFactor }                              from "./WebAuthnUserCredentialFactor.js";
+import { type AuthenticationResponseJSON, type RegistrationResponseJSON } from "@simplewebauthn/server";
+import { type WebAuthnUserCredentialFactor }                              from "./WebAuthnUserCredentialFactor";
 
 
 interface UnknownFunctionRequest {

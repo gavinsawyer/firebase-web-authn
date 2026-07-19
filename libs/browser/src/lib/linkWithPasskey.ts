@@ -1,15 +1,14 @@
 /*
- * Copyright © 2025 Gavin Sawyer. All rights reserved.
+ * Copyright © 2026 Gavin William Sawyer. All rights reserved.
  */
 
-import { type FunctionRequest, type FunctionResponse, type WebAuthnUserCredentialFactor } from "@firebase-web-authn/types";
-import { startRegistration }                                                              from "@simplewebauthn/browser";
-import { type RegistrationResponseJSON }                                                  from "@simplewebauthn/types";
-import { type Auth, type UserCredential }                                                 from "firebase/auth";
-import { type Functions, httpsCallableFromURL, type HttpsCallableResult }                 from "firebase/functions";
-import { clearChallenge }                                                                 from "./clearChallenge.js";
-import { FirebaseWebAuthnError }                                                          from "./FirebaseWebAuthnError.js";
-import { handleVerifyFunctionResponse }                                                   from "./handleVerifyFunctionResponse.js";
+import { type FunctionRequest, type FunctionResponse, type WebAuthnUserCredentialFactor }      from "@firebase-web-authn/types";
+import { type RegistrationResponseJSON, startRegistration }                                    from "@simplewebauthn/browser";
+import { type Auth, type UserCredential }                                                      from "firebase/auth";
+import { type Functions, type FunctionsError, httpsCallableFromURL, type HttpsCallableResult } from "firebase/functions";
+import { clearChallenge }                                                                      from "./clearChallenge";
+import { FirebaseWebAuthnError }                                                               from "./FirebaseWebAuthnError";
+import { handleVerifyFunctionResponse }                                                        from "./handleVerifyFunctionResponse";
 
 
 /**
@@ -42,41 +41,33 @@ export const linkWithPasskey: (
   "/firebase-web-authn-api",
 )(
   {
-    name:                  name,
+    name,
     operation:             "create registration challenge",
     registeringCredential: factor || "first",
   },
 ).then<UserCredential, never>(
-  ({ data: functionResponse }: HttpsCallableResult<FunctionResponse>): Promise<UserCredential> => "creationOptions" in functionResponse ? startRegistration(
-    {
-      ...functionResponse.creationOptions,
-      user: {
-        ...functionResponse.creationOptions.user,
-        id: functionResponse.creationOptions.user.id, // expecting string, actually uint8array :(
-      },
-    },
-  ).then<UserCredential, never>(
+  ({ data: functionResponse }: HttpsCallableResult<FunctionResponse>): Promise<UserCredential> => "creationOptions" in functionResponse ? startRegistration({ optionsJSON: functionResponse.creationOptions }).then<UserCredential, never>(
     (registrationResponse: RegistrationResponseJSON): Promise<UserCredential> => httpsCallableFromURL<FunctionRequest, FunctionResponse>(
       functions,
       "/firebase-web-authn-api",
     )(
       {
-        registrationResponse: registrationResponse,
-        operation:            "verify registration",
+        registrationResponse,
+        operation: "verify registration",
       },
     ).then<UserCredential, never>(
       ({ data: functionResponse }: HttpsCallableResult<FunctionResponse>): Promise<UserCredential> => handleVerifyFunctionResponse(
         auth,
         functionResponse,
       ),
-      (firebaseError): never => {
+      (functionsError: FunctionsError): never => {
         throw new FirebaseWebAuthnError(
           {
-            code:      firebaseError.code.replace(
+            code:      functionsError.code.replace(
               "firebaseWebAuthn/",
               "",
             ),
-            message:   firebaseError.message,
+            message:   functionsError.message,
             method:    "httpsCallableFromURL",
             operation: "verify registration",
           },
@@ -104,14 +95,14 @@ export const linkWithPasskey: (
       },
     );
   })(),
-  (firebaseError): never => {
+  (functionsError: FunctionsError): never => {
     throw new FirebaseWebAuthnError(
       {
-        code:      firebaseError.code.replace(
+        code:      functionsError.code.replace(
           "firebaseWebAuthn/",
           "",
         ),
-        message:   firebaseError.message,
+        message:   functionsError.message,
         method:    "httpsCallableFromURL",
         operation: "create registration challenge",
       },

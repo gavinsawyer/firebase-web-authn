@@ -1,5 +1,5 @@
 /*
- * Copyright © 2025 Gavin Sawyer. All rights reserved.
+ * Copyright © 2026 Gavin William Sawyer. All rights reserved.
  */
 
 import { type WebAuthnUserCredential, type WebAuthnUserCredentialFactor, type WebAuthnUserDocument } from "@firebase-web-authn/types";
@@ -25,7 +25,7 @@ export const credentials: (
   app?: App,
 ): Promise<{ [key in WebAuthnUserCredentialFactor]: WebAuthnUserCredential | null }> => ((firestore: Firestore): Promise<{ [key in WebAuthnUserCredentialFactor]: WebAuthnUserCredential | null }> => (firestore.collection("users").doc(uid) as DocumentReference<WebAuthnUserDocument>).get().then<{ [key in WebAuthnUserCredentialFactor]: WebAuthnUserCredential | null }>(
   (documentSnapshot: DocumentSnapshot<WebAuthnUserDocument>): { [key in WebAuthnUserCredentialFactor]: WebAuthnUserCredential | null } => ({
-    first: documentSnapshot.data()?.credentials?.first || null,
+    first:  documentSnapshot.data()?.credentials?.first || null,
     second: documentSnapshot.data()?.credentials?.second || null,
   }),
 ))(app ? getFirestore(

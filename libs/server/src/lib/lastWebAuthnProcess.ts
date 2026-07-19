@@ -1,5 +1,5 @@
 /*
- * Copyright © 2025 Gavin Sawyer. All rights reserved.
+ * Copyright © 2026 Gavin William Sawyer. All rights reserved.
  */
 
 import { type WebAuthnProcess, type WebAuthnUserDocument }                             from "@firebase-web-authn/types";

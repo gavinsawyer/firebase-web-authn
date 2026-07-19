@@ -6,33 +6,103 @@ on:
       - main
   pull_request:
 
-env:
-  NPM_ACCESS_TOKEN: ${{ secrets.NPM_ACCESS_TOKEN }}
+permissions:
+  id-token: write
+  contents: read
 
 jobs:
-  deploy:
+  install:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-      - id:   cache-node-modules
-        uses: actions/cache@v3
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22.22
+      - id:   cache
+        uses: actions/cache@v4
         with:
           path: node_modules
           key:  node-modules-cache-${{ hashFiles('package-lock.json') }}
-      - if:  steps.cache-node-modules.outputs.cache-hit != 'true'
+      - if:  steps.cache.outputs.cache-hit != 'true'
         run: npm ci
+  deploy--service-configs:
+    needs:   install
+    runs-on: ubuntu-latest
+    if:      github.event_name == 'push' && github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22.22
+      - uses: actions/cache@v4
+        with:
+          path: node_modules
+          key:  node-modules-cache-${{ hashFiles('package-lock.json') }}
       - id:   auth
-        uses: google-github-actions/auth@v1
+        uses: google-github-actions/auth@v2
         with:
           credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_FIR_WEB_AUTHN }}
           token_format:     access_token
-      - run: npx nx run website:deploy
+      - run: npx nx run extension:build
+        env:
+          NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
+      - run: npx firebase ext:export -f
+        env:
+          FIREBASE_SERVICE_ACCOUNT_PATH: ${{ steps.auth.outputs.credentials_file_path }}
+          FIREBASE_TOKEN:                ${{ steps.auth.outputs.access_token }}
+      - run: npx firebase deploy --only extensions,firestore,storage
+        env:
+          FIREBASE_SERVICE_ACCOUNT_PATH: ${{ steps.auth.outputs.credentials_file_path }}
+          FIREBASE_TOKEN:                ${{ steps.auth.outputs.access_token }}
+  resolve-apps:
+    runs-on: ubuntu-latest
+    outputs:
+      apps: ${{ steps.echo.outputs.apps }}
+    steps:
+      - uses: actions/checkout@v6
+      - id:  echo
+        run: echo "apps=$(jq -sc '[.[].name]' apps/*/project.json)" >> "$GITHUB_OUTPUT"
+  deploy:
+    needs: [ install, resolve-apps ]
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        project: ${{ fromJson(needs.resolve-apps.outputs.apps) }}
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22.22
+      - uses: actions/cache@v4
+        with:
+          path: node_modules
+          key:  node-modules-cache-${{ hashFiles('package-lock.json') }}
+      - id:   auth
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_FIR_WEB_AUTHN }}
+          token_format:     access_token
+      - run: npx nx run-many --target deploy --projects ${{ matrix.project }}
         env:
           APP_CHECK_TOKEN_WEBSITE:       ${{ secrets.APP_CHECK_TOKEN_WEBSITE }}
           FIREBASE_SERVICE_ACCOUNT_PATH: ${{ steps.auth.outputs.credentials_file_path }}
           FIREBASE_TOKEN:                ${{ steps.auth.outputs.access_token }}
+          NODE_OPTIONS:                  --max_old_space_size=6144
           NX_CLOUD_ACCESS_TOKEN:         ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
+  publish:
+    needs:   install
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version:          22.22
+          package-manager-cache: false
+      - run: npm install -g npm@latest
+      - uses: actions/cache@v4
+        with:
+          path: node_modules
+          key:  node-modules-cache-${{ hashFiles('package-lock.json') }}
       - run: npx nx run-many --target build --projects api,browser,extension,server,types --parallel 1
         env:
           NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}

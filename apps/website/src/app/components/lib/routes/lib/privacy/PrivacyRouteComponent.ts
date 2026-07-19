@@ -1,5 +1,5 @@
 /*
- * Copyright © 2025 Gavin Sawyer. All rights reserved.
+ * Copyright © 2026 Gavin William Sawyer. All rights reserved.
  */
 
 import { Component }      from "@angular/core";
@@ -14,7 +14,6 @@ import { RouteComponent } from "../../../../../components";
       MatIconModule,
       RouterLink,
     ],
-    selector:    "website-privacy-route",
     templateUrl: "./PrivacyRouteComponent.html",
 
     standalone: true,

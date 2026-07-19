@@ -1,5 +1,5 @@
 /*
- * Copyright © 2025 Gavin Sawyer. All rights reserved.
+ * Copyright © 2026 Gavin William Sawyer. All rights reserved.
  */
 
 import { isPlatformServer }                       from "@angular/common";
@@ -18,7 +18,6 @@ import { PathService }                            from "../../../../../services"
       MatIconModule,
       RouterLink,
     ],
-    selector:    "website-otherwise-route",
     templateUrl: "./OtherwiseRouteComponent.html",
 
     standalone: true,

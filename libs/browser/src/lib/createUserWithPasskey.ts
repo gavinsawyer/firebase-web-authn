@@ -1,11 +1,11 @@
 /*
- * Copyright © 2025 Gavin Sawyer. All rights reserved.
+ * Copyright © 2026 Gavin William Sawyer. All rights reserved.
  */
 
-import { type Auth, signInAnonymously, type UserCredential } from "firebase/auth";
-import { type Functions }                                    from "firebase/functions";
-import { FirebaseWebAuthnError }                             from "./FirebaseWebAuthnError.js";
-import { linkWithPasskey }                                   from "./linkWithPasskey.js";
+import { type Auth, type AuthError, signInAnonymously, type UserCredential } from "firebase/auth";
+import { type Functions }                                                    from "firebase/functions";
+import { FirebaseWebAuthnError }                                             from "./FirebaseWebAuthnError";
+import { linkWithPasskey }                                                   from "./linkWithPasskey";
 
 
 /**
@@ -40,15 +40,15 @@ export const createUserWithPasskey: (
     functions,
     name,
   ),
-  (firebaseError): never => {
+  (authError: AuthError): never => {
     throw new FirebaseWebAuthnError(
       {
-        code: firebaseError.code.replace(
+        code:    authError.code.replace(
           "firebaseWebAuthn/",
           "",
         ),
-        message: firebaseError.message,
-        method: "signInAnonymously",
+        message: authError.message,
+        method:  "signInAnonymously",
       },
     );
   },

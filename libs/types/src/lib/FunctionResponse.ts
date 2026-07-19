@@ -1,10 +1,10 @@
 /*
- * Copyright © 2025 Gavin Sawyer. All rights reserved.
+ * Copyright © 2026 Gavin William Sawyer. All rights reserved.
  */
 
-import { type PublicKeyCredentialCreationOptionsJSON, type PublicKeyCredentialRequestOptionsJSON } from "@simplewebauthn/types";
+import { type PublicKeyCredentialCreationOptionsJSON, type PublicKeyCredentialRequestOptionsJSON } from "@simplewebauthn/server";
 import { type FirebaseError }                                                                      from "firebase-admin";
-import { type WebAuthnUserCredentialFactor }                                                       from "./WebAuthnUserCredentialFactor.js";
+import { type WebAuthnUserCredentialFactor }                                                       from "./WebAuthnUserCredentialFactor";
 
 
 interface UnknownFunctionResponse {
@@ -20,7 +20,7 @@ interface UnknownFunctionResponseSuccessful
 interface UnknownFunctionResponseUnsuccessful
   extends UnknownFunctionResponse {
   "code": FirebaseError["code"] | "missing-auth" | "missing-user-doc" | "no-op" | "not-verified" | "user-doc-missing-challenge-field" | "user-doc-missing-passkey-fields";
-  "message": FirebaseError["message"] | "No user is signed in." | "No user document was found in Firestore." | "No operation is needed." | "User not verified." | "User doc is missing challenge field from prior operation." | "User doc is missing passkey fields from prior operation.";
+  "message": FirebaseError["message"] | "No user is signed in." | "No user document was found in Firestore." | "No operation is needed." | "User not verified." | "User document is missing challenge field from prior operation." | "User document is missing passkey fields from prior operation.";
   "success": false;
 }
 
@@ -73,7 +73,7 @@ interface CreateReauthenticationChallengeFunctionResponseSuccessful
 interface CreateReauthenticationChallengeFunctionResponseUnsuccessful
   extends UnknownFunctionResponseUnsuccessful {
   "code": FirebaseError["code"] | "missing-auth" | "missing-user-doc" | "user-doc-missing-passkey-fields";
-  "message": FirebaseError["message"] | "No user is signed in." | "No user document was found in Firestore." | "User doc is missing passkey fields from prior operation.";
+  "message": FirebaseError["message"] | "No user is signed in." | "No user document was found in Firestore." | "User document is missing passkey fields from prior operation.";
   "operation": "create reauthentication challenge";
 }
 
@@ -101,7 +101,7 @@ interface VerifyAuthenticationFunctionResponseSuccessful
 interface VerifyAuthenticationFunctionResponseUnsuccessful
   extends UnknownFunctionResponseUnsuccessful {
   "code": FirebaseError["code"] | "missing-auth" | "missing-user-doc" | "no-op" | "not-verified" | "user-doc-missing-challenge-field" | "user-doc-missing-passkey-fields";
-  "message": FirebaseError["message"] | "No user is signed in." | "No user document was found in Firestore." | "No operation is needed." | "User not verified." | "User doc is missing challenge field from prior operation." | "User doc is missing passkey fields from prior operation.";
+  "message": FirebaseError["message"] | "No user is signed in." | "No user document was found in Firestore." | "No operation is needed." | "User not verified." | "User document is missing challenge field from prior operation." | "User document is missing passkey fields from prior operation.";
   "operation": "verify authentication";
 }
 
@@ -115,7 +115,7 @@ interface VerifyReauthenticationFunctionResponseSuccessful
 interface VerifyReauthenticationFunctionResponseUnsuccessful
   extends UnknownFunctionResponseUnsuccessful {
   "code": FirebaseError["code"] | "missing-auth" | "missing-user-doc" | "not-verified" | "user-doc-missing-challenge-field" | "user-doc-missing-passkey-fields";
-  "message": FirebaseError["message"] | "No user is signed in." | "No user document was found in Firestore." | "User not verified." | "User doc is missing challenge field from prior operation." | "User doc is missing passkey fields from prior operation.";
+  "message": FirebaseError["message"] | "No user is signed in." | "No user document was found in Firestore." | "User not verified." | "User document is missing challenge field from prior operation." | "User document is missing passkey fields from prior operation.";
   "operation": "verify reauthentication";
 }
 
@@ -129,7 +129,7 @@ interface VerifyRegistrationFunctionResponseSuccessful
 interface VerifyRegistrationFunctionResponseUnsuccessful
   extends UnknownFunctionResponseUnsuccessful {
   "code": FirebaseError["code"] | "missing-auth" | "missing-user-doc" | "no-op" | "not-verified" | "user-doc-missing-challenge-field";
-  "message": FirebaseError["message"] | "No user is signed in." | "No user document was found in Firestore." | "No operation is needed." | "User not verified." | "User doc is missing challenge field from prior operation.";
+  "message": FirebaseError["message"] | "No user is signed in." | "No user document was found in Firestore." | "No operation is needed." | "User not verified." | "User document is missing challenge field from prior operation.";
   "operation": "verify registration";
 }
 

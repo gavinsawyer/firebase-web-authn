@@ -3,48 +3,53 @@
     "enableI18nLegacyMessageIdFormat": false,
     "strictInjectionParameters":       true,
     "strictInputAccessModifiers":      true,
+    "strictStandalone":                true,
     "strictTemplates":                 true
   },
   "compileOnSave":          false,
   "compilerOptions":        {
     "allowSyntheticDefaultImports":       true,
     "baseUrl":                            ".",
-    "declaration":                        true,
     "emitDecoratorMetadata":              true,
     "experimentalDecorators":             true,
     "forceConsistentCasingInFileNames":   true,
     "importHelpers":                      true,
     "lib":                                [
       "ES2020",
-      "DOM"
+      "DOM",
+      "DOM.Iterable"
     ],
     "module":                             "ESNext",
-    "moduleResolution":                   "Node",
+    "moduleResolution":                   "Bundler",
     "noFallthroughCasesInSwitch":         true,
     "noImplicitOverride":                 true,
     "noImplicitReturns":                  true,
     "noPropertyAccessFromIndexSignature": true,
     "outDir":                             "dist/out-tsc",
     "paths":                              {
-      "@firebase-web-authn/api":     [ "libs/api/src/index.ts" ],
-      "@firebase-web-authn/browser": [ "libs/browser/src/index.ts" ],
-      "@firebase-web-authn/server":  [ "libs/server/src/index.ts" ],
-      "@firebase-web-authn/types":   [ "libs/types/src/index.ts" ]
+      "@firebase-web-authn/api":       [ "libs/api/src/index.ts" ],
+      "@firebase-web-authn/browser":   [ "libs/browser/src/index.ts" ],
+      "@firebase-web-authn/extension": [ "libs/extension/src/index.ts" ],
+      "@firebase-web-authn/server":    [ "libs/server/src/index.ts" ],
+      "@firebase-web-authn/types":     [ "libs/types/src/index.ts" ]
     },
+    "resolveJsonModule":                  true,
     "rootDir":                            ".",
     "skipDefaultLibCheck":                true,
     "skipLibCheck":                       true,
-    "sourceMap":                          true,
     "strict":                             true,
     "target":                             "ESNext",
-    "types":                              [ "@types/compression" ]
+    "types":                              [
+      "@types/compression",
+      "@types/cookie-parser"
+    ]
   },
   "exclude":                [
+    "dist",
     "node_modules",
+    "temp",
     "tmp",
     "**/README.md"
   ],
-  "include":                [
-    "!**/*.ts"
-  ]
+  "include":                [ "!**/*.ts" ]
 }

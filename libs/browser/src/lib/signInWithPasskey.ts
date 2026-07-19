@@ -1,15 +1,14 @@
 /*
- * Copyright © 2025 Gavin Sawyer. All rights reserved.
+ * Copyright © 2026 Gavin William Sawyer. All rights reserved.
  */
 
-import { type FunctionRequest, type FunctionResponse, type WebAuthnUserCredentialFactor } from "@firebase-web-authn/types";
-import { startAuthentication }                                                            from "@simplewebauthn/browser";
-import { type AuthenticationResponseJSON }                                                from "@simplewebauthn/types";
-import { type Auth, signInAnonymously, type UserCredential }                              from "firebase/auth";
-import { type Functions, httpsCallableFromURL, type HttpsCallableResult }                 from "firebase/functions";
-import { clearChallenge }                                                                 from "./clearChallenge.js";
-import { FirebaseWebAuthnError }                                                          from "./FirebaseWebAuthnError.js";
-import { handleVerifyFunctionResponse }                                                   from "./handleVerifyFunctionResponse.js";
+import { type FunctionRequest, type FunctionResponse, type WebAuthnUserCredentialFactor }      from "@firebase-web-authn/types";
+import { type AuthenticationResponseJSON, startAuthentication }                                from "@simplewebauthn/browser";
+import { type Auth, type AuthError, signInAnonymously, type UserCredential }                   from "firebase/auth";
+import { type Functions, type FunctionsError, httpsCallableFromURL, type HttpsCallableResult } from "firebase/functions";
+import { clearChallenge }                                                                      from "./clearChallenge";
+import { FirebaseWebAuthnError }                                                               from "./FirebaseWebAuthnError";
+import { handleVerifyFunctionResponse }                                                        from "./handleVerifyFunctionResponse";
 
 
 /**
@@ -35,15 +34,15 @@ export const signInWithPasskey: (
   functions: Functions,
   factor?: WebAuthnUserCredentialFactor,
 ): Promise<UserCredential> => ((handler: () => Promise<UserCredential>): Promise<UserCredential> => auth.currentUser ? handler() : signInAnonymously(auth).then<UserCredential, never>(
-  (): Promise<UserCredential> => handler(),
-  (firebaseError): never => {
+  handler,
+  (authError: AuthError): never => {
     throw new FirebaseWebAuthnError(
       {
-        code:    firebaseError.code.replace(
+        code:    authError.code.replace(
           "firebaseWebAuthn/",
           "",
         ),
-        message: firebaseError.message,
+        message: authError.message,
         method:  "signInAnonymously",
       },
     );
@@ -58,14 +57,14 @@ export const signInWithPasskey: (
       operation:                "create authentication challenge",
     },
   ).then<UserCredential, never>(
-    ({ data: functionResponse }: HttpsCallableResult<FunctionResponse>): Promise<UserCredential> => "requestOptions" in functionResponse ? startAuthentication(functionResponse.requestOptions).then<UserCredential, never>(
+    ({ data: functionResponse }: HttpsCallableResult<FunctionResponse>): Promise<UserCredential> => "requestOptions" in functionResponse ? startAuthentication({ optionsJSON: functionResponse.requestOptions }).then<UserCredential, never>(
       (authenticationResponse: AuthenticationResponseJSON): Promise<UserCredential> => httpsCallableFromURL<FunctionRequest, FunctionResponse>(
         functions,
         "/firebase-web-authn-api",
       )(
         {
-          authenticationResponse: authenticationResponse,
-          operation:              "verify authentication",
+          authenticationResponse,
+          operation: "verify authentication",
         },
       ).then<UserCredential>(
         ({ data: functionResponse }: HttpsCallableResult<FunctionResponse>): Promise<UserCredential> => handleVerifyFunctionResponse(
@@ -93,14 +92,14 @@ export const signInWithPasskey: (
         },
       );
     })(),
-    (firebaseError): never => {
+    (functionsError: FunctionsError): never => {
       throw new FirebaseWebAuthnError(
         {
-          code:      firebaseError.code.replace(
+          code:      functionsError.code.replace(
             "firebaseWebAuthn/",
             "",
           ),
-          message:   firebaseError.message,
+          message:   functionsError.message,
           method:    "httpsCallableFromURL",
           operation: "create authentication challenge",
         },

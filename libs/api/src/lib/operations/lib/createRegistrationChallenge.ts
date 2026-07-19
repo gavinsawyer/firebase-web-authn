@@ -1,10 +1,10 @@
 /*
- * Copyright © 2025 Gavin Sawyer. All rights reserved.
+ * Copyright © 2026 Gavin William Sawyer. All rights reserved.
  */
 
 import { type FunctionResponse, type WebAuthnUserCredentialFactor, type WebAuthnUserDocument } from "@firebase-web-authn/types";
-import { generateRegistrationOptions }                                                         from "@simplewebauthn/server";
-import { type PublicKeyCredentialCreationOptionsJSON }                                         from "@simplewebauthn/types";
+import { generateRegistrationOptions, type PublicKeyCredentialCreationOptionsJSON }            from "@simplewebauthn/server";
+import { isoBase64URL, isoUint8Array }                                                         from "@simplewebauthn/server/helpers";
 import { type FirebaseError }                                                                  from "firebase-admin";
 import { type DocumentReference, type DocumentSnapshot }                                       from "firebase-admin/firestore";
 
@@ -12,13 +12,13 @@ import { type DocumentReference, type DocumentSnapshot }                        
 interface CreateRegistrationChallengeOptions {
   registeringCredentialFactor: WebAuthnUserCredentialFactor;
   registrationOptions: {
-    attestationType: AttestationConveyancePreference
-    authenticatorSelection: AuthenticatorSelectionCriteria
-    rpID: string
-    rpName: string
-    supportedAlgorithmIDs: COSEAlgorithmIdentifier[]
-    userID: string
-    userName: string
+    attestationConveyancePreference: AttestationConveyancePreference;
+    authenticatorSelection: AuthenticatorSelectionCriteria;
+    rpID: string;
+    rpName: string;
+    supportedAlgorithmIDs: COSEAlgorithmIdentifier[];
+    userId: string;
+    userName: string;
   };
   webAuthnUserDocumentReference: DocumentReference<WebAuthnUserDocument>;
 }
@@ -27,12 +27,9 @@ export const createRegistrationChallenge: (options: CreateRegistrationChallengeO
   (userDocumentSnapshot: DocumentSnapshot<WebAuthnUserDocument>): Promise<FunctionResponse> => (async (userDocument: WebAuthnUserDocument | undefined): Promise<FunctionResponse> => (options.registeringCredentialFactor === "second" ? !userDocument?.credentials?.second : !userDocument?.credentials?.first) ? (options.registeringCredentialFactor !== "second" || userDocument && userDocument.credentials?.first) ? generateRegistrationOptions(
     {
       ...options.registrationOptions,
-      excludeCredentials: options.registeringCredentialFactor === "second" ? [
-        {
-          id:   userDocument?.credentials?.first.id || new Uint8Array(),
-          type: "public-key",
-        },
-      ] : undefined,
+      attestationType:    options.registrationOptions.attestationConveyancePreference !== "indirect" ? options.registrationOptions.attestationConveyancePreference : "none",
+      excludeCredentials: options.registeringCredentialFactor === "second" ? [ { id: isoBase64URL.fromBuffer(userDocument?.credentials?.first.id || new Uint8Array()) } ] : undefined,
+      userID:             isoUint8Array.fromUTF8String(options.registrationOptions.userId),
     },
   ).then<FunctionResponse>(
     (publicKeyCredentialCreationOptions: PublicKeyCredentialCreationOptionsJSON): Promise<FunctionResponse> => options.webAuthnUserDocumentReference.set(
@@ -43,9 +40,7 @@ export const createRegistrationChallenge: (options: CreateRegistrationChallengeO
           value:                publicKeyCredentialCreationOptions.challenge,
         },
       },
-      {
-        merge: true,
-      },
+      { merge: true },
     ).then<FunctionResponse, FunctionResponse>(
       (): FunctionResponse => ({
         creationOptions:       publicKeyCredentialCreationOptions,

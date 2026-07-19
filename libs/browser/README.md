@@ -47,35 +47,30 @@ import { createUserWithPasskey }          from "@firebase-web-authn/browser";
 ```ts
 class SignUpComponent {
 
-  constructor(
-    private readonly auth: Auth,
-    private readonly functions: Functions,
-  ) {
-    // Firebase JavaScript SDK usage
-    this
-      .createUserWithEmailAndPassword = (email: string, password: string) => createUserWithEmailAndPassword(auth, email, password)
+  private readonly auth: Auth           = inject<Auth>(Auth);
+  private readonly functions: Functions = inject<Functions>(Functions);
+
+  // Firebase JavaScript SDK usage
+  public createUserWithEmailAndPassword(email: string, password: string): Promise<void> {
+    return createUserWithEmailAndPassword(this.auth, email, password)
       .then(() => void(0));
-
-    // FirebaseWebAuthn usage
-    this
-      .createUserWithPasskey = (name: string) => createUserWithPasskey(auth, functions, name)
+  };
+  // FirebaseWebAuthn usage
+  public createUserWithPasskey(name: string): Promise<void> {
+    return createUserWithPasskey(this.auth, functions, name)
       .then(() => void(0));
-
-  }
-
-  public readonly createUserWithEmailAndPassword: (email: string, password: string) => Promise<void>;
-  public readonly createUserWithPasskey: (name: string) => Promise<void>;
+  };
 
 }
 ```
 Add `.catch((err: FirebaseWebAuthnError): void => console.error(err))` to these for a detailed error object with a `code`, `message`, `method`, and/or `operation`. `method` is present for Firebase errors, and `operation` is present on all errors except Firebase errors from Auth methods:
 ```ts
-import { FirebaseWebAuthnError } from "@firebase-web-authn/browser";
+import { type FirebaseWebAuthnError } from "@firebase-web-authn/browser";
 ```
 ```ts
 class FirebaseWebAuthnError extends Error {
-  code: `firebaseWebAuthn/${FirebaseError["code"] | "missing-auth" | "missing-user-doc" | "no-op" | "not-verified" | "user-doc-missing-challenge-field" | "user-doc-missing-passkey-fields" | "cancelled" | "invalid"}`;
-  message: FirebaseError["message"] | "No user is signed in." | "No user document was found in Firestore." | "No operation is needed." | "User not verified." | "User doc is missing challenge field from prior operation." | "User doc is missing passkey fields from prior operation.";
+  code: `firebaseWebAuthn/${ FirebaseError["code"] | "missing-auth" | "missing-user-doc" | "no-op" | "not-verified" | "user-doc-missing-challenge-field" | "user-doc-missing-passkey-fields" | "cancelled" | "invalid" }`;
+  message: FirebaseError["message"] | "No user is signed in." | "No user document was found in Firestore." | "No operation is needed." | "User not verified." | "User document is missing challenge field from prior operation." | "User document is missing passkey fields from prior operation.";
   method?: "httpsCallableFromURL" | "signInAnonymously" | "signInWithCustomToken";
   operation?: "clear challenge" | "clear credential" | "create authentication challenge" | "create reauthentication challenge" | "create registration challenge" | "verify authentication" | "verify reauthentication" | "verify registration";
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2025 Gavin Sawyer. All rights reserved.
+ * Copyright © 2026 Gavin William Sawyer. All rights reserved.
  */
 
 import { Location }                                                                                                                                                                                                                                                                                                                                                                         from "@angular/common";
@@ -9,26 +9,16 @@ import { type ActivationEnd, type ActivationStart, type ChildActivationEnd, type
 import { filter, map, startWith }                                                                                                                                                                                                                                                                                                                                                           from "rxjs";
 
 
-@Injectable(
-  {
-    providedIn: "root",
-  },
-)
+@Injectable({ providedIn: "root" })
 export class PathService {
 
   public readonly path$: Signal<string> = toSignal<string>(
     inject<Router>(Router).events.pipe<NavigationEnd, string, string>(
-      filter<RouterEvent | NavigationStart | NavigationEnd | NavigationCancel | NavigationError | RoutesRecognized | GuardsCheckStart | GuardsCheckEnd | RouteConfigLoadStart | RouteConfigLoadEnd | ChildActivationStart | ChildActivationEnd | ActivationStart | ActivationEnd | Scroll | ResolveStart | ResolveEnd, NavigationEnd>(
-        (routerEvent: RouterEvent | NavigationStart | NavigationEnd | NavigationCancel | NavigationError | RoutesRecognized | GuardsCheckStart | GuardsCheckEnd | RouteConfigLoadStart | RouteConfigLoadEnd | ChildActivationStart | ChildActivationEnd | ActivationStart | ActivationEnd | Scroll | ResolveStart | ResolveEnd): routerEvent is NavigationEnd => routerEvent instanceof NavigationEnd,
-      ),
-      map<NavigationEnd, string>(
-        (navigationEnd: NavigationEnd): string => navigationEnd.url.split("?")[0],
-      ),
+      filter<RouterEvent | NavigationStart | NavigationEnd | NavigationCancel | NavigationError | RoutesRecognized | GuardsCheckStart | GuardsCheckEnd | RouteConfigLoadStart | RouteConfigLoadEnd | ChildActivationStart | ChildActivationEnd | ActivationStart | ActivationEnd | Scroll | ResolveStart | ResolveEnd, NavigationEnd>((routerEvent: RouterEvent | NavigationStart | NavigationEnd | NavigationCancel | NavigationError | RoutesRecognized | GuardsCheckStart | GuardsCheckEnd | RouteConfigLoadStart | RouteConfigLoadEnd | ChildActivationStart | ChildActivationEnd | ActivationStart | ActivationEnd | Scroll | ResolveStart | ResolveEnd): routerEvent is NavigationEnd => routerEvent instanceof NavigationEnd),
+      map<NavigationEnd, string>((navigationEnd: NavigationEnd): string => navigationEnd.url.split("?")[0]),
       startWith<string, [ string ]>(inject<Location>(Location).path()),
     ),
-    {
-      requireSync: true,
-    },
+    { requireSync: true },
   );
 
 }

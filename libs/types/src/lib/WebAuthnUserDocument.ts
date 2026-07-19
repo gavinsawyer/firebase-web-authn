@@ -1,11 +1,11 @@
 /*
- * Copyright © 2025 Gavin Sawyer. All rights reserved.
+ * Copyright © 2026 Gavin William Sawyer. All rights reserved.
  */
 
-import { Timestamp }                    from "firebase-admin/firestore";
-import { WebAuthnProcess }              from "./WebAuthnProcess.js";
-import { WebAuthnUserCredential }       from "./WebAuthnUserCredential.js";
-import { WebAuthnUserCredentialFactor } from "./WebAuthnUserCredentialFactor.js";
+import { type Timestamp }                    from "firebase-admin/firestore";
+import { type WebAuthnProcess }              from "./WebAuthnProcess";
+import { type WebAuthnUserCredential }       from "./WebAuthnUserCredential";
+import { type WebAuthnUserCredentialFactor } from "./WebAuthnUserCredentialFactor";
 
 
 /**

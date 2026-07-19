@@ -1,0 +1,7 @@
+<component name="CopyrightManager">
+  <copyright>
+    <option name="keyword" value="Copyright ©" />
+    <option name="notice" value="Copyright © &amp;#36;originalComment.match(&quot;Copyright © (\d+)&quot;, 1, &quot;-&quot;, &quot;&amp;#36;today.year&quot;)&amp;#36;today.year Gavin William Sawyer. All rights reserved." />
+    <option name="myName" value="gavinsawyer" />
+  </copyright>
+</component>

@@ -41,16 +41,13 @@ Before installing this extension, you'll need to set up these services in your p
 - Functions
 ### Additional setup:
 1. Create a Firestore Database to store public key credentials with the ID `ext-firebase-web-authn` and location matching the function deployment. It is recommended to choose either `nam5` in North America or `eur3` in Europe and to enable delete protection:
-
     ```
     % firebase firestore:databases:create ext-firebase-web-authn --location ${MULTI_REGION_NAME} --delete-protection ENABLED
     ```
-
-2. As of July 2024, [supported roles for Firebase Extensions](https://firebase.google.com/docs/extensions/publishers/access#supported-roles) do not include `iam.serviceAccounts.signBlob` or `serviceusage.services.use` which are needed for custom auth providers.
+2. As of July 2026, [supported roles for Firebase Extensions](https://firebase.google.com/docs/extensions/publishers/access#supported-roles) do not include `iam.serviceAccounts.signBlob` or `serviceusage.services.use` which are needed for custom auth providers.
    - After deploying the extension, grant the `Service Account Token Creator` and `Service Usage Consumer` roles to the extension's service account in [IAM](https://console.cloud.google.com/iam-admin/iam) under `Firebase Extensions firebase-web-authn service account` > Edit > Assign roles.
    - If the service account isn't appearing, click `Grant Access` and enter its address as `ext-firebase-web-authn@${PROJECT_ID}.iam.gserviceaccount.com`
 3. The browser must reach FirebaseWebAuthn from the same domain as your website. Modify your `firebase.json` to include a rewrite on each app where you'd like to use passkeys:
-
     ```json
     {
       "hosting": [
@@ -111,24 +108,19 @@ import { createUserWithPasskey }          from "@firebase-web-authn/browser";
 ```ts
 class SignUpComponent {
 
-  constructor(
-    private readonly auth: Auth,
-    private readonly functions: Functions,
-  ) {
-    // Firebase JavaScript SDK usage
-    this
-      .createUserWithEmailAndPassword = (email: string, password: string) => createUserWithEmailAndPassword(auth, email, password)
+  private readonly auth: Auth           = inject<Auth>(Auth);
+  private readonly functions: Functions = inject<Functions>(Functions);
+
+  // Firebase JavaScript SDK usage
+  public createUserWithEmailAndPassword(email: string, password: string): Promise<void> {
+    return createUserWithEmailAndPassword(this.auth, email, password)
       .then(() => void(0));
-
-    // FirebaseWebAuthn usage
-    this
-      .createUserWithPasskey = (name: string) => createUserWithPasskey(auth, functions, name)
+  };
+  // FirebaseWebAuthn usage
+  public createUserWithPasskey(name: string): Promise<void> {
+    return createUserWithPasskey(this.auth, functions, name)
       .then(() => void(0));
-
-  }
-
-  public readonly createUserWithEmailAndPassword: (email: string, password: string) => Promise<void>;
-  public readonly createUserWithPasskey: (name: string) => Promise<void>;
+  };
 
 }
 ```
@@ -139,7 +131,7 @@ import { FirebaseWebAuthnError } from "@firebase-web-authn/browser";
 ```ts
 class FirebaseWebAuthnError extends Error {
   code: `firebaseWebAuthn/${FirebaseError["code"] | "missing-auth" | "missing-user-doc" | "no-op" | "not-verified" | "user-doc-missing-challenge-field" | "user-doc-missing-passkey-fields" | "cancelled" | "invalid"}`;
-  message: FirebaseError["message"] | "No user is signed in." | "No user document was found in Firestore." | "No operation is needed." | "User not verified." | "User doc is missing challenge field from prior operation." | "User doc is missing passkey fields from prior operation.";
+  message: FirebaseError["message"] | "No user is signed in." | "No user document was found in Firestore." | "No operation is needed." | "User not verified." | "User document is missing challenge field from prior operation." | "User document is missing passkey fields from prior operation.";
   method?: "httpsCallableFromURL" | "signInAnonymously" | "signInWithCustomToken";
   operation?: "clear challenge" | "clear credential" | "create authentication challenge" | "create reauthentication challenge" | "create registration challenge" | "verify authentication" | "verify reauthentication" | "verify registration";
 }

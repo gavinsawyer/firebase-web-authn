@@ -1,10 +1,10 @@
 /*
- * Copyright © 2025 Gavin Sawyer. All rights reserved.
+ * Copyright © 2026 Gavin William Sawyer. All rights reserved.
  */
 
-export * from "./lib/FunctionRequest.js";
-export * from "./lib/FunctionResponse.js";
-export * from "./lib/WebAuthnProcess.js";
-export * from "./lib/WebAuthnUserCredential.js";
-export * from "./lib/WebAuthnUserCredentialFactor.js";
-export * from "./lib/WebAuthnUserDocument.js";
+export type * from "./lib/FunctionRequest";
+export type * from "./lib/FunctionResponse";
+export type * from "./lib/WebAuthnProcess";
+export type * from "./lib/WebAuthnUserCredential";
+export type * from "./lib/WebAuthnUserCredentialFactor";
+export type * from "./lib/WebAuthnUserDocument";
